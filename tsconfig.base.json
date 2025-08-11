@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "name": "base",
+  "description": "Base set of options shared across all tsconfig files.",
+  "compilerOptions": {
+    "target": "esnext",
+    "noErrorTruncation": true,
+    "pretty": true,
+    "preserveWatchOutput": true,
+    "types": ["@types/node"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "esModuleInterop": true,
+    "moduleDetection": "auto",
+    "verbatimModuleSyntax": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "exactOptionalPropertyTypes": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}

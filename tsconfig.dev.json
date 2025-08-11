@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "name": "dev",
+  "description": "Development configuration covering environment tooling, mocking utilities, and typescript configuration file.",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "allowJs": true
+  },
+  "files": ["./prettier.config.js", ".dependency-cruiser.js"],
+  "include": ["_dev/**/*", "dev/**/*", "*.config.*"],
+  "exclude": [
+    "**/dist/**",
+    "**/node_modules/**",
+    "**/*.test.*",
+    "**/*.spec.*",
+    "**/*.bench.*",
+    "packages/**/*",
+    "src/**/*"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "name": "build",
+  "description": "Strict configuration for building application code.",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "rewriteRelativeImportExtensions": true,
+    "removeComments": true,
+    "esModuleInterop": true
+  },
+  "files": [],
+  "references": [
+    { "path": "./packages/tseslint" },
+    { "path": "./packages/configs" },
+    { "path": "./packages/depcruiser" },
+    { "path": "./packages/dev-kit" },
+    { "path": "./packages/types" },
+    { "path": "./packages/utils" }
+  ]
+}

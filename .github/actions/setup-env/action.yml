@@ -1,0 +1,28 @@
+name: Setup Node/PNPM environment
+description:
+  Checkout code (in caller), setup Node and PNPM, install deps, and build
+  packages.
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 🔧 Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        registry-url: https://registry.npmjs.org/
+        cache: pnpm
+        cache-dependency-path: 'pnpm-lock.yaml'
+
+    - name: 📦 Setup PNPM
+      uses: pnpm/action-setup@v4
+      with:
+        version: '10.14.0'
+
+    - name: 📥 Install dependencies
+      run: pnpm install --frozen-lockfile
+      shell: bash
+
+    - name: 🔨 Build packages
+      run: pnpm build
+      shell: bash

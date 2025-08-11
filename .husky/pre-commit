@@ -1,0 +1,8 @@
+branch=$(git rev-parse --abbrev-ref HEAD)
+if [ "$branch" = "main" ]; then
+  echo "Direct commits to 'main' are not allowed. Please checkout a new branch and commit your changes there."
+  exit 1
+fi
+
+
+pnpm run lint-staged

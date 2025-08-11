@@ -1,0 +1,8 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/tsdoc/v0/tsdoc.schema.json",
+  "tagDefinitions": [
+    { "tagName": "@important", "syntaxKind": "block", "allowMultiple": true },
+    { "tagName": "@module", "syntaxKind": "block", "allowMultiple": false },
+    { "tagName": "@default", "syntaxKind": "block", "allowMultiple": false }
+  ]
+}

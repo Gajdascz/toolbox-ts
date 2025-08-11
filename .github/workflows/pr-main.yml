@@ -1,0 +1,31 @@
+name: Pull Request on Main
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+jobs:
+  validate:
+    uses: ./.github/workflows/validate.yml
+    with:
+      changeset: |
+        ${{ !contains(github.event.pull_request.title, '[skip changeset]') &&
+        !contains(github.event.pull_request.title, 'repo') &&
+        !contains(github.event.pull_request.title, 'ci') }}
+
+  commitlint:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📦 Setup Environment
+        uses: ./.github/actions/setup-env
+
+      - name: 📝 Run Commitlint (pr-commits)
+        uses: ./.github/actions/commitlint/pr-commits/action.yml

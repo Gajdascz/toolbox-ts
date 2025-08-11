@@ -1,0 +1,55 @@
+name: Validate
+
+on:
+  workflow_call:
+    inputs:
+      changeset:
+        type: boolean
+        description: 'Whether to check for changesets'
+        required: false
+        default: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📦 Setup Environment
+        uses: ./.github/actions/setup-env
+
+      - name: 🔨 Build
+        run: pnpm build
+        shell: bash
+
+      - name: 🔍 Types
+        run: pnpm check:types
+        shell: bash
+
+      - name: 🕵️ Dependencies
+        run: pnpm check:dependencies
+        shell: bash
+
+      - name: 🧹 Formatting
+        run: pnpm check:format
+        shell: bash
+
+      - name: 🧹 Linting
+        run: pnpm check:lint
+        shell: bash
+
+      - name: 🧪 Tests
+        run: pnpm test
+        shell: bash
+
+      - name: 🦋 Check for changeset
+        if: ${{ inputs.changeset }}
+        run: |
+          if ! pnpm changeset status --since=origin/main; then
+            echo "::error::No changeset found. Please add a changeset using 'pnpm changeset' if this PR includes user-facing changes."
+            exit 1
+          fi
+        shell: bash

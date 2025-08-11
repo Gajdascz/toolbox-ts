@@ -1,0 +1,15 @@
+**/node_modules
+**/build
+**/dist
+**/artifacts
+**/coverage
+**/.coverage
+**/.cache
+**/*.tsbuildinfo
+**/package-lock.json
+.pnpm-store
+*.log
+.env
+.env.*
+
+docs/reports

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "name": "test",
+  "description": "Covers all .test, .spec and bench files with relaxed rules.",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "allowJs": true,
+    "strict": false,
+    "strictNullChecks": false,
+    "allowUnusedLabels": true,
+    "allowUnreachableCode": true,
+    "noImplicitAny": false,
+    "strictFunctionTypes": false,
+    "strictBindCallApply": false,
+    "strictPropertyInitialization": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": false,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitOverride": false,
+    "exactOptionalPropertyTypes": false
+  },
+  "include": ["**/*.test.*", "**/*.spec.*", "**/*.bench.*"],
+  "exclude": ["dist", "node_modules"]
+}

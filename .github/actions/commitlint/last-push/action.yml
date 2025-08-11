@@ -1,0 +1,11 @@
+name: Lint Last Push Commit Messages
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate current commit (last commit) with commitlint
+      if: github.event_name == 'push'
+      run: |
+        echo "Validating last commit..."
+        npx commitlint --last --verbose
+      shell: bash

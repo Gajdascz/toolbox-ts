@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "name": "reference",
+  "description": "Provides full VSCode IDE typing and intellisense support. This is required to correctly match configurations to their targeted files.",
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.build.json" },
+    { "path": "./tsconfig.dev.json" },
+    { "path": "./tsconfig.test.json" }
+  ]
+}

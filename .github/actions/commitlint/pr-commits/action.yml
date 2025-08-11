@@ -1,0 +1,19 @@
+name: Lint All PR Commit Messages
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Check git history availability
+      run: |
+        if ! git rev-parse ${{ github.event.pull_request.base.sha }} >/dev/null 2>&1; then
+          echo "::error::Git history not available. Ensure the workflow uses 'fetch-depth: 0' in checkout."
+          exit 1
+        fi
+      shell: bash
+
+    - name: Validate PR commits with commitlint
+      if: github.event_name == 'pull_request'
+      run: |
+        npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{
+        github.event.pull_request.head.sha }} --verbose
+      shell: bash

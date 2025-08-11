@@ -1,0 +1,25 @@
+name: Push on Any Non-Main Branch
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  validate:
+    uses: ./.github/workflows/validate.yml
+    with:
+      changeset: false
+
+  commitlint:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Environment
+        uses: ./.github/actions/setup-env
+
+      - name: 📝 Run Commitlint (last push)
+        uses: ./.github/actions/commitlint/last-push/action.yml

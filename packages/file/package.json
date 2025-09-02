@@ -1,0 +1,44 @@
+{
+  "name": "@toolbox-ts/file",
+  "version": "0.1.7",
+  "description": "Node file system utilities",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "Nolan Gajdascz",
+    "email": "dev.gajdascz@gmail.com",
+    "url": "https://github.com/gajdascz"
+  },
+  "keywords": [
+    "typescript",
+    "file",
+    "filesystem",
+    "node"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/file",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gajdascz/toolbox-ts.git"
+  },
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "dependencies": {
+    "fast-glob": "^3.3.3",
+    "jiti": "^2.5.1"
+  }
+}

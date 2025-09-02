@@ -30,6 +30,7 @@
     "@oclif/plugin-help": "^6.2.32",
     "@oclif/plugin-plugins": "^5.4.46",
     "@toolbox-ts/configs": "workspace:^",
+    "@toolbox-ts/tseslint": "workspace:^",
     "@types/node": "^22.18.0",
     "@typescript-eslint/utils": "^8.41.0",
     "@vitest/coverage-v8": "3.0.9",
@@ -68,6 +69,7 @@
   },
   "lint-staged": {
     "*.{js,jsx,cjs,ts,tsx}": [
+      "pnpm eslint --fix",
       "pnpm prettier --write"
     ],
     "*.{json,md,yml,yaml}": [

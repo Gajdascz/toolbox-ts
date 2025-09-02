@@ -14,7 +14,8 @@
   // Order matters - dependencies first
   "references": [
     //#region> 0 Internal Dependencies
-    { "path": "./packages/configs" }
+    { "path": "./packages/configs" },
+    { "path": "./packages/tseslint" }
     //#endregion
   ]
 }

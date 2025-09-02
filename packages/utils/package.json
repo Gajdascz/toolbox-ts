@@ -1,0 +1,48 @@
+{
+  "name": "@toolbox-ts/utils",
+  "version": "0.0.0",
+  "private": false,
+  "description": "Utils",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gajdascz/toolbox-ts"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [],
+  "author": {
+    "name": "Nolan Gajdascz",
+    "email": "dev.gajdascz@gmail.com",
+    "url": "https://github.com/gajdascz"
+  },
+  "type": "module",
+  "scripts": {},
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./obj": {
+      "import": "./dist/object/index.js",
+      "types": "./dist/object/index.d.ts"
+    },
+    "./prim": {
+      "import": "./dist/primitive/index.js",
+      "types": "./dist/primitive/index.d.ts"
+    },
+    "./str": {
+      "import": "./dist/string/index.js",
+      "types": "./dist/string/index.d.ts"
+    },
+    "./constants": {
+      "import": "./dist/constants/index.js",
+      "types": "./dist/constants/index.d.ts"
+    }
+  }
+}

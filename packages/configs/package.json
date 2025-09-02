@@ -1,0 +1,42 @@
+{
+  "name": "@toolbox-ts/configs",
+  "version": "0.0.0",
+  "description": "Configuration wrappers for @toolbox-ts monorepo.",
+  "private": false,
+  "author": {
+    "name": "Nolan Gajdascz",
+    "email": "dev.gajdascz@gmail.com",
+    "url": "https://github.com/gajdascz"
+  },
+  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/configs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gajdascz/toolbox-ts.git"
+  },
+  "type": "module",
+  "keywords": [],
+  "license": "MIT",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "peerDependencies": {
+    "@commitlint/config-conventional": "^19.8.1",
+    "@commitlint/types": "^19.5.0",
+    "prettier": "^3.6.0",
+    "vitest": "^3.2.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

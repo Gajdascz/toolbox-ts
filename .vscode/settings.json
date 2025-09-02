@@ -104,6 +104,7 @@
     "outpipe",
     "paren",
     "parens",
+    "Toggleable",
     "Uncapitalize"
   ],
   "svg.preview.background": "dark-transparent"

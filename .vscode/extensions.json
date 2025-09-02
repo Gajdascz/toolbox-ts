@@ -1,7 +1,6 @@
 {
   "recommendations": [
     "streetsidesoftware.code-spell-checker",
-    "mxsdev.typescript-explorer",
     "YoavBls.pretty-ts-errors",
     "DavidAnson.vscode-markdownlint",
     "aaron-bond.better-comments",

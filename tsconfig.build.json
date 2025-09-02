@@ -15,7 +15,11 @@
   "references": [
     //#region> 0 Internal Dependencies
     { "path": "./packages/configs" },
-    { "path": "./packages/tseslint" }
+    { "path": "./packages/tseslint" },
+    { "path": "./packages/utils" },
+    { "path": "./packages/test-utils" },
     //#endregion
+    { "path": "./packages/file" },
+    { "path": "./packages/cli-kit" }
   ]
 }

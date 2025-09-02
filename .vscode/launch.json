@@ -11,6 +11,18 @@
       "args": ["run", "${relativeFile}"],
       "smartStep": true,
       "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug depcruiser",
+      "program": "${workspaceFolder}/packages/depcruiser/src/cli/bin/dev.ts",
+      "runtimeArgs": ["--import=tsx", "--inspect-brk"],
+      "args": ["./packages/tseslint/**"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "sourceMaps": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
     }
   ]
 }

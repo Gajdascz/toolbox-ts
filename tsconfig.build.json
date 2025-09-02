@@ -11,12 +11,10 @@
     "esModuleInterop": true
   },
   "files": [],
+  // Order matters - dependencies first
   "references": [
-    { "path": "./packages/tseslint" },
-    { "path": "./packages/configs" },
-    { "path": "./packages/depcruiser" },
-    { "path": "./packages/dev-kit" },
-    { "path": "./packages/types" },
-    { "path": "./packages/utils" }
+    //#region> 0 Internal Dependencies
+    { "path": "./packages/configs" }
+    //#endregion
   ]
 }

@@ -16,7 +16,7 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "exactOptionalPropertyTypes": true,
+    "exactOptionalPropertyTypes": false,
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true

@@ -1,0 +1,43 @@
+{
+  "name": "@toolbox-ts/test-utils",
+  "version": "0.0.0",
+  "private": false,
+  "description": "Test Utilities",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gajdascz/toolbox-ts"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [],
+  "author": {
+    "name": "Nolan Gajdascz",
+    "email": "dev.gajdascz@gmail.com",
+    "url": "https://github.com/gajdascz"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./setup": {
+      "import": "./dist/mocks/setup.js",
+      "types": "./dist/mocks/setup.d.ts"
+    },
+    "./helpers": {
+      "import": "./dist/helpers/index.js",
+      "types": "./dist/helpers/index.d.ts"
+    }
+  },
+  "dependencies": {
+    "memfs": "4.36.0",
+    "vitest": "^3.2.4"
+  }
+}

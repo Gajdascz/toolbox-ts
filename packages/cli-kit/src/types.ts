@@ -33,4 +33,4 @@ export type ErrorBehavior = 'terminate' | 'throw';
 export type ExecaOptionsNoStdio<O extends Options | SyncOptions = Options> =
   Omit<O, 'stdio'>;
 
-export type Flag<S extends string = string> = `--${S}`;
+export type FlagToken<S extends string = string> = `--${S}`;

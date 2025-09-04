@@ -81,7 +81,7 @@ export const config = async ({
 
   // Start from default + input
   let merged = Obj.merge(defaultConfig, _input, {
-    array: { behavior: 'append' }
+    array: { behavior: 'overwrite' }
   }) as BaseConfig;
 
   // Resolve all extends recursively

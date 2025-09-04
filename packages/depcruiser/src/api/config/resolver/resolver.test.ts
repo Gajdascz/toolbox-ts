@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { InputConfig } from '../../../config/index.ts';
 import type { BaseConfig } from '../defaults.ts';
 
+import { defaultConfig } from '../defaults.ts';
 import { loadConfig } from '../loader.ts';
 import * as resolve from './resolver.ts';
 
@@ -18,7 +19,6 @@ vi.mock('../defaults.ts', async (importActual) => {
     }
   });
 });
-import { defaultConfig } from '../defaults.ts';
 const mockLoadConfig = vi.mocked(loadConfig);
 
 describe('extends', () => {

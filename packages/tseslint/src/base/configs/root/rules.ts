@@ -197,7 +197,9 @@ export const typescriptEslint: ConfigWithExtends['rules'] = {
    * Disable ESLint's no-shadow to enable
    * TSESlint's extended version `@typescript-eslint/no-shadow`
    */
-  'no-shadow': 'off'
+  'no-shadow': 'off',
+
+  '@typescript-eslint/no-non-null-assertion': 'off'
 } as const;
 export const docs: ConfigWithExtends['rules'] = {
   /** tsdoc syntax errors are not significant and/or mature enough to require immediate attention */

@@ -25,9 +25,7 @@ export class DependencyCruiser extends BaseCommand {
     scan: Args.string({
       name: 'filesOrDirectories',
       description:
-        'Files, directories, or glob patterns to analyze. Wrap globs in quotes to prevent shell expansion (e.g. "packages/**/src/**").',
-      required: false,
-      default: '.'
+        'Files, directories, or glob patterns to analyze. Wrap globs in quotes to prevent shell expansion (e.g. "packages/**/src/**").'
     })
   };
 
@@ -216,13 +214,17 @@ export default cfg;
 
   public async run(): Promise<void> {
     const { args, flags: _flags } = await this.parse(DependencyCruiser);
+    if (!args.scan && !_flags.init) {
+      await DependencyCruiser.run(['--help']);
+      return;
+    }
     if (_flags.init) {
       const runNow = await this.initConfig();
-      if (!runNow) return;
+      if (!runNow || !args.scan) return;
       this.cache.clear();
     }
     const cfg = await this.cache.get();
-    const { output: out, result } = await cruise([args.scan], {
+    const { output: out, result } = await cruise([args.scan!], {
       input: cfg,
       flags: _flags
     });

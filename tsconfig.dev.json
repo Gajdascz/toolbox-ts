@@ -10,7 +10,7 @@
     "allowJs": true
   },
   "files": ["./prettier.config.js"],
-  "include": ["_dev/**/*", "dev/**/*", "*.config.*", "./*.ts"],
+  "include": ["_dev/**/*", "dev/**/*", "*.config.*"],
   "exclude": [
     "**/dist/**",
     "**/node_modules/**",

@@ -21,6 +21,6 @@
     //#endregion
     { "path": "./packages/file" },
     { "path": "./packages/cli-kit" },
-    { "path": "./packages/git-kit" }
+    { "path": "./packages/depcruiser" }
   ]
 }

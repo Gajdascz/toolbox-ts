@@ -1,6 +1,6 @@
 export const api = '🌐';
 export const bug = '🐛';
-export const chore = '🧹';
+export const broom = '🧹';
 export const ci = '🏗️';
 export const search = '🔍';
 export const pkg = '📦';

@@ -1,4 +1,6 @@
-import { config, type ConfigArray } from 'typescript-eslint';
+import type { ConfigWithExtendsArray } from '@eslint/config-helpers';
+
+import { defineConfig as defCfg } from 'eslint/config';
 
 import type { BaseCfg } from '../base/types.js';
 
@@ -25,7 +27,7 @@ export const defineConfig = ({
   defaults
 }: DefineConfigInput = {}) => {
   /* c8 ignore start */
-  const result: ConfigArray = [configs.__root];
+  const result: ConfigWithExtendsArray = [configs.__root];
   if (defaults === true || defaults === undefined)
     result.push(
       create({ base: configs.build }),
@@ -49,5 +51,5 @@ export const defineConfig = ({
   for (const key in custom)
     result.push(create({ base: custom[key].base, cfg: custom[key].cfg ?? {} }));
 
-  return config(result);
+  return defCfg(result);
 };

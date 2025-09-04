@@ -40,11 +40,6 @@ export type FilterRecord<T, R extends T[keyof T]> = Pick<
   { [K in keyof T]: T[K] extends R ? K : never }[keyof T]
 >;
 
-export type StripNullish<T> = {
-  [K in keyof T as [Extract<T[K], null | undefined>] extends [never] ? K
-  : never]: StripNullish<NonNullable<T[K]>>;
-};
-
 /**
  * Removes readonly modifiers from top level properties of a type.
  *
@@ -95,6 +90,7 @@ export type Narrow<T> =
  */
 export type NestedMutable<T> =
   T extends object ? { -readonly [P in keyof T]: NestedMutable<T[P]> } : T;
+
 /**
  * Marks all properties of a type as optional, including nested objects.
  *
@@ -117,7 +113,6 @@ export type NestedPartial<T> =
  */
 export type NestedReadonly<T> =
   T extends object ? { readonly [P in keyof T]: NestedReadonly<T[P]> } : T;
-
 /**
  * Marks all properties of a type as required, including nested objects.
  *
@@ -157,6 +152,11 @@ export type PartiallyRequired<T, K extends keyof T> = NestedRequired<Pick<T, K>>
 
 export type PluckRecord<T, K extends keyof T[keyof T]> = {
   [P in keyof T]: T[P] extends Record<K, infer V> ? V : undefined;
+};
+
+export type StripNullish<T> = {
+  [K in keyof T as [Extract<T[K], null | undefined>] extends [never] ? K
+  : never]: StripNullish<NonNullable<T[K]>>;
 };
 
 /** Extracts string keys from an object */

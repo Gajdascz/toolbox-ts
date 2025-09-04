@@ -4,15 +4,6 @@ import { clone, is } from '../Obj.js';
 
 export type MergeFn<R> = (current: R, next: unknown) => R;
 
-/**
- * Behavior for merging arrays:
- * - `append` (default) → concatenate arrays and optionally deduplicate
- * - `prepend` → concatenate arrays with next array first and optionally deduplicate
- * - `overwrite` → replace current array with next array
- * - `merge` → merge arrays element-wise using deep merge logic
- */
-type MergeArrayBehavior = 'append' | 'overwrite' | 'prepend';
-
 export interface MergeOptions {
   array?: {
     behavior: MergeArrayBehavior;
@@ -26,6 +17,15 @@ export interface MergeOptions {
    */
   retainEmptyObjectProps?: boolean;
 }
+
+/**
+ * Behavior for merging arrays:
+ * - `append` (default) → concatenate arrays and optionally deduplicate
+ * - `prepend` → concatenate arrays with next array first and optionally deduplicate
+ * - `overwrite` → replace current array with next array
+ * - `merge` → merge arrays element-wise using deep merge logic
+ */
+type MergeArrayBehavior = 'append' | 'overwrite' | 'prepend';
 
 export const mergeArr = (
   currArr: unknown[],

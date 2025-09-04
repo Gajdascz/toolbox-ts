@@ -1,0 +1,64 @@
+{
+  "name": "@toolbox-ts/depcruiser",
+  "version": "0.0.0",
+  "private": false,
+  "description": "Dependency cruiser utilities.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gajdascz/toolbox-ts"
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "dependency-cruiser",
+    "typed-api",
+    "cli",
+    "dependency",
+    "graph",
+    "validation"
+  ],
+  "author": {
+    "name": "Nolan Gajdascz",
+    "email": "dev.gajdascz@gmail.com",
+    "url": "https://github.com/gajdascz"
+  },
+  "type": "module",
+  "scripts": {},
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "dependencies": {
+    "@oclif/core": "^4.5.2",
+    "@toolbox-ts/cli-kit": "workspace:^",
+    "@toolbox-ts/file": "workspace:^",
+    "@toolbox-ts/utils": "workspace:^",
+    "dependency-cruiser": "^16.10.4",
+    "watskeburt": "^4.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.124",
+    "tsx": "^4.20.5"
+  },
+  "bin": {
+    "depcruiser": "./dist/cli/bin/run.js"
+  },
+  "oclif": {
+    "bin": "depcruiser",
+    "commands": {
+      "target": "./dist/cli/command/depcruiser.js",
+      "strategy": "single"
+    },
+    "dirname": "depcruiser",
+    "topicSeparator": " "
+  }
+}

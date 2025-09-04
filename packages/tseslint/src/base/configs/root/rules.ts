@@ -1,8 +1,10 @@
-import type { ConfigWithExtends } from 'typescript-eslint';
-
+import type { ConfigWithExtends } from '@eslint/config-helpers';
 export const unicorn: ConfigWithExtends['rules'] = {
+  /** Can be overly restrictive */
+  'unicorn/consistent-function-scoping': 'off',
   /** Causes problems when joining string arrays that are declared not empty */
   'unicorn/error-message': 'off',
+
   'unicorn/filename-case': [
     'error',
     {
@@ -27,14 +29,28 @@ export const unicorn: ConfigWithExtends['rules'] = {
       }
     }
   ],
-
   /** Using function references is concise and avoids unnecessary arrow wrappers. */
   'unicorn/no-array-callback-reference': 'off',
+
+  /**
+   * Flags error on my Obj.filter method
+   * @example
+   * ```ts
+   * it('filters properties based on predicate', () => {
+   * const obj = { a: 1, b: 'string', c: 2, d: true };
+   * const filtered = Obj.filter(
+   *    obj,
+   *    (v): v is number => typeof v === 'number' // flagged as error
+   * );
+   * ```
+   */
+  'unicorn/no-array-method-this-argument': 'off',
   /** With TypeScript and explicit generics reduce does not hurt readability. */
   'unicorn/no-array-reduce': 'off',
 
   /** This often adds verbosity with negligible clarity gain. As long as promise-returning expressions are controlled, the inlining is fine. */
   'unicorn/no-await-expression-member': 'off',
+
   /**
    * Negation can sometimes be the most readable option
    * @example
@@ -55,7 +71,6 @@ export const unicorn: ConfigWithExtends['rules'] = {
 
   /** Sometimes thenable reduces verbosity and improves clarity. */
   'unicorn/no-thenable': 'off',
-
   /** typeof can be safer in some interop/edge cases, especially when dealing with dynamic/arbitrary data.  */
   'unicorn/no-typeof-undefined': 'off',
 
@@ -66,25 +81,9 @@ export const unicorn: ConfigWithExtends['rules'] = {
 
   /** Abbreviations are often used and improve conciseness. */
   'unicorn/prevent-abbreviations': 'off',
-  /** Can be overly restrictive */
-  'unicorn/consistent-function-scoping': 'off',
-
   /** excluding braces can be cleaner */
-  'unicorn/switch-case-braces': 'off',
-  /**
-   * Flags error on my Obj.filter method
-   * @example
-   * ```ts
-   * it('filters properties based on predicate', () => {
-   * const obj = { a: 1, b: 'string', c: 2, d: true };
-   * const filtered = Obj.filter(
-   *    obj,
-   *    (v): v is number => typeof v === 'number' // flagged as error
-   * );
-   * ```
-   */
-  'unicorn/no-array-method-this-argument': 'off'
-};
+  'unicorn/switch-case-braces': 'off'
+} as const;
 export const typescriptEslint: ConfigWithExtends['rules'] = {
   /**
    * Using Record and indexed object types
@@ -179,17 +178,6 @@ export const typescriptEslint: ConfigWithExtends['rules'] = {
    * ```
    */
   '@typescript-eslint/no-unnecessary-type-parameters': 'off',
-  /** Simplifies debugging and general logging. */
-  '@typescript-eslint/restrict-template-expressions': [
-    'error',
-    { allowBoolean: true, allowNever: true, allowNumber: true }
-  ],
-  /**
-   * Disable ESLint's no-shadow to enable
-   * TSESlint's extended version `@typescript-eslint/no-shadow`
-   */
-  'no-shadow': 'off',
-
   /**
    * Prevents the use of spreading objects for omission.
    * @example
@@ -198,15 +186,26 @@ export const typescriptEslint: ConfigWithExtends['rules'] = {
    * return rest; // Error: no-unused-vars
    * ```
    */
-  '@typescript-eslint/no-unused-vars': 'off'
-};
+  '@typescript-eslint/no-unused-vars': 'off',
+  /** Simplifies debugging and general logging. */
+  '@typescript-eslint/restrict-template-expressions': [
+    'error',
+    { allowBoolean: true, allowNever: true, allowNumber: true }
+  ],
+
+  /**
+   * Disable ESLint's no-shadow to enable
+   * TSESlint's extended version `@typescript-eslint/no-shadow`
+   */
+  'no-shadow': 'off'
+} as const;
 export const docs: ConfigWithExtends['rules'] = {
   /** tsdoc syntax errors are not significant and/or mature enough to require immediate attention */
   'jsdoc/lines-before-block': 'off',
   'jsdoc/require-hyphen-before-param-description': 'off',
   'jsdoc/tag-lines': 'off',
   'tsdoc/syntax': 'warn'
-};
+} as const;
 export const imports: ConfigWithExtends['rules'] = {
   'import/no-duplicates': 'error',
   /**
@@ -215,10 +214,18 @@ export const imports: ConfigWithExtends['rules'] = {
    * no-duplicates.
    */
   'no-duplicate-imports': 'off'
-};
+} as const;
 
+const REGION_PARTITION = {
+  partitionByComment: {
+    line: [{ pattern: '^#region' }, { pattern: '^#endregion' }]
+  }
+} as const;
 export const perfectionist: ConfigWithExtends['rules'] = {
+  'perfectionist/sort-imports': ['error', { ...REGION_PARTITION }],
+  'perfectionist/sort-interfaces': ['error', { ...REGION_PARTITION }],
+  'perfectionist/sort-modules': ['error', { ...REGION_PARTITION }],
+  'perfectionist/sort-classes': ['error', { ...REGION_PARTITION }],
   'perfectionist/sort-objects': 'off',
-  'perfectionist/sort-switch-case': 'off',
-  'perfectionist/sort-modules': 'off'
-};
+  'perfectionist/sort-switch-case': 'off'
+} as const;

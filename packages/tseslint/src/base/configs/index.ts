@@ -1,7 +1,13 @@
+import type { ConfigWithExtends } from '@eslint/config-helpers';
+
+import type { BaseCfg } from '../types.js';
+
 import { GLOBS } from '../constants.js';
 import { createBaseConfig, ROOT } from './root/index.js';
 
-export const configs = {
+export const configs: { __root: ConfigWithExtends } & {
+  [K in 'build' | 'dev' | 'test']: BaseCfg<K>;
+} = {
   __root: ROOT,
   build: createBaseConfig('build', {
     files: [`${GLOBS.SRC_DIRS}/**/*.${GLOBS.EXTS}`],

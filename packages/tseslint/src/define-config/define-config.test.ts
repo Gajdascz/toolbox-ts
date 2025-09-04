@@ -1,11 +1,10 @@
-import { config } from 'typescript-eslint';
+import { defineConfig as defCfg } from 'eslint/config';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { create } from '../base/index.js';
 import { defineConfig, type DefineConfigInput } from './define-config.js';
-
-vi.mock('typescript-eslint', () => ({
-  config: vi.fn((configs: any[]) => configs)
+vi.mock('eslint/config', () => ({
+  defineConfig: vi.fn((configs: any[]) => configs)
 }));
 
 vi.mock('../base/index.js', () => ({
@@ -29,7 +28,7 @@ vi.mock('../base/index.js', () => ({
 
 describe('defineConfig', () => {
   const mockCreate = vi.mocked(create);
-  const mockConfig = vi.mocked(config);
+  const mockConfig = vi.mocked(defCfg);
 
   beforeEach(() => {
     vi.clearAllMocks();

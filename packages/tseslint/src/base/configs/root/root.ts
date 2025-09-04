@@ -1,3 +1,5 @@
+import type { ConfigWithExtends } from '@eslint/config-helpers';
+
 import js from '@eslint/js';
 /* c8 ignore start */
 import vitestPlugin from '@vitest/eslint-plugin';
@@ -7,7 +9,7 @@ import jsdoc from 'eslint-plugin-jsdoc';
 import perfectionistPlugin from 'eslint-plugin-perfectionist';
 import tsdoc from 'eslint-plugin-tsdoc';
 import unicornPlugin from 'eslint-plugin-unicorn';
-import { configs, type ConfigWithExtends, plugin } from 'typescript-eslint';
+import { configs, plugin } from 'typescript-eslint';
 
 import type { BaseCfg } from '../../types.js';
 
@@ -32,14 +34,14 @@ export const ROOT: ConfigWithExtends = Object.freeze({
     prettierConfig
   ],
   files: ['**/*'],
-  ignores: ['**/node_modules/**', '**/dist/**', '**/build/**'],
+  ignores: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/docs/**'],
   name: '__root',
   plugins: {
     '@typescript-eslint': plugin,
     import: importPlugin,
     jsdoc,
     tsdoc,
-    vitest: vitestPlugin
+    vitest: vitestPlugin as never
   },
   rules: {
     ...typescriptEslint,

@@ -5,15 +5,16 @@ import { ghActionsAnnotations } from '../reporters/index.ts';
 import { Reporter } from '../reporters/types.ts';
 import {
   chain,
-  getNormalizeInputWrapper,
+  normalize,
   resolveError,
   spawn,
   spawnSync
 } from '../utils/index.js';
 import { BaseCommand } from './BaseCommand.ts';
-vi.mock('../utils/index.js', () => ({
+vi.mock('../utils/index.js', async (actual) => ({
+  ...(await actual()),
   chain: vi.fn(),
-  getNormalizeInputWrapper: vi.fn(),
+  normalize: { commandInput: vi.fn(), getCommandInputWrapper: vi.fn() },
   kebabKeysToFlagMap: vi.fn(),
   normalizeInput: vi.fn(),
   resolveError: vi.fn(),
@@ -36,7 +37,7 @@ class TestCommand extends BaseCommand {
 let instance;
 
 let mockChain,
-  mockGetNormalizeInputWrapper,
+  mockGetCommandInputWrapper,
   mockResolveError,
   mockSpawn,
   mockSpawnSync;
@@ -47,7 +48,7 @@ beforeEach(() => {
   mockSpawn = vi.mocked(spawn);
   mockSpawnSync = vi.mocked(spawnSync);
   mockResolveError = vi.mocked(resolveError);
-  mockGetNormalizeInputWrapper = vi.mocked(getNormalizeInputWrapper);
+  mockGetCommandInputWrapper = vi.mocked(normalize.getCommandInputWrapper);
 });
 describe('BaseCommand', () => {
   it('sets and gets defaultErrorBehavior', () => {
@@ -95,8 +96,8 @@ describe('BaseCommand', () => {
         execaOpts: { foo: 1 }
       });
       expect(execSpy).toHaveBeenCalledWith('echo hi', {
-        onExecFail: undefined,
-        execaOpts: { foo: 1, stdio: 'pipe' }
+        execaOpts: { foo: 1, stdio: 'pipe' },
+        onExecFail: undefined
       });
       expect(res).toEqual({ stdio: 'pipe', stdout: 'hi' });
     });
@@ -205,7 +206,7 @@ describe('BaseCommand', () => {
   });
   describe('wrap', () => {
     it('returns wrapper object with exec, execWithStdio, string, normalizeInput, sync', () => {
-      mockGetNormalizeInputWrapper.mockReturnValue((cmd) => [
+      mockGetCommandInputWrapper.mockReturnValue((cmd) => [
         'main',
         Array.isArray(cmd) ? cmd : [cmd]
       ]);
@@ -218,7 +219,7 @@ describe('BaseCommand', () => {
     });
 
     it('exec calls exec with normalized input', async () => {
-      mockGetNormalizeInputWrapper.mockReturnValue((cmd) => [
+      mockGetCommandInputWrapper.mockReturnValue((cmd) => [
         'main',
         Array.isArray(cmd) ? cmd : [cmd]
       ]);
@@ -230,7 +231,7 @@ describe('BaseCommand', () => {
     });
 
     it('execWithStdio calls execWithStdio with normalized input', async () => {
-      mockGetNormalizeInputWrapper.mockReturnValue((cmd) => [
+      mockGetCommandInputWrapper.mockReturnValue((cmd) => [
         'main',
         Array.isArray(cmd) ? cmd : [cmd]
       ]);
@@ -247,7 +248,7 @@ describe('BaseCommand', () => {
     });
 
     it('string calls string with normalized input', async () => {
-      mockGetNormalizeInputWrapper.mockReturnValue((cmd) => [
+      mockGetCommandInputWrapper.mockReturnValue((cmd) => [
         'main',
         Array.isArray(cmd) ? cmd : [cmd]
       ]);
@@ -262,7 +263,7 @@ describe('BaseCommand', () => {
     });
 
     it('sync.exec calls sync.exec with normalized input', () => {
-      mockGetNormalizeInputWrapper.mockReturnValue((cmd) => [
+      mockGetCommandInputWrapper.mockReturnValue((cmd) => [
         'main',
         Array.isArray(cmd) ? cmd : [cmd]
       ]);
@@ -272,14 +273,14 @@ describe('BaseCommand', () => {
       const wrapper = instance._wrap('main');
       const res = wrapper.sync.exec('sub arg', { execaOpts: { foo: 1 } });
       expect(syncExecSpy).toHaveBeenCalledWith(['main', ['sub arg']], {
-        onExecFail: undefined,
-        execaOpts: { foo: 1 }
+        execaOpts: { foo: 1 },
+        onExecFail: undefined
       });
       expect(res).toBe('syncWrapped');
     });
 
     it('sync.execWithStdio calls sync.execWithStdio with normalized input', () => {
-      mockGetNormalizeInputWrapper.mockReturnValue((cmd) => [
+      mockGetCommandInputWrapper.mockReturnValue((cmd) => [
         'main',
         Array.isArray(cmd) ? cmd : [cmd]
       ]);
@@ -293,13 +294,13 @@ describe('BaseCommand', () => {
       expect(syncExecWithStdioSpy).toHaveBeenCalledWith(
         ['main', ['sub arg']],
         'pipe',
-        { onExecFail: undefined, execaOpts: { foo: 1 } }
+        { execaOpts: { foo: 1 }, onExecFail: undefined }
       );
       expect(res).toBe('syncWrappedStdio');
     });
 
     it('sync.string calls sync.string with normalized input', () => {
-      mockGetNormalizeInputWrapper.mockReturnValue((cmd) => [
+      mockGetCommandInputWrapper.mockReturnValue((cmd) => [
         'main',
         Array.isArray(cmd) ? cmd : [cmd]
       ]);

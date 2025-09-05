@@ -36,21 +36,3 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
-
-  release:
-    name: release
-    needs: publish
-    runs-on: ubuntu-latest
-    steps:
-      - name: ⬇️ Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: 📦 Setup Environment
-        uses: ./.github/actions/setup-env
-
-      - name: 🏷️ Create GitHub Release
-        uses: ./.github/actions/gh-release/action.yml
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}

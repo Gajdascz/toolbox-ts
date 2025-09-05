@@ -45,9 +45,15 @@ describe('DependencyCruiser CLI', () => {
   const cwdSpy = vi.spyOn(process, 'cwd').mockReturnValue(outDir);
   const readFile = async (fileName: string = cfgFileName) =>
     await fs.readFile(path.join(outDir, fileName), 'utf8');
+
+  const mockCruise = vi.mocked(cruise);
+  const mockFormat = vi.mocked(format);
+  const mockLoadConfig = vi.mocked(loadConfig);
+
   beforeEach(async () => {
     await fs.rm(outDir, { recursive: true, force: true });
     await fs.mkdir(outDir, { recursive: true });
+    vi.clearAllMocks();
   });
   describe('init', () => {
     it('handles ts project', async () => {
@@ -99,10 +105,6 @@ describe('DependencyCruiser CLI', () => {
     });
   });
   describe('run', () => {
-    const mockCruise = vi.mocked(cruise);
-    const mockFormat = vi.mocked(format);
-    const mockLoadConfig = vi.mocked(loadConfig);
-
     it('with --init and runCruise=false returns early (no cruise, no loadConfig)', async () => {
       const cmd = new DependencyCruiser([], {} as any);
 
@@ -289,5 +291,83 @@ describe('DependencyCruiser CLI', () => {
       const graph = await fs.readFile(graphDotPath, 'utf8');
       expect(graph).toBe('GRAPH_FORMAT');
     });
+  });
+  it('emits GitHub Actions summary when --emit-actions-summary is set', async () => {
+    const cmd = new DependencyCruiser([], {} as any);
+
+    vi.spyOn(cmd as any, 'parse').mockResolvedValueOnce({
+      args: { scan: '.' },
+      flags: { emitActionsSummary: 'mock-sha', outDir: outDir }
+    });
+    const fakeResult = { modules: [{ source: 'a' }], summary: {} } as any;
+    mockFormat.mockImplementation((res: any, opts: any) =>
+      opts.outputType === 'mermaid' ?
+        'MERMAID_GRAPH'
+      : (JSON.stringify({ res, opts }) as any)
+    );
+    mockCruise.mockResolvedValue({
+      output: {
+        log: false,
+        report: false,
+        graph: false,
+        overwriteBehavior: 'force',
+        formatting: {}
+      },
+      result: fakeResult,
+      exitCode: 0
+    });
+    const execSpy = vi.spyOn(cmd as any, 'execWithStdio');
+    const warnSpy = vi.spyOn(cmd as any, 'warn');
+    const appendSpy = vi.spyOn(fs, 'appendFile').mockResolvedValueOnce();
+    process.env.GITHUB_STEP_SUMMARY = 'GITHUB_STEP_SUMMARY.md';
+
+    await cmd.run();
+    expect(mockLoadConfig).toHaveBeenCalledTimes(1);
+    expect(mockCruise).toHaveBeenCalledTimes(2);
+    expect(execSpy).not.toHaveBeenCalled();
+    expect(warnSpy).not.toHaveBeenCalled();
+    expect(appendSpy).toHaveBeenCalledWith(
+      'GITHUB_STEP_SUMMARY.md',
+      expect.stringContaining('MERMAID_GRAPH')
+    );
+    delete process.env.GITHUB_STEP_SUMMARY;
+  });
+  it('warns when --emit-actions-summary is set but GITHUB_STEP_SUMMARY is not set', async () => {
+    const cmd = new DependencyCruiser([], {} as any);
+
+    vi.spyOn(cmd as any, 'parse').mockResolvedValueOnce({
+      args: { scan: '.' },
+      flags: { emitActionsSummary: 'mock-sha', outDir: outDir }
+    });
+    const fakeResult = { modules: [{ source: 'a' }], summary: {} } as any;
+    mockFormat.mockImplementation((res: any, opts: any) =>
+      opts.outputType === 'mermaid' ?
+        'MERMAID_GRAPH'
+      : (JSON.stringify({ res, opts }) as any)
+    );
+    mockCruise.mockResolvedValue({
+      output: {
+        log: false,
+        report: false,
+        graph: false,
+        overwriteBehavior: 'force',
+        formatting: {}
+      },
+      result: fakeResult,
+      exitCode: 0
+    });
+    const execSpy = vi.spyOn(cmd as any, 'execWithStdio');
+    const warnSpy = vi.spyOn(cmd as any, 'warn');
+    const appendSpy = vi.spyOn(fs, 'appendFile').mockResolvedValueOnce();
+    delete process.env.GITHUB_STEP_SUMMARY;
+
+    await cmd.run();
+    expect(mockLoadConfig).toHaveBeenCalledTimes(1);
+    expect(mockCruise).toHaveBeenCalledTimes(1);
+    expect(execSpy).not.toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalledWith(
+      'GITHUB_STEP_SUMMARY not set, cannot emit GitHub Actions summary.'
+    );
+    expect(appendSpy).not.toHaveBeenCalled();
   });
 });

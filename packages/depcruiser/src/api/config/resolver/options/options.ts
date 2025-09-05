@@ -19,7 +19,7 @@ import {
   type InputCruiseOptions,
   output,
   type ResolvedCruiseOptions
-} from '../../../../config/index.js';
+} from '../../../../definitions/index.js';
 
 const { nestWhen } = utils.normalize;
 

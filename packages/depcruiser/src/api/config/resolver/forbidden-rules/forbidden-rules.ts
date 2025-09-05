@@ -2,7 +2,7 @@ import type { IForbiddenRuleType } from 'dependency-cruiser';
 
 import { Obj } from '@toolbox-ts/utils';
 
-import { rules } from '../../../../config/index.js';
+import { rules } from '../../../../definitions/index.js';
 
 /**
  * Takes a partial forbidden rules configuration and returns an array of

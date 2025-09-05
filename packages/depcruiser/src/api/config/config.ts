@@ -1,4 +1,4 @@
-import type { InputConfig } from '../../config/index.js';
+import type { InputConfig } from '../../definitions/index.js';
 
 // Does nothing, just returns what it's given
 /* c8 ignore start */

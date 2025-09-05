@@ -79,6 +79,13 @@ export const definitions = {
       helpGroup: 'Output'
     })
   }),
+  emitActionsSummary: Flags.string({
+    ...utils.flagMeta(
+      'emitActionsSummary',
+      'emit a GitHub Actions step summary with a Mermaid graph of the affected modules. Pass it the git revision to compare against ${{ github.event.pull_request.base.sha }} to get a graph of the modules changed in a PR and all modules that depend on them. It requires the process.env.GITHUB_STEP_SUMMARY environment variable to find out where to write the summary to.',
+      { helpGroup: 'Output' }
+    )
+  }),
   //#endregion
 
   //#region> Cache

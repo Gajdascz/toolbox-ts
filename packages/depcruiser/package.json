@@ -1,40 +1,51 @@
 {
   "name": "@toolbox-ts/depcruiser",
   "version": "0.0.0",
-  "private": false,
   "description": "Dependency cruiser utilities.",
   "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/depcruiser",
+  "private": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/gajdascz/toolbox-ts"
   },
   "files": [
     "dist",
-    "package.json",
     "README.md",
     "LICENSE"
   ],
   "keywords": [
     "dependency-cruiser",
-    "typed-api",
+    "dependency-graph",
+    "toolbox-ts",
+    "utilities",
     "cli",
-    "dependency",
-    "graph",
-    "validation"
+    "api"
   ],
   "author": {
     "name": "Nolan Gajdascz",
     "email": "dev.gajdascz@gmail.com",
     "url": "https://github.com/gajdascz"
   },
-  "type": "module",
-  "scripts": {},
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./cli": {
+      "import": "./dist/cli/index.js",
+      "types": "./dist/cli/index.d.ts"
+    },
+    "./api": {
+      "import": "./dist/api/index.js",
+      "types": "./dist/api/index.d.ts"
+    },
+    "./definitions": {
+      "import": "./dist/definitions/index.js",
+      "types": "./dist/definitions/index.d.ts"
     }
   },
   "dependencies": {

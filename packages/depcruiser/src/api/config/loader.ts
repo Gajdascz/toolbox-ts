@@ -1,7 +1,7 @@
 import * as file from '@toolbox-ts/file';
 import { Obj } from '@toolbox-ts/utils';
 
-import type { InputConfig } from '../../config/types.js';
+import type { InputConfig } from '../../definitions/types.js';
 
 import { defaultConfig } from './defaults.js';
 // Simply wraps file functions with error handling

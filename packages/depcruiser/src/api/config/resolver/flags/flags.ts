@@ -8,7 +8,7 @@ import {
   MODULE_SYSTEMS,
   output,
   type ResolvedCruiseOptions
-} from '../../../../config/index.js';
+} from '../../../../definitions/index.js';
 
 const { nestWhen, strOrNum } = utils.normalize;
 

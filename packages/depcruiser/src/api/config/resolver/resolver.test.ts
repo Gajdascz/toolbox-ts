@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { InputConfig } from '../../../config/index.ts';
+import type { InputConfig } from '../../../definitions/index.ts';
 import type { BaseConfig } from '../defaults.ts';
 
 import { defaultConfig } from '../defaults.ts';

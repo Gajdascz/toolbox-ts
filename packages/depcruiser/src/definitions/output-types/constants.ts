@@ -36,7 +36,11 @@ const all: TypeDefs = {
   text: { kind: 'report', fileExtension: '.txt', loggable: true },
   teamcity: { kind: 'report', fileExtension: '.txt', loggable: true },
   'gh-actions-json': { kind: 'report', fileExtension: '.json', loggable: true },
-  'gh-actions-text': { kind: 'report', fileExtension: '.txt', loggable: true },
+  'gh-actions-annotations': {
+    kind: 'report',
+    fileExtension: '.txt',
+    loggable: true
+  },
   //#endregion
 
   null: { fileExtension: '.', kind: 'report', loggable: false }

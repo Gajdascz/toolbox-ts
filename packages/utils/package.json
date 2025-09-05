@@ -1,9 +1,11 @@
 {
   "name": "@toolbox-ts/utils",
-  "version": "0.0.0",
-  "private": false,
+  "version": "0.4.6",
   "description": "Utils",
+  "type": "module",
   "license": "MIT",
+  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/utils",
+  "private": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/gajdascz/toolbox-ts"
@@ -13,14 +15,17 @@
     "README.md",
     "LICENSE"
   ],
-  "keywords": [],
+  "keywords": [
+    "toolbox-ts",
+    "utilities",
+    "utils",
+    "typescript"
+  ],
   "author": {
     "name": "Nolan Gajdascz",
     "email": "dev.gajdascz@gmail.com",
     "url": "https://github.com/gajdascz"
   },
-  "type": "module",
-  "scripts": {},
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {

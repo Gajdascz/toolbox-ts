@@ -1,125 +1,150 @@
 # @toolbox-ts/file
 
-![](https://img.shields.io/badge/coverage-100%25-brightgreen)
+Utility functions for common file operations: finding files, loading/parsing configs, and writing templates.
+Designed for **config-driven tools** where you need to locate files, load structured content, and persist artifacts safely.
+
+```sh
+pnpm add @toolbox-ts/utils
+# or
+npm install @toolbox-ts/utils
+# or
+yarn add @toolbox-ts/utils
+```
 
 ---
-
-A minimal and flexible toolkit for working with the filesystem—resolve paths,
-load modules, parse configs, and safely manage files with consistent, typed
-results.
-
-## Installation
-
-```bash
-npm install @toolbox-ts/file
-```
 
 ## Features
 
-- 🔍 **Find Files** by name and extension
-- 📦 **Load and Resolve** modules dynamically (default, named, or factory
-  exports)
-- 📄 **Parse JSON** configs with optional resolver logic
-- ⚙️ **Safely execute** file operations with typed result wrappers
-- 🛠️ **Write File Templates** with configurable overwrite strategies (prompt,
-  force, skip)
-- 🧪 **100% Typed and Test-Covered**
+* **Find** files with `fast-glob` (search all, first up, or first down).
+* **Load modules** (`.ts`/`.js`) with [jiti](https://github.com/unjs/jiti), supporting default/named/function exports.
+* **Parse JSON** configs with optional custom resolvers.
+* **Write files** with overwrite policies (`force`, `prompt`, `skip`).
+* **Write templates** into directories with safe overwrite handling.
 
-## Usage Examples
+---
 
-All functions return a `ResultObj<T>` for safe, pattern friendly usage with
-`result` and `error`
+## API
 
-### 📍 Find a File
+### 🔍 Find files (`find/`)
+
+Search for files using glob patterns. Ignores `node_modules/` and `dist/` by default.
 
 ```ts
-import { findFile } from "@toolbox-ts/file";
+import { all, firstUp, firstDown, sync } from '@toolbox-ts/file/find';
 
-const { result, error } = findFile("./configs", {
-  fileName: "app",
-  extension: ["json", "js"],
-});
+// Find all matching files in cwd
+const files = await all('*.ts');
 
-if (result) console.log(`Found file: ${result}`);
-else console.error(error);
-```
+// Find nearest tsconfig.json by traversing upwards
+const tsconfig = await firstUp('tsconfig.json');
 
-### 📦 Load a Script-Based Config
+// Find first match by searching downward breadth-first
+const pkg = await firstDown('package.json');
 
-```ts
-import { loadModule } from "@toolbox-ts/file";
-
-const { result, error } = await loadModule<{ title: string }>(
-  "./my.config.ts",
-  { exportKey: "config", resolverFn: (cfg) => (cfg?.title ? cfg : null) },
-);
-
-console.log(result); // { title: "my-app" }
-```
-
-### 🧾 Parse a JSON File
-
-```ts
-import { parseJson } from "@toolbox-ts/file";
-
-const { result, error } = await parseJson<{ port: number }>("config", {
-  fileName: "server",
-  resolverFn: (cfg) => (cfg.port ? cfg : null),
-});
-```
-
-### 🛠️ Write Templates
-
-```ts
-import { write, type WriteTemplate } from "@toolbox-ts/file";
-
-// Imported - added here for clarity
-interface WriteTemplate<Content extends object = object> {
-  filename: string;
-  generate: (cfg: Content, ...args: any[]) => string;
-  relativePath?: string;
-}
-
-interface Content {
-  title: string;
-  tsVersion: string;
-  authorName: string;
-  message: string;
-}
-const data: Content = {
-  title: "foobar",
-  tsVersion: "5.8",
-  authorName: "Joe",
-  message: "hi",
-};
-
-await write<DynamicPageData>(
-  { ...data, outputDirectory: "./dist" },
-  [
-    {
-      filename: "readme.txt",
-      generate: ({ title, tsVersion, authorName, message }) => `=== ${title} ===
-      TS-VER: ${tsVersion}
-      AUTHOR: ${authorName}
-      
-      ${message}
-      `,
-    },
-  ],
-  {
-    overwrite: {
-      behavior: "force", // or 'prompt', optionally with a promptFn
-    },
-  },
-);
+// Sync variants also available
+const filesSync = sync.all('*.js');
 ```
 
 ---
 
-## License
+### 📦 Load modules (`load-module/`)
+
+Load `.ts`/`.js` configs with flexible export resolution.
+
+```ts
+import { loadModule } from '@toolbox-ts/file/load-module';
+
+const { result, error } = await loadModule<MyConfig>('depcruiser.config.ts', {
+  exportKey: 'default', // default | named key
+  resolverFn: (cfg) => cfg ?? null, // optional transform/validation
+});
+
+if (error) console.error(error);
+else console.log(result);
+```
+
+Supported module shapes:
+
+* Default export
+* Named export
+* Entire object export
+* Function that returns config (sync or async)
+
+---
+
+### 📄 Parse JSON (`parse-json/`)
+
+```ts
+import { parseJson } from '@toolbox-ts/file/parse-json';
+
+const { result, error } = await parseJson<MyConfig>('config.json', {
+  resolverFn: (cfg) => validate(cfg)
+});
+```
+
+---
+
+### ✏️ Write files (`write/`)
+
+#### Normalize arbitrary data to string
+
+```ts
+import { normalizeData } from '@toolbox-ts/file/write';
+
+normalizeData({ a: 1 }); // -> JSON string
+normalizeData(Buffer.from('hello')); // -> "hello"
+```
+
+#### Write single file
+
+```ts
+import { file } from '@toolbox-ts/file/write';
+
+await file('out/config.json', { foo: 'bar' }, {
+  overwrite: { behavior: 'force' }
+});
+```
+
+#### Write templates
+
+```ts
+import { templates } from '@toolbox-ts/file/write';
+
+await templates('out', { name: 'pkg' }, [
+  {
+    filename: 'package.json',
+    generate: (cfg) => JSON.stringify({ name: cfg.name }, null, 2)
+  }
+], {
+  overwrite: { behavior: 'skip' }
+});
+```
+
+Overwrite behaviors:
+
+* `force` – always overwrite
+* `prompt` – ask before overwrite (requires `promptFn`)
+* `skip` – never overwrite
+
+---
+
+## Types
+
+* `ResultObj<T>` – standard `{ result: T | null; error?: string }` wrapper.
+* `OverwriteBehavior` – `'force' | 'prompt' | 'skip'`.
+* `WriteTemplate` – template definition `{ filename, generate, outDir?, relativePath? }`.
+
+---
+
+## Notes
+
+* `find` uses [`fast-glob`](https://github.com/mrmlnc/fast-glob).
+* `load-module` uses [`jiti`](https://github.com/unjs/jiti) for seamless TS/JS imports.
+* Overwrite behavior is explicit to avoid accidental data loss.
+
+---
+
+## ⚖️ License
 
 MIT – © 2025 [Nolan Gajdascz](https://github.com/gajdascz)
-
-- @toolbox-ts
-  - [NPM](https://www.npmjs.com/org/toolbox-ts)
-  - [GitHub](https://github.com/toolbox-ts/toolbox-ts)
+[GitHub](https://github.com/gajdascz/toolbox-ts) | [NPM](https://npmjs.com/package/@toolbox-ts)

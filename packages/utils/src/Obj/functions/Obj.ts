@@ -1,4 +1,3 @@
-import type { Prim } from '../../Prim/index.js';
 import type {
   FilterRecord,
   PluckRecord,
@@ -248,6 +247,28 @@ export const pluck = <T, K extends keyof T[keyof T] = keyof T[keyof T]>(
   return result;
 };
 
+/**
+ * Omits properties with `null` or `undefined` values from an object,
+ * recursively applying the same logic to nested objects.
+ *
+ * @template T - Object type
+ * @example
+ * ```ts
+ * const cleaned = stripNullish({
+ *   a: 1,
+ *   b: null,
+ *   c: undefined,
+ *   d: {
+ *     e: 2,
+ *     f: null,
+ *     g: {
+ *       h: 3,
+ *       i: undefined
+ *     }
+ *   }
+ * }) // { a: 1, d: { e: 2, g: { h: 3 } } }
+ * ```
+ */
 export const stripNullish = <T>(obj: T): StripNullish<T> => {
   if (!is.obj(obj)) return obj as StripNullish<T>;
   const result = {} as StrRecord;

@@ -2,21 +2,19 @@
   "name": "@toolbox-ts/tseslint",
   "version": "0.0.0",
   "description": "TypeScript ESLint configuration and utilities.",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/tseslint",
   "private": false,
   "author": {
     "name": "Nolan Gajdascz",
     "email": "dev.gajdascz@gmail.com",
     "url": "https://github.com/gajdascz"
   },
-  "publishConfig": {
-    "access": "public"
-  },
-  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/tseslint",
   "repository": {
     "type": "git",
     "url": "https://github.com/gajdascz/toolbox-ts.git"
   },
-  "type": "module",
   "keywords": [
     "typescript",
     "eslint",
@@ -24,7 +22,6 @@
     "linting",
     "configuration"
   ],
-  "license": "MIT",
   "files": [
     "dist",
     "LICENSE",

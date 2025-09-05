@@ -1,3 +1,4 @@
+/* c8 ignore start */
 import type { ConfigWithExtends } from '@eslint/config-helpers';
 export const unicorn: ConfigWithExtends['rules'] = {
   /** Can be overly restrictive */
@@ -231,3 +232,4 @@ export const perfectionist: ConfigWithExtends['rules'] = {
   'perfectionist/sort-objects': 'off',
   'perfectionist/sort-switch-case': 'off'
 } as const;
+/* c8 ignore end */

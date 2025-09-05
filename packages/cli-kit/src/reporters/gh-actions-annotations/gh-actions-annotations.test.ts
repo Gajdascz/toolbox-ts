@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { type Message, Reporter } from './gh-actions-annotations.js';
+import { type Message, Reporter } from './gh-actions-annotations.ts';
 
 describe('gh-actions Reporter', () => {
   beforeEach(() => {

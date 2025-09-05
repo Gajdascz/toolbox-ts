@@ -20,29 +20,41 @@ import {
 
 /** Base command class for executing shell commands with Oclif. */
 export abstract class BaseCommand extends Command {
+  /**
+   * Reporters for various output formats and integrations.
+   * - Currently includes GitHub Actions Annotations reporter.
+   */
   static readonly reporters = {
     ghActionsAnnotations: <T>(adapter: ghActionsAnnotations.Adapter<T>) =>
       new ghActionsAnnotations.Reporter<T>(adapter)
   };
-  /* c8 ignore start */
-  readonly normalize = {
-    objArgs: normalize.objToFlags,
-    flagArgs: normalize.flagArgs,
-    strOrNum: normalize.strOrNum,
-    when: normalize.when,
-    nestWhen: normalize.nestWhen
-  };
-  /* c8 ignore end */
   set defaultErrorBehavior(mode: ErrorBehavior) {
     this._defaultErrorBehavior = mode;
   }
   get defaultErrorBehavior() {
     return this._defaultErrorBehavior;
   }
+  /* c8 ignore start */
+  /** Utility methods for normalizing command arguments. */
+  protected readonly normalize = {
+    objArgs: normalize.objToFlags,
+    flagArgs: normalize.flagArgs
+  };
+  /* c8 ignore end */
 
   protected resolveError = resolveError;
 
+  /** Synchronous command execution utilities. */
   protected readonly sync = {
+    /**
+     * Executes a command synchronously using execaSync with normalized input.
+     *
+     * @example
+     * ```ts
+     * const result = this.sync.exec('ls -la', { execaOpts: { cwd: '/some/path' } });
+     * console.log(result.stdout) // lists files in /some/path in console
+     * ```
+     */
     exec: <O extends SyncOptions = SyncOptions>(
       cmd: CommandInput,
       opts?: CommandOptions<O>
@@ -56,6 +68,15 @@ export abstract class BaseCommand extends Command {
         this.error(err);
       }
     },
+    /**
+     * Executes a command with specified stdio configuration.
+     *
+     * @example
+     * ```ts
+     * const result = this.sync.execWithStdio('ls -la', 'inherit');
+     * // Output is printed directly to the console
+     * ```
+     */
     execWithStdio<
       S extends SyncOptions['stdio'],
       O extends
@@ -66,12 +87,37 @@ export abstract class BaseCommand extends Command {
         onExecFail: opts?.onExecFail
       });
     },
+    /**
+     * Executes a command and returns its trimmed stdout as a string.
+     * The command is executed with stdio set to 'pipe'.
+     * @example
+     * ```ts
+     * const result = this.sync.string('echo " Hello World "');
+     * console.log(result); // 'Hello World'
+     * ```
+     */
     string(cmd: CommandInput, opts?: CommandOptionsNoStdio<SyncOptions>) {
       return this.execWithStdio(cmd, 'pipe', opts).stdout.trim();
     }
   } as const;
   private _defaultErrorBehavior: ErrorBehavior = 'terminate';
 
+  /**
+   * Chains multiple commands together, piping the output of each command
+   * to the input of the next, using execa.
+   *
+   * Each command is executed with stdio set to 'pipe' to facilitate piping.
+   *
+   * @example
+   * ```ts
+   * const result = await this.chain([
+   *  'echo "Hello World"',
+   *  ['grep', ['Hello']],
+   *  'awk \'{print $2}\''
+   * ]);
+   * // Result: { stdout: 'World', ... }
+   * ```
+   */
   protected async chain(
     input: CommandInput[],
     opts?: CommandOptionsNoStdio
@@ -90,6 +136,16 @@ export abstract class BaseCommand extends Command {
     }
     /* c8 ignore end */
   }
+
+  /**
+   * Executes a command using execa with normalized input.
+   *
+   * @example
+   * ```ts
+   * const result = await this.exec('ls -la', { execaOpts: { cwd: '/some/path' } });
+   * console.log(result.stdout) // lists files in /some/path in console
+   * ```
+   */
   protected async exec<O extends Options = Options>(
     cmd: CommandInput,
     opts?: CommandOptions<O>
@@ -107,6 +163,15 @@ export abstract class BaseCommand extends Command {
     }
   }
 
+  /**
+   * Executes a command with specified stdio configuration.
+   *
+   * @example
+   * ```ts
+   * const result = await this.execWithStdio('ls -la', 'inherit');
+   * // Output is printed directly to the console
+   * ```
+   */
   protected async execWithStdio<
     S extends Options['stdio'],
     O extends CommandOptionsNoStdio = CommandOptionsNoStdio
@@ -117,17 +182,57 @@ export abstract class BaseCommand extends Command {
     });
   }
 
+  /**
+   * Hook method called after executing a command.
+   * - Override to add custom post-execution logic.
+   * - Default implementation is a no-op.
+   */
   protected postExec() {
     return;
   }
 
+  /**
+   * Hook method called before executing a command.
+   * - Override to add custom pre-execution logic.
+   * - Default implementation is a no-op.
+   */
   protected preExec() {
     return;
   }
 
+  /**
+   * Executes a command and returns its trimmed stdout as a string.
+   * The command is executed with stdio set to 'pipe'.
+   *
+   * @example
+   * ```ts
+   * const result = await this.string('echo " Hello World "');
+   * console.log(result); // 'Hello World'
+   * ```
+   */
   protected async string(cmd: CommandInput, opts?: CommandOptionsNoStdio) {
     return (await this.execWithStdio(cmd, 'pipe', opts)).stdout.trim();
   }
+  /**
+   * Wraps command execution methods to prepend a main command or executable.
+   *
+   * Useful for wrapping commands with tools like 'npx' or 'git'.
+   *
+   * @example
+   * ```ts
+   * const wrapWithNpx = this._wrap('npx');
+   * const result = await wrapWithNpx.exec(['eslint', ['--fix', 'src/']]);
+   * // Executes: npx eslint --fix src/
+   *
+   * const wrapWithGit = this._wrap('git');
+   * const result2 = await wrapWithGit.exec('commit -m "Initial commit"');
+   * // Executes: git commit -m "Initial commit"
+   *
+   * const wrapWithNpmSilent = this._wrap('npm --silent');
+   * const result3 = await wrapWithNpmSilent.exec('install lodash');
+   * // Executes: npm --silent install lodash
+   * ```
+   */
   protected wrap(mainCommand: string) {
     const normalizeInput = normalize.getCommandInputWrapper(mainCommand);
     const exec = <O extends CommandOptions = CommandOptions>(

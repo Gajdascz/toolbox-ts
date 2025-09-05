@@ -1,23 +1,11 @@
-import { Command } from '@oclif/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ghActionsAnnotations } from '../reporters/index.ts';
-import { Reporter } from '../reporters/types.ts';
-import {
-  chain,
-  normalize,
-  resolveError,
-  spawn,
-  spawnSync
-} from '../utils/index.js';
+import { chain, spawn, spawnSync } from '../utils/index.js';
 import { BaseCommand } from './BaseCommand.ts';
 vi.mock('../utils/index.js', async (actual) => ({
   ...(await actual()),
   chain: vi.fn(),
-  normalize: { commandInput: vi.fn(), getCommandInputWrapper: vi.fn() },
-  kebabKeysToFlagMap: vi.fn(),
-  normalizeInput: vi.fn(),
-  resolveError: vi.fn(),
   spawn: vi.fn(),
   spawnSync: vi.fn()
 }));
@@ -36,19 +24,13 @@ class TestCommand extends BaseCommand {
 }
 let instance;
 
-let mockChain,
-  mockGetCommandInputWrapper,
-  mockResolveError,
-  mockSpawn,
-  mockSpawnSync;
+let mockChain, mockSpawn, mockSpawnSync;
 beforeEach(() => {
   vi.clearAllMocks();
   instance = new TestCommand([], {} as any);
   mockChain = vi.mocked(chain);
   mockSpawn = vi.mocked(spawn);
   mockSpawnSync = vi.mocked(spawnSync);
-  mockResolveError = vi.mocked(resolveError);
-  mockGetCommandInputWrapper = vi.mocked(normalize.getCommandInputWrapper);
 });
 describe('BaseCommand', () => {
   it('sets and gets defaultErrorBehavior', () => {
@@ -69,7 +51,7 @@ describe('BaseCommand', () => {
       mockSpawnSync.mockImplementation(() => {
         throw error;
       });
-      mockResolveError.mockReturnValue(error);
+
       expect(() =>
         instance._sync.exec('echo hi', { onExecFail: 'throw' })
       ).toThrow('fail');
@@ -79,7 +61,7 @@ describe('BaseCommand', () => {
       mockSpawnSync.mockImplementation(() => {
         throw error;
       });
-      mockResolveError.mockReturnValue(error);
+
       const errorSpy = vi.spyOn(instance, 'error').mockImplementation((err) => {
         throw err;
       });
@@ -124,14 +106,13 @@ describe('BaseCommand', () => {
       it('throws error if chain fails and onExecFail is throw', async () => {
         const error = new Error('fail');
         mockChain.mockRejectedValue(error);
-        mockResolveError.mockReturnValue(error);
+
         await expect(
           instance._chain(['echo hi'], { onExecFail: 'throw' })
         ).rejects.toThrow('fail');
       });
       it('calls error if chain fails and onExecFail is terminate', async () => {
         mockChain.mockRejectedValue('fail');
-        mockResolveError.mockReturnValue(new Error('fail'));
         const errorSpy = vi
           .spyOn(instance, 'error')
           .mockImplementation((err) => {
@@ -167,7 +148,7 @@ describe('BaseCommand', () => {
     it('exec throws error if spawn fails and onExecFail is throw', async () => {
       const error = new Error('fail');
       mockSpawn.mockRejectedValue(error);
-      mockResolveError.mockReturnValue(error);
+
       await expect(
         instance._exec('echo hi', { onExecFail: 'throw' })
       ).rejects.toThrow('fail');
@@ -175,7 +156,6 @@ describe('BaseCommand', () => {
 
     it('exec calls error if spawn fails and onExecFail is terminate', async () => {
       mockSpawn.mockRejectedValue('fail');
-      mockResolveError.mockReturnValue(new Error('fail'));
       const errorSpy = vi.spyOn(instance, 'error').mockImplementation((err) => {
         throw err;
       });
@@ -205,11 +185,16 @@ describe('BaseCommand', () => {
     });
   });
   describe('wrap', () => {
+    it('wraps executable with flag', () => {
+      const wrapper = instance._wrap('npm --silent');
+      mockSpawn.mockResolvedValue('wrapped');
+      wrapper.exec('install lodash', { execaOpts: { foo: 1 } });
+      expect(mockSpawn).toHaveBeenCalledWith(
+        ['npm', ['--silent', 'install', 'lodash']],
+        { foo: 1 }
+      );
+    });
     it('returns wrapper object with exec, execWithStdio, string, normalizeInput, sync', () => {
-      mockGetCommandInputWrapper.mockReturnValue((cmd) => [
-        'main',
-        Array.isArray(cmd) ? cmd : [cmd]
-      ]);
       const wrapper = instance._wrap('main');
       expect(wrapper).toHaveProperty('exec');
       expect(wrapper).toHaveProperty('execWithStdio');
@@ -219,28 +204,22 @@ describe('BaseCommand', () => {
     });
 
     it('exec calls exec with normalized input', async () => {
-      mockGetCommandInputWrapper.mockReturnValue((cmd) => [
-        'main',
-        Array.isArray(cmd) ? cmd : [cmd]
-      ]);
       mockSpawn.mockResolvedValue('wrapped');
       const wrapper = instance._wrap('main');
       const res = await wrapper.exec('sub arg', { execaOpts: { foo: 1 } });
-      expect(mockSpawn).toHaveBeenCalledWith(['main', ['sub arg']], { foo: 1 });
+      expect(mockSpawn).toHaveBeenCalledWith(['main', ['sub', 'arg']], {
+        foo: 1
+      });
       expect(res).toBe('wrapped');
     });
 
     it('execWithStdio calls execWithStdio with normalized input', async () => {
-      mockGetCommandInputWrapper.mockReturnValue((cmd) => [
-        'main',
-        Array.isArray(cmd) ? cmd : [cmd]
-      ]);
       mockSpawn.mockResolvedValue('wrappedStdio');
       const wrapper = instance._wrap('main');
       const res = await wrapper.execWithStdio('sub arg', 'pipe', {
         execaOpts: { foo: 1 }
       });
-      expect(mockSpawn).toHaveBeenCalledWith(['main', ['sub arg']], {
+      expect(mockSpawn).toHaveBeenCalledWith(['main', ['sub', 'arg']], {
         foo: 1,
         stdio: 'pipe'
       });
@@ -248,14 +227,10 @@ describe('BaseCommand', () => {
     });
 
     it('string calls string with normalized input', async () => {
-      mockGetCommandInputWrapper.mockReturnValue((cmd) => [
-        'main',
-        Array.isArray(cmd) ? cmd : [cmd]
-      ]);
       mockSpawn.mockResolvedValue({ stdout: 'wrappedString' });
       const wrapper = instance._wrap('main');
       const res = await wrapper.string('sub arg', { execaOpts: { foo: 1 } });
-      expect(mockSpawn).toHaveBeenCalledWith(['main', ['sub arg']], {
+      expect(mockSpawn).toHaveBeenCalledWith(['main', ['sub', 'arg']], {
         foo: 1,
         stdio: 'pipe'
       });
@@ -263,16 +238,12 @@ describe('BaseCommand', () => {
     });
 
     it('sync.exec calls sync.exec with normalized input', () => {
-      mockGetCommandInputWrapper.mockReturnValue((cmd) => [
-        'main',
-        Array.isArray(cmd) ? cmd : [cmd]
-      ]);
       const syncExecSpy = vi
         .spyOn(instance._sync, 'exec')
         .mockReturnValue('syncWrapped');
       const wrapper = instance._wrap('main');
       const res = wrapper.sync.exec('sub arg', { execaOpts: { foo: 1 } });
-      expect(syncExecSpy).toHaveBeenCalledWith(['main', ['sub arg']], {
+      expect(syncExecSpy).toHaveBeenCalledWith(['main', ['sub', 'arg']], {
         execaOpts: { foo: 1 },
         onExecFail: undefined
       });
@@ -280,10 +251,6 @@ describe('BaseCommand', () => {
     });
 
     it('sync.execWithStdio calls sync.execWithStdio with normalized input', () => {
-      mockGetCommandInputWrapper.mockReturnValue((cmd) => [
-        'main',
-        Array.isArray(cmd) ? cmd : [cmd]
-      ]);
       const syncExecWithStdioSpy = vi
         .spyOn(instance._sync, 'execWithStdio')
         .mockReturnValue('syncWrappedStdio');
@@ -292,7 +259,7 @@ describe('BaseCommand', () => {
         execaOpts: { foo: 1 }
       });
       expect(syncExecWithStdioSpy).toHaveBeenCalledWith(
-        ['main', ['sub arg']],
+        ['main', ['sub', 'arg']],
         'pipe',
         { execaOpts: { foo: 1 }, onExecFail: undefined }
       );
@@ -300,16 +267,12 @@ describe('BaseCommand', () => {
     });
 
     it('sync.string calls sync.string with normalized input', () => {
-      mockGetCommandInputWrapper.mockReturnValue((cmd) => [
-        'main',
-        Array.isArray(cmd) ? cmd : [cmd]
-      ]);
       const syncStringSpy = vi
         .spyOn(instance._sync, 'string')
         .mockReturnValue('syncWrappedString');
       const wrapper = instance._wrap('main');
       const res = wrapper.sync.string('sub arg', { execaOpts: { foo: 1 } });
-      expect(syncStringSpy).toHaveBeenCalledWith(['main', ['sub arg']], {
+      expect(syncStringSpy).toHaveBeenCalledWith(['main', ['sub', 'arg']], {
         execaOpts: { foo: 1 }
       });
       expect(res).toBe('syncWrappedString');

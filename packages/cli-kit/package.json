@@ -1,9 +1,11 @@
 {
   "name": "@toolbox-ts/cli-kit",
   "version": "0.0.0",
-  "private": false,
-  "description": "CLI Kit.",
+  "description": "CLI Kit utilities and base command for oclif.",
   "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/cli-kit",
+  "private": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/gajdascz/toolbox-ts"
@@ -13,19 +15,36 @@
     "README.md",
     "LICENSE"
   ],
-  "keywords": [],
+  "keywords": [
+    "toolbox-ts",
+    "utilities",
+    "oclif",
+    "cli",
+    "cli-kit"
+  ],
   "author": {
     "name": "Nolan Gajdascz",
     "email": "dev.gajdascz@gmail.com",
     "url": "https://github.com/gajdascz"
   },
-  "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./utils": {
+      "import": "./dist/utils/index.js",
+      "types": "./dist/utils/index.d.ts"
+    },
+    "./reporters": {
+      "import": "./dist/reporters/index.js",
+      "types": "./dist/reporters/index.d.ts"
+    },
+    "./BaseCommand": {
+      "import": "./dist/BaseCommand/index.js",
+      "types": "./dist/BaseCommand/index.d.ts"
     }
   },
   "dependencies": {

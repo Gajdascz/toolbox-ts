@@ -7,7 +7,7 @@ export interface StringifyOptions extends ReporterOptions {
   footer?: string;
   header?: string;
 }
-
+/** Abstract base class for creating reporters that format and output data. */
 export abstract class Reporter<T = unknown> {
   /** The name of the reporter, used for identification. */
   static readonly name: string;

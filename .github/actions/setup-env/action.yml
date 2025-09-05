@@ -6,6 +6,11 @@ description:
 runs:
   using: 'composite'
   steps:
+    - name: 📦 Setup PNPM
+      uses: pnpm/action-setup@v4
+      with:
+        version: '10.15.1'
+
     - name: 🔧 Setup Node
       uses: actions/setup-node@v4
       with:
@@ -14,15 +19,14 @@ runs:
         cache: pnpm
         cache-dependency-path: 'pnpm-lock.yaml'
 
-    - name: 📦 Setup PNPM
-      uses: pnpm/action-setup@v4
-      with:
-        version: '10.14.0'
-
     - name: 📥 Install dependencies
       run: pnpm install --frozen-lockfile
       shell: bash
 
     - name: 🔨 Build packages
       run: pnpm build
+      shell: bash
+
+    - name: Make binaries executable
+      run: chmod +x ./node_modules/.bin/*
       shell: bash

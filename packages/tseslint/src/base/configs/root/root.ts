@@ -1,7 +1,7 @@
+/* c8 ignore start */
 import type { ConfigWithExtends } from '@eslint/config-helpers';
 
 import js from '@eslint/js';
-/* c8 ignore start */
 import vitestPlugin from '@vitest/eslint-plugin';
 import prettierConfig from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
@@ -51,7 +51,6 @@ export const ROOT: ConfigWithExtends = Object.freeze({
     ...perfectionist
   }
 });
-/* c8 ignore end */
 
 export const createBaseConfig = <N extends string>(
   name: N,
@@ -74,3 +73,4 @@ export const createBaseConfig = <N extends string>(
     ...overrides
   };
 };
+/* c8 ignore end */

@@ -27,7 +27,7 @@ jobs:
 
       - name: 🕵️ Dependencies
         run: |
-          pnpm depcruiser --log-type "gh-actions-annotations" --no-graph --no-report
+          pnpm depcruiser ./packages --log-type "gh-actions-annotations" --no-graph --no-report
         shell: bash
 
       - name: 🧹 Formatting

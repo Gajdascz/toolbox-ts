@@ -56,18 +56,18 @@ jobs:
           fi
         shell: bash
 
-      - name: 📝 Validate Last Commit Message
-        if: ${{ inputs.commitlint_mode == 'last' }}
+      - name: 📝 Validate Commit Messages
+        if: ${{ inputs.commitlint_mode != 'none' }}
         run: |
-          echo "Validating last commit..."
-          pnpm commitlint --last --verbose
-
-      - name: 📝 Validate PR Commit Messages
-        if:
-          ${{ inputs.commitlint_mode == 'pr' && github.event_name ==
-          'pull_request' }}
-        run: |
-          echo "Validating all PR commits..."
-          pnpm commitlint --from ${{ github.event.pull_request.base.sha }} \
-                          --to ${{ github.event.pull_request.head.sha }} \
-                          --verbose
+          if [ "${{ inputs.commitlint_mode }}" = "last" ]; then
+            echo "Validating last commit..."
+            pnpm commitlint --last --verbose
+          elif [ "${{ inputs.commitlint_mode }}" = "pr" ] && [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "Validating all PR commits..."
+            pnpm commitlint --from ${{ github.event.pull_request.base.sha }} \
+                            --to ${{ github.event.pull_request.head.sha }} \
+                            --verbose
+          else
+            echo "Skipping commitlint (mode=${{ inputs.commitlint_mode }}, event=${{ github.event_name }})"
+          fi
+        shell: bash

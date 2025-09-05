@@ -13,7 +13,11 @@ jobs:
   create-changeset-pr:
     name: Create Changeset PR
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.head_commit.message, 'Version Packages') }}
+    if:
+      ${{ !contains(github.event.head_commit.message, 'Version Packages') &&
+      !contains(github.event.head_commit.message, '[skip changeset]') &&
+      !contains(github.event.head_commit.message, 'repo') &&
+      !contains(github.event.head_commit.message, 'ci') }}
     steps:
       - name: ⬇️ Checkout code
         uses: actions/checkout@v4

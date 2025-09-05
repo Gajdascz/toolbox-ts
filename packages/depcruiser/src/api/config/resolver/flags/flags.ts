@@ -75,7 +75,10 @@ const normalize: { [key: string]: Normalize } = {
     nestWhen('progress', progressType, (type) => ({
       type,
       maximumLevel: strOrNum(progressMaximumLevel)
-    }))
+    })),
+  outputTo: ({ outputTo }) => nestWhen('outputTo', outputTo, outputTo),
+  emitActionsSummary: ({ emitActionsSummary }) =>
+    nestWhen('emitActionsSummary', emitActionsSummary, emitActionsSummary)
 } as const;
 
 export const resolveFlags = (

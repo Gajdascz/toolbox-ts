@@ -41,13 +41,6 @@ OR
 import '@toolbox-ts/dev-kit/setup-tests';
 ```
 
-## API Reference
-
-- **core.ts**  
-  - `TOKENS`, `MockToken`, `hasToken`, `isMocked`, `assertMockedEnv`, `wrapMockExport`, `mockModule`, `recursiveReset`
-- **mocks/setup.ts**  
-  - Automatically sets up and resets all mocks for safe testing.
-
 ## Why use this?
 
 - **Safety:** Prevents accidental writes or process spawning during tests.
@@ -63,9 +56,24 @@ Import the setup file in your test entrypoint to guarantee a safe environment fo
 ## Troubleshooting
 
 - "[TEST ENV ERROR]: `X` is not mocked. Refusing to run tests."
-  - Ensure your vitest config's setupFiles points to the the package setup export `@toolbox-ts/setup-tests`
-  - Ensure you're not overwriting the wrapped export details by mocking the module.
-    - If possible it's advised to avoid mocking the `fs` module entirely and to work with memfs as it is.
+  - Ensure your vitest config's setupFiles points to the the package setup export
+
+```ts
+import { vitestConfig } from '@toolbox-ts/configs';
+
+const root = import.meta.dirname;
+
+export default vitestConfig.define({
+  root,
+  coverage: { reportsDirectory: `${root}/docs/reports/vitest-ui` },
+  dir: import.meta.dirname,
+  setupFiles: ['@toolbox-ts/test-utils/setup'],
+  tsconfigFilename: 'tsconfig.test.json'
+});
+```
+
+- Ensure you're not overwriting the wrapped export details by mocking the module.
+  - If possible it's advised to avoid mocking the `fs` module entirely and to work with memfs as it is.
 
 ```ts
 
@@ -102,13 +110,7 @@ describe('test suite', () => {
 
 ```
 
-## 🤝 Contributing
-
-This package is part of the @toolbox-ts monorepo. See the main repository for
-contribution guidelines.
-
-## 📝 License
+## ⚖️ License
 
 MIT – © 2025 [Nolan Gajdascz](https://github.com/gajdascz)
-[GitHub](https://github.com/gajdascz/toolbox-ts) |
-[NPM](https://npmjs.com/package/@toolbox-ts/tseslint)
+[GitHub](https://github.com/gajdascz/toolbox-ts) | [NPM](https://npmjs.com/package/@toolbox-ts)

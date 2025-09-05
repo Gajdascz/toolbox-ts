@@ -5,21 +5,49 @@
 
 ---
 
-A monorepo for Typescript utility packages.
+A monorepo for Typescript utility packages and libraries.
 
 ## Packages
 
-| Package                              | Version                                      | Description                    |
-| ------------------------------------ | -------------------------------------------- | ------------------------------ |
-| [`@toolbox-ts/configs`][configs-pkg] | [![npm version][configs-badge]][configs-npm] | Repository Configurations |
+| Package                                    | Version                                            | Description                            |
+| ------------------------------------------ | -------------------------------------------------- | -------------------------------------- |
+| [`@toolbox-ts/configs`][configs-pkg]       | [![npm version][configs-badge]][configs-npm]       | Repository config utils                |
+| [`@toolbox-ts/cli-kit`][cli-kit-pkg]       | [![npm version][cli-kit-badge]][cli-kit-npm]       | CLI building utils                     |
+| [`@toolbox-ts/depcruiser`][depcruiser-pkg] | [![npm version][depcruiser-badge]][depcruiser-npm] | Dependency-Cruiser wrapper             |
+| [`@toolbox-ts/file`][file-pkg]             | [![npm version][file-badge]][file-npm]             | Node filesystem utils                  |
+| [`@toolbox-ts/test-utils`][test-utils-pkg] | [![npm version][test-utils-badge]][test-utils-npm] | Vitest utilities and environment setup |
+| [`@toolbox-ts/tseslint`][tseslint-pkg]     | [![npm version][tseslint-badge]][tseslint-npm]     | TS-ESlint configuration and utilities  |
+| [`@toolbox-ts/utils`][utils-pkg]           | [![npm version][utils-badge]][utils-npm]           | General developer utilities            |
 
 ---
 
-[configs-pkg]: (./packages/configs)
+[configs-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/configs
 [configs-badge]: https://img.shields.io/npm/v/@toolbox-ts/configs?label=
 [configs-npm]: https://www.npmjs.com/package/@toolbox-ts/configs
 
-## Development
+[cli-kit-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/cli-kit
+[cli-kit-badge]: https://img.shields.io/npm/v/@toolbox-ts/cli-kit?label=
+[cli-kit-npm]: https://www.npmjs.com/package/@toolbox-ts/cli-kit
+
+[depcruiser-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/depcruiser
+[depcruiser-badge]: https://img.shields.io/npm/v/@toolbox-ts/depcruiser?label=
+[depcruiser-npm]: https://www.npmjs.com/package/@toolbox-ts/depcruiser
+
+[file-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/file
+[file-badge]: https://img.shields.io/npm/v/@toolbox-ts/file?label=
+[file-npm]: https://www.npmjs.com/package/@toolbox-ts/file
+
+[test-utils-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/test-utils
+[test-utils-badge]: https://img.shields.io/npm/v/@toolbox-ts/test-utils?label=
+[test-utils-npm]: https://www.npmjs.com/package/@toolbox-ts/test-utils
+
+[tseslint-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/tseslint
+[tseslint-badge]: https://img.shields.io/npm/v/@toolbox-ts/tseslint?label=
+[tseslint-npm]: https://www.npmjs.com/package/@toolbox-ts/tseslint
+
+[utils-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/utils
+[utils-badge]: https://img.shields.io/npm/v/@toolbox-ts/utils?label=
+[utils-npm]: https://www.npmjs.com/package/@toolbox-ts/utils
 
 ## Tooling
 
@@ -30,7 +58,7 @@ A monorepo for Typescript utility packages.
 <details><summary><b>Quality & Standards</b></summary>
 
 - [`vitest`](https://vitest.dev): Unit and Integration testing.
-- [`dependency-cruiser`](https://github.com/sverweij/dependency-cruiser):
+- [`depcruiser`](https://github.com/Gajdascz/toolbox-ts/tree/main/packages/depcruiser):
   Validates and provides visualization for project dependencies.
 - [`prettier`](https://prettier.io/): Formatter.
 - [`typescript-eslint`](https://typescript-eslint.io/): Linter
@@ -56,10 +84,18 @@ A monorepo for Typescript utility packages.
 
 ---
 
-## License
+## 📝 To Do
+
+- **Documentation**
+  - [ ] Contributing guide
+  - [ ] CI/CD diagrams
+  - [ ] Consider documentation tooling like docusaurus
+- **Packages**
+  - [ ] Find and fix pain-points/bugs
+  - [ ] Finalize apis and implementations for stable releases
+  
+## ⚖️ License
 
 MIT – © 2025 [Nolan Gajdascz](https://github.com/gajdascz)
-
-- @toolbox-ts
-  - [NPM](https://www.npmjs.com/org/toolbox-ts)
-  - [GitHub](https://github.com/gajdascz/toolbox-ts)
+[GitHub](https://github.com/gajdascz/toolbox-ts) |
+[NPM](https://npmjs.com/package/@toolbox-ts)

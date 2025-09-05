@@ -217,9 +217,45 @@ export const suffix = <P extends string = string, S extends string = string>(
 ): Suffix<S, P> => `${str}${suf}`;
 
 export const parse = {
+  /**
+   * Splits a CSV row into an array of trimmed strings.
+   *
+   * @example
+   * ```ts
+   * parse.csvRow(' foo, bar , ,baz ') // ['foo', 'bar', 'baz']
+   * parse.csvRow('') // []
+   * ```
+   */
   csvRow: (input = ''): string[] => cleanArr(input.split(',')),
+  /**
+   * Splits a multiline string into an array of trimmed lines.
+   *
+   * @example
+   * ```ts
+   * parse.lines(' foo \n bar \n\n baz ') // ['foo', 'bar', 'baz']
+   * parse.lines('') // []
+   * ```
+   */
   spaceSeparated: (input = ''): string[] => cleanArr(input.split(' ')),
+  /**
+   * Splits a multiline string into an array of trimmed lines.
+   *
+   * @example
+   * ```ts
+   * parse.lines(' foo \n bar \n\n baz ') // ['foo', 'bar', 'baz']
+   * parse.lines('') // []
+   * ```
+   */
   lines: (input = ''): string[] => cleanArr(input.split(EOL)),
+  /**
+   * Parses a multiline CSV string into a 2D array of trimmed strings.
+   *
+   * @example
+   * ```ts
+   * parse.csv(' foo, bar \n baz , qux ') // [['foo', 'bar'], ['baz', 'qux']]
+   * parse.csv('') // []
+   * ```
+   */
   csv: (input = ''): string[][] => parse.lines(input).map(parse.csvRow)
 } as const;
 

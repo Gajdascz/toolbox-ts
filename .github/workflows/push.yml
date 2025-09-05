@@ -6,23 +6,8 @@ on:
       - main
 
 jobs:
-  validate:
+  validate-push:
     uses: ./.github/workflows/validate.yml
     with:
       changeset: false
-
-  commitlint:
-    needs: validate
-    runs-on: ubuntu-latest
-    steps:
-      - name: ⬇️ Checkout code
-        uses: actions/checkout@v4
-
-      - name: 📦 Setup Environment
-        uses: ./.github/actions/setup-env
-
-      - name: 📝 Validate Commit Message (Commitlint)
-        run: |
-          echo "Validating last commit..."
-          npx commitlint --last --verbose
-        shell: bash
+      commitlint_mode: 'last'

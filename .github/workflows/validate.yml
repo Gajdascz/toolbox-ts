@@ -8,6 +8,11 @@ on:
         description: 'Whether to check for changesets'
         required: false
         default: false
+      commitlint_mode:
+        type: string
+        description: 'Mode for commitlint (last|none|pr)'
+        required: false
+        default: 'none'
 
 jobs:
   validate:
@@ -50,3 +55,19 @@ jobs:
             exit 1
           fi
         shell: bash
+
+      - name: 📝 Validate Last Commit Message
+        if: ${{ inputs.commitlint_mode == 'last' }}
+        run: |
+          echo "Validating last commit..."
+          pnpm commitlint --last --verbose
+
+      - name: 📝 Validate PR Commit Messages
+        if:
+          ${{ inputs.commitlint_mode == 'pr' && github.event_name ==
+          'pull_request' }}
+        run: |
+          echo "Validating all PR commits..."
+          pnpm commitlint --from ${{ github.event.pull_request.base.sha }} \
+                          --to ${{ github.event.pull_request.head.sha }} \
+                          --verbose

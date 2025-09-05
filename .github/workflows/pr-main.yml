@@ -7,16 +7,17 @@ on:
       - main
 
 jobs:
-  validate:
+  validate-pr:
     uses: ./.github/workflows/validate.yml
     with:
       changeset: |
         ${{ !contains(github.event.pull_request.title, '[skip changeset]') &&
         !contains(github.event.pull_request.title, 'repo') &&
         !contains(github.event.pull_request.title, 'ci') }}
+      commitlint_mode: 'pr'
 
   open-pr:
-    needs: validate
+    needs: validate-pr
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout code
@@ -26,12 +27,6 @@ jobs:
 
       - name: 📦 Setup Environment
         uses: ./.github/actions/setup-env
-
-      - name: 📝 Run Commitlint (pr-commits)
-        run: |
-          pnpm commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{
-          github.event.pull_request.head.sha }} --verbose
-        shell: bash
 
       - name: 🛠️ Depcruise - Generate Dependency Graph
         run: |

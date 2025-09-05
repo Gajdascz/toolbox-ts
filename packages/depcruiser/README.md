@@ -200,8 +200,6 @@ Add this to your PR workflow.
     github.event.pull_request.base.sha }} --no-graph --no-report
 ```
 
----
-
 ## ⚖️ License
 
 MIT – © 2025 [Nolan Gajdascz](https://github.com/gajdascz)

@@ -1,7 +1,6 @@
 import { commitlint } from '@toolbox-ts/configs';
 
 export default commitlint.define({
-  rules: {},
   scopes: [
     'repo',
     'cli-kit',
@@ -11,5 +10,6 @@ export default commitlint.define({
     'test-utils',
     'tseslint',
     'utils'
-  ]
+  ],
+  usingChangeset: true
 });

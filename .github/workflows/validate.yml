@@ -8,6 +8,11 @@ on:
         description: 'Whether to check for changesets'
         required: false
         default: false
+      commitlint_mode:
+        type: string
+        description: 'Mode for commitlint (last|none|pr)'
+        required: false
+        default: 'none'
 
 jobs:
   validate:
@@ -48,5 +53,21 @@ jobs:
           if ! pnpm changeset status --since=origin/main; then
             echo "::error::No changeset found. Please add a changeset using 'pnpm changeset' if this PR includes user-facing changes."
             exit 1
+          fi
+        shell: bash
+
+      - name: 📝 Validate Commit Messages
+        if: ${{ inputs.commitlint_mode != 'none' }}
+        run: |
+          if [ "${{ inputs.commitlint_mode }}" = "last" ]; then
+            echo "Validating last commit..."
+            pnpm commitlint --last --verbose
+          elif [ "${{ inputs.commitlint_mode }}" = "pr" ] && [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "Validating all PR commits..."
+            pnpm commitlint --from ${{ github.event.pull_request.base.sha }} \
+                            --to ${{ github.event.pull_request.head.sha }} \
+                            --verbose
+          else
+            echo "Skipping commitlint (mode=${{ inputs.commitlint_mode }}, event=${{ github.event_name }})"
           fi
         shell: bash

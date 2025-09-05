@@ -58,4 +58,10 @@ describe('commitlint config', () => {
     expect(result.helpUrl).toBe('https://example.com');
     expect(result.formatter).toBe('json');
   });
+  it('respects usingChangeset flag', () => {
+    const result = commitlintConfig({ usingChangeset: true });
+    expect(result.ignores[0]?.('Version Packages')).toBe(true);
+    const result2 = commitlintConfig({ usingChangeset: false });
+    expect(result2.ignores[0]).toBeUndefined();
+  });
 });

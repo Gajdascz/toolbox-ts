@@ -4,7 +4,6 @@ import { describe, expect, it } from 'vitest';
 
 import {
   isOutputType,
-  noticeMap,
   outputTypeFormatMap,
   reporter,
   reporterAdapter
@@ -82,7 +81,7 @@ describe('gh-actions reporter module', () => {
     expect(text).toContain('r (f -> t)');
   });
   it('prints no violations message when there are no violations', () => {
-    const fmt = outputTypeFormatMap['gh-actions-text'];
+    const fmt = outputTypeFormatMap['gh-actions-annotations'];
     const text = fmt([]);
     expect(text).toContain('No violations');
   });

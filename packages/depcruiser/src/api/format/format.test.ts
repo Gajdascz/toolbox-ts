@@ -10,10 +10,10 @@ vi.mock('dependency-cruiser', () => ({
 vi.mock('./gh-actions/index.js', () => ({
   ghActions: {
     isOutputType: (type: string) =>
-      type === 'gh-actions-json' || type === 'gh-actions-text',
+      type === 'gh-actions-json' || type === 'gh-actions-annotations',
     outputTypeFormatMap: {
       'gh-actions-json': vi.fn(() => '{"json":"output"}'),
-      'gh-actions-text': vi.fn(() => 'text-output')
+      'gh-actions-annotations': vi.fn(() => 'text-output')
     }
   }
 }));
@@ -32,7 +32,7 @@ describe('format', () => {
   });
 
   it('returns gh-actions-text output when outputType is gh-actions-text', async () => {
-    const out = await format(result, { outputType: 'gh-actions-text' });
+    const out = await format(result, { outputType: 'gh-actions-annotations' });
     expect(out).toBe('text-output');
   });
 

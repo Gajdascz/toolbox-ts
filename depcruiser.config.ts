@@ -9,21 +9,8 @@ const cfg = config({
   },
   options: {
     cache: false,
-    log: 'gh-actions-text',
-
+    log: 'gh-actions-annotations',
     includeOnly: { path: 'packages/*' },
-    doNotFollow: {
-      path: [
-        'bin',
-        '.d.ts',
-        '.test.ts',
-        '.spec.ts',
-        '.bench.ts',
-        '.md',
-        'LICENSE',
-        'dist'
-      ]
-    },
     graph: { type: 'x-dot-webpage' },
     combinedDependencies: true,
     preserveSymlinks: false,

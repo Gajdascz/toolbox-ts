@@ -1,6 +1,6 @@
 import { Obj } from '@toolbox-ts/utils';
 
-import type { flags, InputConfig } from '../../../config/index.js';
+import type { flags, InputConfig } from '../../../definitions/index.js';
 
 import { type BaseConfig, defaultConfig } from '../defaults.js';
 import { loadConfig } from '../loader.js';

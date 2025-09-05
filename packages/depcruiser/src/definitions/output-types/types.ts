@@ -162,10 +162,11 @@ export interface TypeDefs {
    */
   flat: DotGraphDef;
 
+  /** Outputs results formatted as GitHub Actions text */
+  'gh-actions-annotations': TextReportDef;
+
   /** Outputs results formatted as GitHub Actions JSON format */
   'gh-actions-json': JsonReportDef;
-  /** Outputs results formatted as GitHub Actions text */
-  'gh-actions-text': TextReportDef;
 
   /**
    * Creates a contingency style graph (matrix) in a single HTML file

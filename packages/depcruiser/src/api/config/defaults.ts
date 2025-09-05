@@ -6,7 +6,7 @@ import {
   PROGRESS_MAXIMUM_LEVEL,
   PROGRESS_TYPES,
   type ResolvedCruiseOptions
-} from '../../config/index.js';
+} from '../../definitions/index.js';
 
 export interface BaseConfig extends InputConfig {
   configFileName: string;
@@ -34,7 +34,19 @@ export const defaultConfig: BaseConfig = {
   options: {
     overwriteBehavior: file.write.overwriteBehaviors.force,
     moduleSystems: ['es6', 'amd', 'cjs'],
-    doNotFollow: { path: ['node_modules'] },
+    doNotFollow: {
+      path: [
+        'node_modules',
+        'bin',
+        '.d.ts',
+        '.test.ts',
+        '.spec.ts',
+        '.bench.ts',
+        '.md',
+        'LICENSE',
+        'dist'
+      ]
+    },
     outputTo: 'docs/reports/dependencies',
     cache: false,
     report: { fileName: 'dependency-report', type: 'json' },

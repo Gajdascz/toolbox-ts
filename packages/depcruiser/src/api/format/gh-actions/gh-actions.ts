@@ -1,11 +1,10 @@
+import type { IViolation } from 'dependency-cruiser';
+
 import { reporters } from '@toolbox-ts/cli-kit';
 import { icons } from '@toolbox-ts/utils/constants';
-import { format as _format, type IViolation } from 'dependency-cruiser';
 import { EOL } from 'node:os';
 
-import { output } from '../../../config/index.js';
-
-const violationHeader = `${icons.rotatingLight} Dependency-Cruiser violations:${EOL}`;
+import { output } from '../../../definitions/index.js';
 
 export const noticeMap: {
   [K in IViolation['rule']['severity']]: reporters.ghActionsAnnotations.NoticeType;
@@ -25,10 +24,13 @@ export const reporter = new reporters.ghActionsAnnotations.Reporter(
 
 export const outputTypeFormatMap = {
   [output.maps.all['gh-actions-json']]: reporter.toJson.bind(reporter),
-  [output.maps.all['gh-actions-text']]: (violations: IViolation[]) =>
+  [output.maps.all['gh-actions-annotations']]: (violations: IViolation[]) =>
     violations.length === 0 ?
       `${icons.success} No violations`
-    : reporter.stringify(violations, { header: violationHeader })
+    : reporter.stringify(violations, {
+        header: `::group::${icons.rotatingLight} Dependency-Cruiser violations:${EOL}`,
+        footer: '::endgroup::'
+      })
 } as const;
 
 export type OutputType = keyof typeof outputTypeFormatMap;

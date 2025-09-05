@@ -1,6 +1,6 @@
 import { format as _format, type ICruiseResult } from 'dependency-cruiser';
 
-import type { IFormattingOptions } from '../../config/index.js';
+import type { IFormattingOptions } from '../../definitions/index.js';
 
 import { ghActions } from './gh-actions/index.js';
 

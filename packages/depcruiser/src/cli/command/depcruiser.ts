@@ -13,19 +13,21 @@ import {
   type InputConfig,
   output,
   rules
-} from '../../config/index.js';
+} from '../../definitions/index.js';
 
 interface GetCacheOptions {
   cfgFileName?: string;
   startingDir?: string;
 }
 
+import fs from 'node:fs/promises';
+
 export class DependencyCruiser extends BaseCommand {
   static override readonly args = {
     scan: Args.string({
       name: 'filesOrDirectories',
       description:
-        'Files, directories, or glob patterns to analyze. Wrap globs in quotes to prevent shell expansion (e.g. "packages/**/src/**").'
+        'Files, directories, or glob patterns to analyze. Wrap globs in quotes to prevent shell expansion (e.g. "packages/*").'
     })
   };
 
@@ -146,6 +148,26 @@ export class DependencyCruiser extends BaseCommand {
     ).stdout;
   }
 
+  async emitActionsSummary(prBaseSha: string) {
+    const outputFile = process.env.GITHUB_STEP_SUMMARY;
+    if (!outputFile) {
+      this.warn(
+        'GITHUB_STEP_SUMMARY not set, cannot emit GitHub Actions summary.'
+      );
+      return;
+    }
+    const { result } = await cruise(['.'], { flags: { affected: prBaseSha } });
+    const mermaidGraph = await format(result, { outputType: 'mermaid' });
+    await fs.appendFile(
+      outputFile,
+      `## Modules changed and affected by this PR
+      Modules changed in this PR have a fluorescent green color. All other modules in the graph are those directly or indirectly affected.
+      \`\`\`mermaid
+      ${mermaidGraph}
+      \`\`\``
+    );
+  }
+
   async initConfig(overwriteBehavior: file.write.OverwriteBehavior = 'force') {
     const isTs = await this.prompt.isTs();
     const fileName = await this.prompt.fileName(
@@ -155,7 +177,6 @@ export class DependencyCruiser extends BaseCommand {
     const tsConfig = isTs ? await this.prompt.tsConfig() : undefined;
 
     const isMonorepo = await this.prompt.isMonorepo();
-    console.log(isMonorepo);
     const defaultIncludes = isMonorepo ? 'packages/**/src/**' : 'src/**';
     const includeOnly = await this.prompt.includeOnly(defaultIncludes);
     const nativeRules = (await this.prompt.nativeRules()).reduce(
@@ -214,7 +235,7 @@ export default cfg;
 
   public async run(): Promise<void> {
     const { args, flags: _flags } = await this.parse(DependencyCruiser);
-    if (!args.scan && !_flags.init) {
+    if (!args.scan && !_flags.init && !_flags.emitActionsSummary) {
       await DependencyCruiser.run(['--help']);
       return;
     }
@@ -223,6 +244,7 @@ export default cfg;
       if (!runNow || !args.scan) return;
       this.cache.clear();
     }
+
     const cfg = await this.cache.get();
     const { output: out, result } = await cruise([args.scan!], {
       input: cfg,
@@ -230,6 +252,9 @@ export default cfg;
     });
 
     if (out.log) this.log(await format(result, { outputType: out.log }));
+
+    if (typeof _flags.emitActionsSummary === 'string')
+      await this.emitActionsSummary(_flags.emitActionsSummary);
 
     if (out.report)
       await this.write({

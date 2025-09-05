@@ -1,6 +1,6 @@
 {
   "name": "@toolbox-ts/test-utils",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Vitest Utilities",
   "license": "MIT",
   "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/test-utils",

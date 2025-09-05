@@ -1,6 +1,6 @@
 {
   "name": "@toolbox-ts/cli-kit",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "CLI Kit utilities and base command for oclif.",
   "license": "MIT",
   "type": "module",

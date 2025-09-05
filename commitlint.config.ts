@@ -11,5 +11,6 @@ export default commitlint.define({
     'test-utils',
     'tseslint',
     'utils'
-  ]
+  ],
+  ignores: [(commit) => commit.includes('Version Packages')]
 });

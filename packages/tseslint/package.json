@@ -6,6 +6,9 @@
   "type": "module",
   "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/tseslint",
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "author": {
     "name": "Nolan Gajdascz",
     "email": "dev.gajdascz@gmail.com",

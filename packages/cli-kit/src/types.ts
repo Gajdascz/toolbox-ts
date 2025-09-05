@@ -7,10 +7,10 @@ import type { Options, SyncOptions } from 'execa';
  * - Array Input: ['executable', 'arg1'?, 'arg2'?]
  */
 export type CommandInput = [string, string[]?] | string | string[];
+
 /** Options for executing commands, extending execa's Options. */
 export interface CommandOptions<O extends Options | SyncOptions = Options> {
   execaOpts?: O;
-
   onExecFail?: ErrorBehavior;
 }
 

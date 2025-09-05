@@ -6,8 +6,13 @@ import type {
   Reporter as IReporter,
   ReporterOptions,
   StringifyOptions
-} from '../types.js';
+} from '../types.ts';
 
+/**
+ * Adapter function type to convert input items to GitHub Actions annotation messages.
+ *
+ * @template T - The type of the input item to be adapted.
+ */
 export type Adapter<T = unknown> = (
   item: T,
   options?: FormatOptions
@@ -45,6 +50,11 @@ export interface Message {
  */
 export type NoticeType = 'debug' | 'error' | 'notice' | 'warning';
 
+/**
+ * Reporter class to format and output GitHub Actions annotations.
+ *
+ * @template T - The type of the input item to be reported.
+ */
 export class Reporter<T = Message> implements IReporter<T[]> {
   static readonly name = 'gh-actions-annotations';
   static noticeTypes = ['debug', 'error', 'notice', 'warning'] as const;
@@ -63,6 +73,7 @@ export class Reporter<T = Message> implements IReporter<T[]> {
     return Reporter.noticeTypes.includes(type as NoticeType);
   }
 
+  /** Parse GitHub Actions annotation string(s) back into Message objects */
   parseAnnotations(annotations: string | string[]): Message[] {
     const _annotations =
       Array.isArray(annotations) ? annotations : [annotations];

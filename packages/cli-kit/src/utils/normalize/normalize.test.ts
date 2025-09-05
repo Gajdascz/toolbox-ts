@@ -65,6 +65,9 @@ describe('cli-kit: Normalize Utils', () => {
     it('returns undefined when input is undefined', () => {
       expect(strOrNum(undefined)).toBe(undefined);
     });
+    it('returns empty string when input is empty string', () => {
+      expect(strOrNum('')).toBe('');
+    });
   });
   describe('when', () => {
     it('returns value when condition is true', () => {
@@ -276,7 +279,9 @@ describe('cli-kit: Normalize Utils', () => {
       exclude: { arrayFormat: 'repeat', sep: 'space' },
       glob: { arrayFormat: 'repeat', sep: 'equals' },
       filter: { arrayFormat: 'repeat', sep: 'space' },
-      grep: { arrayFormat: 'repeat', sep: 'space' }
+      grep: { arrayFormat: 'repeat', sep: 'space' },
+      other: { arrayFormat: 'json', sep: 'equals' },
+      random: { arrayFormat: 'comma', sep: 'equals' }
     };
     it('normalizes flags and args according to spec', () => {
       const res = flagArgs(
@@ -289,7 +294,9 @@ describe('cli-kit: Normalize Utils', () => {
           glob: null,
           filter: {},
           unknown: 'x',
-          grep: ['t']
+          grep: ['t'],
+          other: undefined,
+          random: ''
         } as any,
         mockSpec
       );
@@ -298,11 +305,13 @@ describe('cli-kit: Normalize Utils', () => {
         dryRun: false,
         date: 'now',
         short: 5,
-        glob: [],
+        glob: null,
         filter: ['[object Object]'],
         exclude: ['a', 'b'],
         unknown: 'x',
-        grep: ['t']
+        grep: ['t'],
+        other: undefined,
+        random: []
       });
     });
   });

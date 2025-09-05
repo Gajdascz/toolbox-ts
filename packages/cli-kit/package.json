@@ -6,6 +6,9 @@
   "type": "module",
   "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/cli-kit",
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/gajdascz/toolbox-ts"

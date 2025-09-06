@@ -66,7 +66,7 @@ const normalize: { [key: string]: Normalize } = {
       path: Str.parse.csvRow(path),
       depth: strOrNum(depth)
     }),
-  doNotFollow: ({ doNotFollowPath: path, doNotFollowDependencyTypes: types }) =>
+  doNotFollow: ({ doNotFollow: path, doNotFollowDependencyTypes: types }) =>
     nestWhen('doNotFollow', path, (p) => ({
       path: Str.parse.csvRow(p),
       dependencyTypes: Str.parse.csvRow(types)
@@ -78,15 +78,31 @@ const normalize: { [key: string]: Normalize } = {
     })),
   outputTo: ({ outputTo }) => nestWhen('outputTo', outputTo, outputTo),
   emitActionsSummary: ({ emitActionsSummary }) =>
-    nestWhen('emitActionsSummary', emitActionsSummary, emitActionsSummary)
+    nestWhen('emitActionsSummary', emitActionsSummary, emitActionsSummary),
+  logOnly: ({ logOnly }) => nestWhen('logOnly', logOnly, logOnly),
+  noOutput: ({ noOutput }) => nestWhen('noOutput', noOutput, noOutput)
 } as const;
 
-export const resolveFlags = (
-  result: Partial<flags.ParsedResult>
-): ResolvedCruiseOptions =>
-  Obj.stripNullish(
+export const resolveFlags = ({
+  logOnly,
+  noOutput,
+  ...rest
+}: Partial<flags.ParsedResult>): ResolvedCruiseOptions => {
+  const result = Obj.stripNullish(
     Obj.keys(normalize).reduce(
-      (acc, curr) => ({ ...acc, ...normalize[curr](result) }),
+      (acc, curr) => ({ ...acc, ...normalize[curr](rest) }),
       {}
     )
   ) as ResolvedCruiseOptions;
+
+  if (noOutput) {
+    result.log = false;
+    result.graph = false;
+    result.report = false;
+  } else if (logOnly) {
+    result.graph = false;
+    result.report = false;
+  }
+
+  return result;
+};

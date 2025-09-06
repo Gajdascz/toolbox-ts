@@ -14,7 +14,10 @@ export type ParsedResult = InferredFlags<typeof definitions>;
 export const definitions = {
   //#region> Output
   noLog: Flags.boolean({
-    ...utils.flagMeta('noLog', 'disable logging.', { helpGroup: 'Output' })
+    ...utils.flagMeta('noLog', 'disable logging.', {
+      helpGroup: 'Output',
+      otherAliases: ['silent']
+    })
   }),
   logType: Flags.string({
     ...utils.flagMeta('logType', 'logging output type', {
@@ -85,6 +88,18 @@ export const definitions = {
       'emit a GitHub Actions step summary with a Mermaid graph of the affected modules. Pass it the git revision to compare against ${{ github.event.pull_request.base.sha }} to get a graph of the modules changed in a PR and all modules that depend on them. It requires the process.env.GITHUB_STEP_SUMMARY environment variable to find out where to write the summary to.',
       { helpGroup: 'Output' }
     )
+  }),
+  logOnly: Flags.boolean({
+    ...utils.flagMeta(
+      'logOnly',
+      'Disable graph and report generation; only emit logs to the console.',
+      { helpGroup: 'Output' }
+    )
+  }),
+  noOutput: Flags.boolean({
+    ...utils.flagMeta('noOutput', 'disable all output.', {
+      helpGroup: 'Output'
+    })
   }),
   //#endregion
 
@@ -183,9 +198,9 @@ export const definitions = {
       { helpGroup: 'Traversal' }
     )
   }),
-  doNotFollowPath: Flags.string({
+  doNotFollow: Flags.string({
     ...utils.flagMeta(
-      'doNotFollowPath',
+      'doNotFollow',
       "include modules matching the regex, but don't follow their dependencies.",
       { acceptsCommaSeparated: true, char: 'X', helpGroup: 'Traversal' }
     )

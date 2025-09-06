@@ -156,7 +156,14 @@ export class DependencyCruiser extends BaseCommand {
       );
       return;
     }
-    const { result } = await cruise(['.'], { flags: { affected: prBaseSha } });
+    const { result } = await cruise(['.'], {
+      flags: {
+        affected: prBaseSha,
+        noOutput: true,
+        doNotFollow:
+          'node_modules,bin,.d.ts,.test.ts,.spec.ts,.bench.ts,.md,LICENSE,dist'
+      }
+    });
     const mermaidGraph = await format(result, { outputType: 'mermaid' });
     await fs.appendFile(
       outputFile,

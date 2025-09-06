@@ -144,8 +144,8 @@ export default config({
 
 * `--max-depth, -d <n>`: Limit how deep to follow dependencies.
 * `--ts-pre-compilation-deps`: Detect dependencies that exist only pre TypeScript compilation.
-* `--do-not-follow-path, -X <patterns>`: Include modules matching regex but do not follow their dependencies.
-* `--do-not-follow-dependency-types <types>`: Dependency types to ignore when applying `doNotFollowPath`.
+* `--do-not-follow, -X <patterns>`: Include modules matching regex but do not follow their dependencies. Provide patterns as comma separate values.
+* `--do-not-follow-dependency-types <types>`: Dependency types to ignore when applying `doNotFollow`.
 
 </details>
 

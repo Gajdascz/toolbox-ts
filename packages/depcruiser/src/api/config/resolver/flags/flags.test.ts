@@ -26,7 +26,7 @@ describe('resolveFlags', () => {
       focus: 'src/index',
       focusDepth: 2,
       // doNotFollow
-      doNotFollowPath: 'a,b',
+      doNotFollow: 'a,b',
       doNotFollowDependencyTypes: 'cjs,es6',
       // progress
       progressType: 'dots',
@@ -130,5 +130,17 @@ describe('resolveFlags', () => {
     expect(res.log).toBeFalsy();
     expect(res.report).toBeFalsy();
     expect(res.graph).toBeFalsy();
+  });
+  it('handles logOnly', () => {
+    const res = resolveFlags({ logOnly: true });
+    expect(!!res.log === true || res.log === undefined).toBe(true);
+    expect(res.graph).toBe(false);
+    expect(res.report).toBe(false);
+  });
+  it('handles noOutput', () => {
+    const res = resolveFlags({ noOutput: true });
+    expect(res.log).toBe(false);
+    expect(res.graph).toBe(false);
+    expect(res.report).toBe(false);
   });
 });

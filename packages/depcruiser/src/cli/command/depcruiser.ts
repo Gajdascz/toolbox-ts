@@ -148,7 +148,7 @@ export class DependencyCruiser extends BaseCommand {
     ).stdout;
   }
 
-  async emitActionsSummary(prBaseSha: string) {
+  async emitActionsSummary(prBaseSha: string): Promise<void> {
     const outputFile = process.env.GITHUB_STEP_SUMMARY;
     if (!outputFile) {
       this.warn(
@@ -156,15 +156,16 @@ export class DependencyCruiser extends BaseCommand {
       );
       return;
     }
-    const { result } = await cruise(['.'], {
-      flags: { affected: prBaseSha, noOutput: true },
-      input: { options: { doNotFollow: defaultConfig.options.doNotFollow } }
+    const { result, output: out } = await cruise(['.'], {
+      flags: { affected: prBaseSha, noOutput: true }
     });
-    const mermaidGraph = await format(result, { outputType: 'mermaid' });
+    const mermaidGraph = await format(result, {
+      outputType: 'mermaid',
+      reaches: out.formatting.reaches as string
+    });
     await fs.appendFile(
       outputFile,
       `# Modules changed and affected by this PR
-Modules changed in this PR have a fluorescent green color. All other modules in the graph are those directly or indirectly affected.
 \`\`\`mermaid
 ${mermaidGraph}
 \`\`\``

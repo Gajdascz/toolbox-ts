@@ -160,11 +160,11 @@ export class DependencyCruiser extends BaseCommand {
     const mermaidGraph = await format(result, { outputType: 'mermaid' });
     await fs.appendFile(
       outputFile,
-      `## Modules changed and affected by this PR
-      Modules changed in this PR have a fluorescent green color. All other modules in the graph are those directly or indirectly affected.
-      \`\`\`mermaid
-      ${mermaidGraph}
-      \`\`\``
+      `# Modules changed and affected by this PR
+Modules changed in this PR have a fluorescent green color. All other modules in the graph are those directly or indirectly affected.
+\`\`\`mermaid
+${mermaidGraph}
+\`\`\``
     );
   }
 

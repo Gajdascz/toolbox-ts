@@ -242,26 +242,25 @@ export default cfg;
 
   public async run(): Promise<void> {
     const { args, flags: _flags } = await this.parse(DependencyCruiser);
-    if (!args.scan && !_flags.init && !_flags.emitActionsSummary) {
-      await DependencyCruiser.run(['--help']);
-      return;
-    }
     if (_flags.init) {
       const runNow = await this.initConfig();
       if (!runNow || !args.scan) return;
       this.cache.clear();
     }
+    if (!args.scan) {
+      await DependencyCruiser.run(['--help']);
+      return;
+    }
 
+    if (typeof _flags.emitActionsSummary === 'string')
+      await this.emitActionsSummary(_flags.emitActionsSummary);
     const cfg = await this.cache.get();
-    const { output: out, result } = await cruise([args.scan!], {
+    const { output: out, result } = await cruise([args.scan], {
       input: cfg,
       flags: _flags
     });
 
     if (out.log) this.log(await format(result, { outputType: out.log }));
-
-    if (typeof _flags.emitActionsSummary === 'string')
-      await this.emitActionsSummary(_flags.emitActionsSummary);
 
     if (out.report)
       await this.write({

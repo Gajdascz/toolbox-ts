@@ -30,4 +30,4 @@ jobs:
 
       - name: 🛠️ Depcruise - Generate Dependency Graph
         run: |
-          pnpm . depcruiser --emit-actions-summary ${{ github.event.pull_request.base.sha }} --no-graph --no-report
+          pnpm depcruiser . --emit-actions-summary ${{ github.event.pull_request.base.sha }} --no-graph --no-report

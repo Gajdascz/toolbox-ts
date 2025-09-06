@@ -157,12 +157,8 @@ export class DependencyCruiser extends BaseCommand {
       return;
     }
     const { result } = await cruise(['.'], {
-      flags: {
-        affected: prBaseSha,
-        noOutput: true,
-        doNotFollow:
-          'node_modules,bin,.d.ts,.test.ts,.spec.ts,.bench.ts,.md,LICENSE,dist'
-      }
+      flags: { affected: prBaseSha, noOutput: true },
+      input: { options: { doNotFollow: defaultConfig.options.doNotFollow } }
     });
     const mermaidGraph = await format(result, { outputType: 'mermaid' });
     await fs.appendFile(

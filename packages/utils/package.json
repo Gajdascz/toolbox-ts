@@ -48,9 +48,17 @@
       "import": "./dist/string/index.js",
       "types": "./dist/string/index.d.ts"
     },
-    "./constants": {
-      "import": "./dist/constants/index.js",
-      "types": "./dist/constants/index.d.ts"
+    "./arr": {
+      "import": "./dist/array/index.js",
+      "types": "./dist/array/index.d.ts"
+    },
+    "./num": {
+      "import": "./dist/number/index.js",
+      "types": "./dist/number/index.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types/index.js",
+      "types": "./dist/types/index.d.ts"
     }
   }
 }

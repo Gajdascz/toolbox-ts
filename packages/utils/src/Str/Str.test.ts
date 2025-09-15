@@ -10,7 +10,7 @@ import {
   prefix,
   suffix,
   uncapitalize
-} from './Str.ts';
+} from '../../Text/Str.ts';
 
 describe('camelToKebab', () => {
   it('converts typical camelCase', () => {

@@ -1,5 +1,3 @@
-import { EOL } from 'node:os';
-
 /**
  * @module Str
  *
@@ -7,29 +5,31 @@ import { EOL } from 'node:os';
  * camel/kebab case conversion, prefix/suffix checks, and
  * string cleaning.
  */
-import type { CamelToKebab, KebabToCamel, Prefix, Suffix } from './types.js';
+import { EOL } from 'node:os';
 
-import { regex } from '../constants/index.js';
+import type {
+  CamelToKebab,
+  KebabToCamel,
+  KebabToPascal,
+  PascalToKebab,
+  Prefix,
+  Suffix
+} from './types.js';
+
+import { Arr } from '../Arr/index.js';
 import { Prim } from '../Prim/index.js';
+import {
+  alphabetic,
+  alphanumeric,
+  camelCase,
+  capitalized,
+  kebabCase,
+  pascalCase,
+  punctuated,
+  space
+} from './regex.js';
 
-/**
- * Basic camel to kebab text conversion
- * - Ensures the first letter is lowercase.
- * - Separates uppercase letters and prefixes with hyphen
- *  - This behavior is chosen to align the result with the CamelToKebab Type.
- * - Converts full string to lowercase.
- * @example
- * ```ts
- * camelToKebab('noEdit')      // 'no-edit'
- * camelToKebab('noVerify')    // 'no-verify'
- * camelToKebab('aAAAAA')      // 'a-a-a-a-a-a'
- * ```
- */
-export const camelToKebab = <S extends string>(str: S): CamelToKebab<S> =>
-  uncapitalize(str)
-    .replaceAll(/([A-Z])/g, '-$1')
-    .toLowerCase()
-    .trim() as CamelToKebab<S>;
+export const SPACE = ' ';
 
 /**
  * Capitalizes the first letter of a string.
@@ -41,7 +41,6 @@ export const camelToKebab = <S extends string>(str: S): CamelToKebab<S> =>
  */
 export const capitalize = <S extends string>(str: S): Capitalize<S> =>
   (str.charAt(0).toUpperCase() + str.slice(1)) as Capitalize<S>;
-
 /**
  * Uncapitalizes the first letter of a string.
  * @example
@@ -53,59 +52,28 @@ export const capitalize = <S extends string>(str: S): Capitalize<S> =>
 export const uncapitalize = <S extends string>(str: S): Uncapitalize<S> =>
   (str.charAt(0).toLowerCase() + str.slice(1)) as Uncapitalize<S>;
 
-/**
- * Converts a kebab-case string to camelCase.
- * @example
- * ```ts
- * keyToLong('node-edit')        // 'noEdit'
- * keyToLong('no-verify')        // 'noVerify'
- * camelToKebab('a-a-a-a-a-a')   // 'aAAAAA'
- * ```
- */
-export const kebabToCamel = <S extends string>(str: S): KebabToCamel<S> => {
-  const [first, ...rest] = str.split('-');
-  return `${first.toLowerCase()}${rest.map(capitalize).join('')}` as KebabToCamel<S>;
-};
-/**
- * Cleans an array of strings:
- * - Trims whitespace from each string.
- * - Filters out empty strings and non-string values.
- * - Returns an empty array if the input is undefined or empty.
- * - Optionally deduplicates the array.
- * @example
- * ```ts
- * cleanStrArray([' foo ', 'bar', '', 123, null, undefined, 'baz '])
- * // ['foo', 'bar', 'baz']
- * cleanStrArray(undefined) // []
- * cleanStrArray([]) // []
- * cleanStrArray(['a', 'b', 'a'], true) // ['a', 'b']
- * ```
- */
-export const cleanArr = (
-  /** Array to clean */
-  arr: unknown = [],
-  /** Whether to remove duplicates from the array */
-  deduplicate = false
-): string[] => {
-  const clean = (Array.isArray(arr) ? arr : [])
-    .map((str) => (Prim.isTypeOf.string(str) ? str.trim() : ''))
-    .filter((str) => str.length > 0);
-  return deduplicate ? [...new Set(clean)] : clean;
-};
-
-export const is = {
+export const camel = {
   /**
-   * Checks if a value is a string containing only
-   * alphabetic characters.
-   *
+   * Basic camel to kebab text conversion
+   * - Ensures the first letter is lowercase.
+   * - Separates uppercase letters and prefixes with hyphen
+   *  - This behavior is chosen to align the result with the CamelToKebab Type.
+   * - Converts full string to lowercase.
    * @example
    * ```ts
-   * is.alphabetic('hello') // true
-   * is.alphabetic('Hello123') // false
+   * camelToKebab('noEdit')      // 'no-edit'
+   * camelToKebab('noVerify')    // 'no-verify'
+   * camelToKebab('aAAAAA')      // 'a-a-a-a-a-a'
    * ```
    */
-  alphabetic: (str: unknown): str is string =>
-    Prim.isTypeOf.string(str) && regex.alphabetic.test(str),
+  toKebab: <S extends string>(str: S): CamelToKebab<S> =>
+    uncapitalize(str)
+      .replaceAll(/([A-Z])/g, '-$1')
+      .toLowerCase()
+      .trim() as CamelToKebab<S>,
+
+  toPascal: capitalize,
+
   /**
    * Checks if a string is in camelCase format.
    *
@@ -116,74 +84,54 @@ export const is = {
    * is.camel('camel-case') // false
    * ```
    */
-  camel: <S extends string = string>(
+  is: <S extends string = string>(
     str: unknown,
-    type: keyof typeof regex.camel = 'alphabetic'
+    type: keyof typeof camelCase = 'alphabetic'
   ): str is S =>
-    Prim.isTypeOf.string(str) && str.length > 0 && regex.camel[type].test(str),
+    Prim.is.string(str) && str.length > 0 && camelCase[type].test(str)
+} as const;
+
+export const pascal = {
+  toKebab: <S extends string>(str: S): PascalToKebab<S> =>
+    camel.toKebab(uncapitalize(str)),
+  toCamel: uncapitalize,
+  is: <S extends string = string>(
+    str: unknown,
+    type: keyof typeof pascalCase = 'alphabetic'
+  ): str is S =>
+    Prim.is.string(str) && str.length > 0 && pascalCase[type].test(str)
+} as const;
+export const kebab = {
   /**
    * Checks if a string is in kebab-case format.
    *
    * @example
    * ```ts
-   * is.kebab('kebab-case') // true
-   * is.kebab('Kebab-Case') // false
-   * is.kebab('kebabCase') // false
+   * kebab.is('kebab-case') // true
+   * kebab.is('Kebab-Case') // false
+   * kebab.is('kebabCase') // false
    * ```
    */
-  kebab: <S extends string = string>(
+  is: <S extends string = string>(
     str: unknown,
-    type: keyof typeof regex.kebab = 'lowercaseAlphabetic'
+    type: keyof typeof kebabCase = 'lowercaseAlphabetic'
   ): str is S =>
-    Prim.isTypeOf.string(str) && str.length > 0 && regex.kebab[type].test(str),
+    Prim.is.string(str) && str.length > 0 && kebabCase[type].test(str),
   /**
-   * Checks if a string is a valid semantic version.
-   *
+   * Converts a kebab-case string to camelCase.
    * @example
    * ```ts
-   * is.semVer('1.0.0') // true
-   * is.semVer('1.0.0-alpha') // true
-   * is.semVer('1.0') // false
-   * is.semVer('1.0.0+build') // true
+   * kebab.toCamel('node-edit')        // 'noEdit'
+   * kebab.toCamel('no-verify')        // 'noVerify'
+   * kebab.toCamel('a-a-a-a-a-a')      // 'aAAAAA'
    * ```
    */
-  prefixed: <P extends string = string, S extends string = string>(
-    str: unknown,
-    prefix: P
-  ): str is Prefix<P, S> =>
-    Prim.isTypeOf.string(str)
-    && str.startsWith(prefix)
-    && str.length > prefix.length,
-  /**
-   * Checks if a string is suffixed with a specific string.
-   *
-   * @example
-   * ```ts
-   * is.suffixed('test.js', '.js') // true
-   * is.suffixed('test.js', '.ts') // false
-   * is.suffixed('test', 'test') // false
-   * ```
-   */
-  str: Prim.isTypeOf.string,
-  /**
-   * Checks if a string is suffixed with a specific string.
-   *
-   * @example
-   * ```ts
-   * is.suffixed('test.js', '.js') // true
-   * is.suffixed('test.js', '.ts') // false
-   * is.suffixed('test', 'test') // false
-   * ```
-   */
-  suffixed: <S extends string = string, P extends string = string>(
-    str: unknown,
-    suffix: P
-  ): str is Suffix<S, P> =>
-    Prim.isTypeOf.string(str)
-    && str.endsWith(suffix)
-    && str.length > suffix.length,
-  array: (input: unknown): input is string[] =>
-    Array.isArray(input) && input.every((elem) => Prim.isTypeOf.string(elem))
+  toCamel: <S extends string>(str: S): KebabToCamel<S> => {
+    const [first, ...rest] = str.split('-');
+    return `${first.toLowerCase()}${rest.map(capitalize).join('')}` as KebabToCamel<S>;
+  },
+  toPascal: <S extends string>(str: S): KebabToPascal<S> =>
+    capitalize(kebab.toCamel(str))
 } as const;
 
 /**
@@ -216,47 +164,183 @@ export const suffix = <P extends string = string, S extends string = string>(
   suf: P
 ): Suffix<S, P> => `${str}${suf}`;
 
-export const parse = {
+export const is = {
+  alphanumeric: (str: unknown): str is string =>
+    Prim.is.string(str) && alphanumeric.test(str),
   /**
-   * Splits a CSV row into an array of trimmed strings.
+   * Checks if a value is a string containing only
+   * alphabetic characters.
    *
    * @example
    * ```ts
-   * parse.csvRow(' foo, bar , ,baz ') // ['foo', 'bar', 'baz']
-   * parse.csvRow('') // []
+   * is.alphabetic('hello') // true
+   * is.alphabetic('Hello123') // false
    * ```
    */
-  csvRow: (input = ''): string[] => cleanArr(input.split(',')),
+  alphabetic: (str: unknown): str is string =>
+    Prim.is.string(str) && alphabetic.test(str),
+
+  char: (str: unknown): str is string =>
+    Prim.is.string(str) && str.length === 1,
+
+  capitalized: (str: unknown): str is string =>
+    Prim.is.string(str) && str.length > 0 && capitalized.test(str),
+
+  prefixed: <P extends string = string, S extends string = string>(
+    str: unknown,
+    p: P
+  ): str is Prefix<P, S> =>
+    Prim.is.string(str) && str.startsWith(p) && str.length > p.length,
   /**
-   * Splits a multiline string into an array of trimmed lines.
+   * Checks if a string is suffixed with a specific string.
    *
    * @example
    * ```ts
-   * parse.lines(' foo \n bar \n\n baz ') // ['foo', 'bar', 'baz']
-   * parse.lines('') // []
+   * is.suffixed('test.js', '.js') // true
+   * is.suffixed('test.js', '.ts') // false
+   * is.suffixed('test', 'test') // false
    * ```
    */
-  spaceSeparated: (input = ''): string[] => cleanArr(input.split(' ')),
-  /**
-   * Splits a multiline string into an array of trimmed lines.
-   *
-   * @example
-   * ```ts
-   * parse.lines(' foo \n bar \n\n baz ') // ['foo', 'bar', 'baz']
-   * parse.lines('') // []
-   * ```
-   */
-  lines: (input = ''): string[] => cleanArr(input.split(EOL)),
-  /**
-   * Parses a multiline CSV string into a 2D array of trimmed strings.
-   *
-   * @example
-   * ```ts
-   * parse.csv(' foo, bar \n baz , qux ') // [['foo', 'bar'], ['baz', 'qux']]
-   * parse.csv('') // []
-   * ```
-   */
-  csv: (input = ''): string[][] => parse.lines(input).map(parse.csvRow)
+  suffixed: <S extends string = string, P extends string = string>(
+    str: unknown,
+    s: P
+  ): str is Suffix<S, P> =>
+    Prim.is.string(str) && str.endsWith(s) && str.length > s.length,
+  array: (input: unknown): input is string[] =>
+    Array.isArray(input) && input.every(Prim.is.string)
 } as const;
 
+export const split = {
+  by: (input: string, pattern: RegExp | string) =>
+    normalize.array(input.split(pattern)),
+  /**
+   * Splits csv (comma separated values) into an array of trimmed strings.
+   *
+   * @example
+   * ```ts
+   * split.csv(' foo, bar , ,baz ') // ['foo', 'bar', 'baz']
+   * split.csv('') // []
+   * ```
+   */
+  csv: (input = ''): string[] => split.by(input, ','),
+  /**
+   * Splits a multiline string into an array of trimmed lines.
+   *
+   * @example
+   * ```ts
+   * split.lines(' foo \n bar \n\n baz ') // ['foo', 'bar', 'baz']
+   * split.lines('') // []
+   * ```
+   */
+  space: (input = ''): string[] => split.by(input, space),
+  /**
+   * Splits a multiline string into an array of trimmed lines.
+   *
+   * @example
+   * ```ts
+   * split.lines(' foo \n bar \n\n baz ') // ['foo', 'bar', 'baz']
+   * split.lines('') // []
+   * ```
+   */
+  lines: (input = ''): string[] => split.by(input, EOL)
+} as const;
+
+export interface NormalizeArrayOptions {
+  deduplicate?: boolean;
+}
+export interface NormalizeSentenceOptions {
+  capitalizeFirst?: boolean;
+  endPunctuation?: string;
+}
+export const normalize: {
+  /**
+   * Cleans an array of strings:
+   * - Trims whitespace from each string.
+   * - Filters out empty strings and non-string values.
+   * - Returns an empty array if the input is undefined or empty.
+   * - Optionally deduplicates the array.
+   * @example
+   * ```ts
+   * normalize.array([' foo ', 'bar', '', 123, null, undefined, 'baz '])
+   * // ['foo', 'bar', 'baz']
+   * normalize.array(undefined) // []
+   * normalize.array([]) // []
+   * normalize.array(['a', 'b', 'a'], true) // ['a', 'b']
+   * ```
+   */
+  array: (arr?: unknown, options?: NormalizeArrayOptions) => string[];
+  /**
+   * Normalizes a string into a well-formed sentence:
+   * - Trims whitespace from the string.
+   * - Capitalizes the first letter (optional, default: true).
+   * - Ensures the string ends with proper punctuation (optional, default: '.').
+   * - Returns an empty string if the input is not a valid string.
+   * @example
+   * ```ts
+   * normalize.sentence(' hello world ') // 'Hello world.'
+   * normalize.sentence('hello world', { endPunctuation: '!' }) // 'Hello world!'
+   * normalize.sentence('Hello world.') // 'Hello world.'
+   * normalize.sentence('') // ''
+   * normalize.sentence(123) // ''
+   * ```
+   */
+  sentence: (str: unknown, options?: NormalizeSentenceOptions) => string;
+  /**
+   * Converts any input to a string in a safe manner.
+   * - For strings, returns the string as is.
+   * - For numbers, bigints, booleans, and functions, converts to string using String().
+   * - For symbols, converts to string using toString().
+   * - For undefined, returns an empty string.
+   * - For null and objects, converts to a JSON string representation.
+   * @example
+   * ```ts
+   * normalize.unknown('hello') // 'hello'
+   * normalize.unknown(123) // '123'
+   * normalize.unknown(true) // 'true'
+   * normalize.unknown(Symbol('sym')) // 'Symbol(sym)'
+   * normalize.unknown(undefined) // ''
+   * normalize.unknown(null) // 'null'
+   * normalize.unknown({ key: 'value' }) // '{"key":"value"}'
+   * normalize.unknown([1, 2, 3]) // '[1,2,3]'
+   * normalize.unknown(() => {}) // '() => {}'
+   * ```
+   */
+  unknown: (input: unknown) => string;
+} = {
+  unknown: (input: unknown): string => {
+    switch (typeof input) {
+      case 'string':
+        return input;
+      case 'number':
+      case 'bigint':
+      case 'boolean':
+      case 'function':
+        return String(input);
+      case 'symbol':
+        return input.toString();
+      case 'undefined':
+        return '';
+      default:
+        return JSON.stringify(input);
+    }
+  },
+  sentence: (str, { capitalizeFirst = true, endPunctuation = '.' } = {}) => {
+    let result = normalize.unknown(str).trim();
+    if (capitalizeFirst && !capitalized.test(result))
+      result = capitalize(result);
+    if (endPunctuation && !punctuated.test(result)) result += endPunctuation;
+    return result;
+  },
+  array: (arr: unknown = [], { deduplicate = false } = {}): string[] => {
+    const result = Arr.transform(Arr.to(arr), (item) => {
+      if (Prim.is.string(item)) {
+        const trimmed = item.trim();
+        if (trimmed.length > 0) return trimmed;
+      }
+      return undefined;
+    });
+    return deduplicate ? Arr.dedupe(result) : result;
+  }
+} as const;
+export * as regex from './regex.js';
 export type * from './types.js';

@@ -1,2 +1,2 @@
-export * as Obj from './functions/index.js';
+export * as Obj from './Obj.js';
 export type * from './types.js';

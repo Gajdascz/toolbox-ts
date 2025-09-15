@@ -19,6 +19,19 @@ export type KebabToCamel<S extends string> =
   S extends `${infer H}-${infer T}` ? `${H}${Capitalize<KebabToCamel<T>>}`
   : S extends `${infer H}` ? H
   : S;
+/**
+ * Converts a camelCase string to PascalCase.
+ *
+ * @template S - The camelCase string to convert.
+ */
+export type KebabToPascal<S extends string> = Capitalize<KebabToCamel<S>>;
+
+/**
+ * Converts a PascalCase string to kebab-case.
+ *
+ * @template S - The PascalCase string to convert.
+ */
+export type PascalToKebab<S extends string> = CamelToKebab<Uncapitalize<S>>;
 
 /**
  * Prepends a prefix to a string type.

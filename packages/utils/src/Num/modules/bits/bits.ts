@@ -1,3 +1,4 @@
+import { Prim } from '../../../Prim/index.js';
 import * as Base from '../base/index.js';
 
 /** 8-bit (1-byte) depth and max value. */
@@ -31,7 +32,7 @@ const is = {
       || !(typeof value === 'number' || Base.is.stringNumber(value))
     )
       return false;
-    const parsed = Number.parseInt(String(depth), 10);
+    const parsed = Prim.coerce.number(value);
     return parsed >= 0 && parsed <= map[depth].max;
   }
 } as const;

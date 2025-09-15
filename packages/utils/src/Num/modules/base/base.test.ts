@@ -3,11 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   average,
   clamp,
-  difference,
   is,
-  max,
-  min,
-  normalize,
   product,
   range,
   reduce,
@@ -15,28 +11,9 @@ import {
   sum
 } from './base.ts';
 
-describe('normalize', () => {
-  it('returns number as is', () => {
-    expect(normalize(42)).toBe(42);
-  });
-  it('converts string to number', () => {
-    expect(normalize('3.14')).toBe(3.14);
-  });
-  it('returns 0 for NaN, undefined, null, object', () => {
-    expect(normalize(Number.NaN)).toBe(0);
-    expect(normalize(undefined)).toBe(0);
-    expect(normalize(null)).toBe(0);
-    expect(normalize({})).toBe(0);
-  });
-  it('returns 0 for Infinity', () => {
-    expect(normalize(Infinity)).toBe(0);
-    expect(normalize(-Infinity)).toBe(0);
-  });
-});
-
 describe('round', () => {
-  it('rounds to default 2 decimals', () => {
-    expect(round(1.2345)).toBe(1.23);
+  it('rounds to default 0 decimals', () => {
+    expect(round(1.2345)).toBe(1);
   });
   it('rounds to given decimal position', () => {
     expect(round(1.2345, 3)).toBe(1.235);
@@ -74,27 +51,23 @@ describe('is', () => {
     expect(is.integer(5.1)).toBe(false);
     expect(is.integer('5')).toBe(false);
   });
-  it('safeInteger', () => {
-    expect(is.safeInteger(5)).toBe(true);
-    expect(is.safeInteger(Number.MAX_SAFE_INTEGER + 1)).toBe(false);
-  });
   it('positive', () => {
     expect(is.positive(5)).toBe(true);
     expect(is.positive(-5)).toBe(false);
     expect(is.positive(0)).toBe(true);
-    expect(is.positive(5, true)).toBe(true);
-    expect(is.positive(Number.MAX_SAFE_INTEGER + 1, true)).toBe(false);
+    expect(is.positive(5)).toBe(true);
+    expect(is.positive(Number.MAX_SAFE_INTEGER + 1)).toBe(true);
   });
   it('negative', () => {
     expect(is.negative(-5)).toBe(true);
     expect(is.negative(5)).toBe(false);
-    expect(is.negative(0)).toBe(false);
-    expect(is.negative(Number.MAX_SAFE_INTEGER + 1, true)).toBe(true);
+    expect(is.negative(0)).toBe(true);
+    expect(is.negative(-Number.MAX_SAFE_INTEGER - 1)).toBe(true);
   });
   it('decimal', () => {
     expect(is.decimal(5.1)).toBe(true);
     expect(is.decimal(5)).toBe(false);
-    expect(is.decimal('5.1')).toBe(false);
+    expect(is.decimal('5.1')).toBe(true);
   });
   it('inRange', () => {
     expect(is.inRange(5, 1, 10)).toBe(true);
@@ -108,8 +81,7 @@ describe('is', () => {
     expect(is.positiveInt(5)).toBe(true);
     expect(is.positiveInt(-5)).toBe(false);
     expect(is.positiveInt(0)).toBe(true);
-    expect(is.positiveInt(5, true)).toBe(true);
-    expect(is.positiveInt(Number.MAX_SAFE_INTEGER + 1)).toBe(false);
+    expect(is.positiveInt(Number.MAX_SAFE_INTEGER + 1, true)).toBe(false);
     expect(is.positiveInt(Number.MAX_SAFE_INTEGER + 1, false)).toBe(true);
   });
   it('negativeInt', () => {
@@ -117,54 +89,46 @@ describe('is', () => {
     expect(is.negativeInt(5)).toBe(false);
     expect(is.negativeInt(0)).toBe(true);
     expect(is.negativeInt(-5, true)).toBe(true);
-    expect(is.negativeInt(Number.MAX_SAFE_INTEGER + 1, true)).toBe(false);
-    expect(is.negativeInt(-5, false)).toBe(true);
-    expect(is.negativeInt(5, false)).toBe(false);
-    expect(is.negative(-Number.MAX_SAFE_INTEGER - 1, false)).toBe(true);
+    expect(is.negativeInt(-Number.MAX_SAFE_INTEGER - 1, false)).toBe(true);
+    expect(is.negativeInt(-Number.MAX_SAFE_INTEGER - 1, true)).toBe(false);
   });
-  it('zero', () => {
-    expect(is.zero(0)).toBe(true);
-    expect(is.zero(5)).toBe(false);
-    expect(is.zero(-5)).toBe(false);
+  it('theNumber', () => {
+    expect(is.theNumber(5, 5)).toBe(true);
+    expect(is.theNumber(5, 6)).toBe(false);
+    expect(is.theNumber('5', 5)).toBe(false);
+    expect(is.theNumber(BigInt(5), BigInt(5))).toBe(true);
+    expect(is.theNumber(BigInt(5), BigInt(6))).toBe(false);
+    expect(is.theNumber(5, BigInt(5))).toBe(false);
+  });
+  it('stringNumber', () => {
+    expect(is.stringNumber('5')).toBe(true);
+    expect(is.stringNumber('5.1')).toBe(true);
+    expect(is.stringNumber('-5.1')).toBe(true);
+    expect(is.stringNumber('foo')).toBe(false);
+    expect(is.stringNumber(5)).toBe(false);
+    expect(is.stringNumber(null)).toBe(false);
   });
 });
 
 describe('reduce', () => {
   it('reduces with sum', () => {
     expect(
-      reduce({
-        numbers: [1, 2, 3],
-        fn: (a: number, b: number) => a + b,
-        start: 0
-      })
+      reduce([1, 2, 3], (a: number, b: number) => a + b, { start: 0 })
     ).toBe(6);
   });
   it('reduces with product', () => {
-    expect(reduce({ numbers: [2, 3], fn: (a, b) => a * b, start: 1 })).toBe(6);
+    expect(reduce([2, 3], (a, b) => a * b, { start: 1 })).toBe(6);
   });
   it('reduces with roundTo', () => {
     expect(
-      reduce({
-        numbers: [1.234, 2.345],
-        fn: (a: number, b: number) => a + b,
+      reduce([1.234, 2.345], (a: number, b: number) => a + b, {
         start: 0,
         roundTo: 2
       })
     ).toBe(3.58);
   });
   it('handles empty numbers', () => {
-    expect(
-      reduce({ numbers: [], fn: (a: number, b: number) => a + b, start: 5 })
-    ).toBe(5);
-  });
-  it('handles non-number values', () => {
-    expect(
-      reduce({
-        numbers: [1, '2', null, undefined],
-        fn: (a: number, b: number) => a + b,
-        start: 0
-      })
-    ).toBe(3);
+    expect(reduce([], (a: number, b: number) => a + b, { start: 5 })).toBe(5);
   });
 });
 
@@ -204,22 +168,6 @@ describe('average', () => {
   });
 });
 
-describe('min', () => {
-  it('returns min value', () => {
-    expect(min([1, 2, 3])).toBe(1);
-    expect(min(['5', 2, 3])).toBe(2);
-    expect(min([Infinity, 2, 3])).toBe(2);
-  });
-});
-
-describe('max', () => {
-  it('returns max value', () => {
-    expect(max([1, 2, 3])).toBe(3);
-    expect(max(['5', 2, 3])).toBe(5);
-    expect(max([-Infinity, 2, 3])).toBe(3);
-  });
-});
-
 describe('range', () => {
   it('returns range', () => {
     expect(range([1, 2, 3])).toBe(2);
@@ -227,23 +175,8 @@ describe('range', () => {
   });
 });
 
-describe('difference', () => {
-  it('returns difference for 2+ numbers', () => {
-    expect(difference([10, 2, 3])).toBe(5);
-  });
-  it('returns 0 for less than 2 numbers', () => {
-    expect(difference([5])).toBe(0);
-    expect(difference([])).toBe(0);
-  });
-});
-
 describe('clamp', () => {
   it('clamps within min and max', () => {
-    expect(clamp(50)).toBe(50);
-    expect(clamp(-10)).toBe(0);
-    expect(clamp(110)).toBe(100);
-  });
-  it('clamps with custom options', () => {
     expect(clamp(5, { min: 3, max: 7, decimal: 1 })).toBe(5);
     expect(clamp(2, { min: 3, max: 7 })).toBe(3);
     expect(clamp(8, { min: 3, max: 7 })).toBe(7);

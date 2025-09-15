@@ -17,7 +17,7 @@ export const loadConfig = async (
       throw new Error(
         `Failed to load configuration from ${cfgPath}\nError: ${error}`
       );
-    else if (!result || !Obj.is.obj<InputConfig>(result))
+    else if (!result || !Obj.is.obj(result))
       throw new TypeError(
         `Configuration file ${cfgPath} should export a Configuration object, but got: ${typeof result}`
       );

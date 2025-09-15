@@ -42,16 +42,14 @@ export const is = {
   /** Checks if a value is an odd integer. */
   odd: (num: unknown): num is number => is.number(num) && num % 2 !== 0,
   /** Checks if a value is an even integer. */
-  even: (num: unknown): num is number => !is.odd(num),
+  even: (num: unknown): num is number => is.number(num) && num % 2 === 0,
   /** Checks if a value is an integer. */
   integer: (n: unknown, safe = false): n is number =>
     safe ? Number.isSafeInteger(n) : Number.isInteger(n),
   /** Checks if a value is a positive number. */
-  positive: (n: unknown, safe = false): n is number =>
-    is.integer(n, safe) && n > 0,
+  positive: (n: unknown): n is number => is.number(n) && n >= 0,
   /** Checks if a value is a negative number. */
-  negative: (num: unknown, safe = false): num is number =>
-    !is.positive(num, safe),
+  negative: (num: unknown): num is number => is.number(num) && num <= 0,
   /** Checks if a value is a decimal (non-integer) number. */
   decimal: (num: unknown): num is number => !is.integer(num),
   /** Checks if a value is within a specified range (inclusive). */
@@ -59,10 +57,10 @@ export const is = {
     is.number(num) && num >= min && num <= max,
   /** Checks if a value is a positive integer. */
   positiveInt: (num: unknown, safe = true): num is number =>
-    is.integer(num, safe) && num > 0,
+    is.integer(num, safe) && num >= 0,
   /** Checks if a value is a negative integer. */
   negativeInt: (num: unknown, safe = true): num is number =>
-    is.integer(num, safe) && num < 0
+    is.integer(num, safe) && num <= 0
 } as const;
 
 export interface ReducerOpts {

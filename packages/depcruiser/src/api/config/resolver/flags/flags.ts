@@ -15,13 +15,11 @@ const { nestWhen, strOrNum } = utils.normalize;
 type Normalize = (flags: Partial<flags.ParsedResult>) => StrRecord | undefined;
 const normalize: { [key: string]: Normalize } = {
   exclude: ({ exclude }) =>
-    nestWhen('exclude', exclude, (e) => ({ path: Str.parse.csvRow(e) })),
+    nestWhen('exclude', exclude, (e) => ({ path: Str.split.csv(e) })),
   includeOnly: ({ includeOnly }) =>
-    nestWhen('includeOnly', includeOnly, (i) => ({
-      path: Str.parse.csvRow(i)
-    })),
+    nestWhen('includeOnly', includeOnly, (i) => ({ path: Str.split.csv(i) })),
   reaches: ({ reaches }) =>
-    nestWhen('reaches', reaches, (r) => ({ path: Str.parse.csvRow(r) })),
+    nestWhen('reaches', reaches, (r) => ({ path: Str.split.csv(r) })),
   maxDepth: ({ maxDepth }) => nestWhen('maxDepth', maxDepth, strOrNum),
   collapse: ({ collapse }) => nestWhen('collapse', collapse, strOrNum),
   tsConfig: ({ tsConfig }) =>
@@ -32,8 +30,8 @@ const normalize: { [key: string]: Normalize } = {
     nestWhen('babelConfig', babelConfig, { fileName: babelConfig }),
   moduleSystems: ({ moduleSystems }) =>
     nestWhen('moduleSystems', moduleSystems, (m) =>
-      Str.parse
-        .csvRow(m)
+      Str.split
+        .csv(m)
         .filter((ms): ms is ModuleSystemType => ms in MODULE_SYSTEMS)
     ),
   cache: ({
@@ -63,13 +61,13 @@ const normalize: { [key: string]: Normalize } = {
     })),
   focus: ({ focus: path, focusDepth: depth }) =>
     nestWhen('focus', path, {
-      path: Str.parse.csvRow(path),
+      path: Str.split.csv(path),
       depth: strOrNum(depth)
     }),
   doNotFollow: ({ doNotFollow: path, doNotFollowDependencyTypes: types }) =>
     nestWhen('doNotFollow', path, (p) => ({
-      path: Str.parse.csvRow(p),
-      dependencyTypes: Str.parse.csvRow(types)
+      path: Str.split.csv(p),
+      dependencyTypes: Str.split.csv(types)
     })),
   progress: ({ progressType, progressMaximumLevel }) =>
     nestWhen('progress', progressType, (type) => ({

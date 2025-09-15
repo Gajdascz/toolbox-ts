@@ -68,7 +68,7 @@ export const isNot = (Object.keys(is) as (keyof typeof is)[]).reduce<{
   { ...is }
 );
 
-export interface NormalizeNumberOpts {
+export interface CoerceNumberOpts {
   /**
    * Whether to allow `Infinity` as a valid number.
    * - If set to `true`, both positive and negative infinity are allowed.
@@ -111,16 +111,16 @@ export interface NormalizeNumberOpts {
    * If the input is not a string, this option is ignored.
    * @example
    * ```ts
-   * normalize.number('123.45abc', { stringCoercion: 'parseFloat' }) // 123.45
-   * normalize.number('123.45abc', { stringCoercion: 'NumberCstr' }) // 0
-   * normalize.number('abc123', { stringCoercion: 'parseFloat' }) // NaN
-   * normalize.number('abc123', { stringCoercion: 'NumberCstr' }) // NaN
+   * coerce.number('123.45abc', { stringCoercion: 'parseFloat' }) // 123.45
+   * coerce.number('123.45abc', { stringCoercion: 'NumberCstr' }) // 0
+   * coerce.number('abc123', { stringCoercion: 'parseFloat' }) // NaN
+   * coerce.number('abc123', { stringCoercion: 'NumberCstr' }) // NaN
    * ```
    */
   stringCoercion?: 'NumberCstr' | 'parseFloat';
 }
 
-export const normalize = {
+export const coerce = {
   string: (input: unknown): string => {
     switch (typeof input) {
       case 'string':
@@ -147,7 +147,7 @@ export const normalize = {
       stringCoercion = 'parseFloat',
       fallbackOnNull = true,
       fallbackOnBoolean = false
-    }: NormalizeNumberOpts = {}
+    }: CoerceNumberOpts = {}
   ): number => {
     // ---- Null / undefined ----
     if (input === null && fallbackOnNull) return fallback;
@@ -216,7 +216,7 @@ export type ExcludeStrategy =
 export type MergeBehavior<T> =
   | 'first'
   | 'last'
-  | ((prev: T, next: T, trigger?: boolean) => T | true);
+  | ((prev: T, next: T) => T | true);
 export interface MergeOpts<T = unknown> {
   behavior?: MergeBehavior<T>;
   exclude?: ExcludeStrategy;
@@ -260,11 +260,12 @@ export const merge = <T = unknown>(
   const values = (Array.isArray(b) ? [a, ...b] : [a, b]).filter(excludeFn);
   if (behavior === 'first') return values[0];
   if (behavior === 'last') return values.at(-1)!;
-  let acc: T = a;
-  for (const val of values) {
-    const result = behavior(acc, val);
-    if (result === true) return acc;
-    acc = result;
+  const [first, ...rest] = values;
+  let acc = first;
+  for (const val of rest) {
+    const res = behavior(acc, val);
+    if (res === true) return acc;
+    acc = res;
   }
   return acc;
 };

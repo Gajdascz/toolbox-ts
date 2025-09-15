@@ -27,7 +27,7 @@ export const cruise = async (
     resolveOptions,
     transpileOptions
   );
-  if (!Obj.is.obj<ICruiseResult>(result.output, ['modules', 'summary']))
+  if (!Obj.is.obj(result.output))
     throw new TypeError(
       `BaseDepCruiser cruise function should always return an ICruiseResult object, but got: ${typeof result === 'object' ? JSON.stringify(result, null, 1) : result}`
     );

@@ -67,12 +67,11 @@ export const camel = {
    * ```
    */
   toKebab: <S extends string>(str: S): CamelToKebab<S> =>
-    uncapitalize(str)
+    uncapitalize(str.trim())
       .replaceAll(/([A-Z])/g, '-$1')
-      .toLowerCase()
-      .trim() as CamelToKebab<S>,
+      .toLowerCase() as CamelToKebab<S>,
 
-  toPascal: capitalize,
+  toPascal: (s: string) => capitalize(s.trim()),
 
   /**
    * Checks if a string is in camelCase format.
@@ -94,7 +93,7 @@ export const camel = {
 export const pascal = {
   toKebab: <S extends string>(str: S): PascalToKebab<S> =>
     camel.toKebab(uncapitalize(str)),
-  toCamel: uncapitalize,
+  toCamel: (s: string) => uncapitalize(s).trim(),
   is: <S extends string = string>(
     str: unknown,
     type: keyof typeof pascalCase = 'alphabetic'
@@ -127,9 +126,18 @@ export const kebab = {
    * ```
    */
   toCamel: <S extends string>(str: S): KebabToCamel<S> => {
-    const [first, ...rest] = str.split('-');
+    const [first, ...rest] = str.trim().split('-');
     return `${first.toLowerCase()}${rest.map(capitalize).join('')}` as KebabToCamel<S>;
   },
+  /**
+   * Converts a kebab-case string to PascalCase.
+   * @example
+   * ```ts
+   * kebab.toPascal('node-edit')        // 'NoEdit'
+   * kebab.toPascal('no-verify')        // 'NoVerify'
+   * kebab.toPascal('a-a-a-a-a-a')      // 'AAAAAA'
+   * ```
+   */
   toPascal: <S extends string>(str: S): KebabToPascal<S> =>
     capitalize(kebab.toCamel(str))
 } as const;
@@ -165,6 +173,8 @@ export const suffix = <P extends string = string, S extends string = string>(
 ): Suffix<S, P> => `${str}${suf}`;
 
 export const is = {
+  str: Prim.is.string,
+  /** Checks if a value is a string containing only alphanumeric characters. */
   alphanumeric: (str: unknown): str is string =>
     Prim.is.string(str) && alphanumeric.test(str),
   /**
@@ -180,17 +190,21 @@ export const is = {
   alphabetic: (str: unknown): str is string =>
     Prim.is.string(str) && alphabetic.test(str),
 
+  /** Checks if a value is a single character string */
   char: (str: unknown): str is string =>
     Prim.is.string(str) && str.length === 1,
 
+  /** Checks if a string is capitalized (first letter uppercase, rest lowercase). */
   capitalized: (str: unknown): str is string =>
     Prim.is.string(str) && str.length > 0 && capitalized.test(str),
 
+  /** Checks if a string is prefixed with a specific string. */
   prefixed: <P extends string = string, S extends string = string>(
     str: unknown,
     p: P
   ): str is Prefix<P, S> =>
     Prim.is.string(str) && str.startsWith(p) && str.length > p.length,
+
   /**
    * Checks if a string is suffixed with a specific string.
    *
@@ -206,11 +220,14 @@ export const is = {
     s: P
   ): str is Suffix<S, P> =>
     Prim.is.string(str) && str.endsWith(s) && str.length > s.length,
+
+  /** Checks if a value is an array containing only strings. */
   array: (input: unknown): input is string[] =>
     Array.isArray(input) && input.every(Prim.is.string)
 } as const;
 
 export const split = {
+  /** Splits a string by a specified pattern (string or RegExp) and normalizes the result. */
   by: (input: string, pattern: RegExp | string) =>
     normalize.array(input.split(pattern)),
   /**
@@ -242,7 +259,23 @@ export const split = {
    * split.lines('') // []
    * ```
    */
-  lines: (input = ''): string[] => split.by(input, EOL)
+  lines: (input = ''): string[] => split.by(input, EOL),
+  /**
+   * Splits a new line separate rows csv string into an array of arrays of trimmed strings.
+   *
+   * @example
+   * ```ts
+   * split.csvRows('a,b , c\nd,e,f\r\ng,h,i')
+   * // [
+   * //   ['a', 'b', 'c'],
+   * //   ['d', 'e', 'f'],
+   * //   ['g', 'h', 'i']
+   * // ]
+   * split.csvRows('') // []
+   * ```
+   */
+  csvRows: (input = ''): string[][] =>
+    normalize.array(split.lines(input)).map(split.csv)
 } as const;
 
 export interface NormalizeArrayOptions {
@@ -285,47 +318,10 @@ export const normalize: {
    * ```
    */
   sentence: (str: unknown, options?: NormalizeSentenceOptions) => string;
-  /**
-   * Converts any input to a string in a safe manner.
-   * - For strings, returns the string as is.
-   * - For numbers, bigints, booleans, and functions, converts to string using String().
-   * - For symbols, converts to string using toString().
-   * - For undefined, returns an empty string.
-   * - For null and objects, converts to a JSON string representation.
-   * @example
-   * ```ts
-   * normalize.unknown('hello') // 'hello'
-   * normalize.unknown(123) // '123'
-   * normalize.unknown(true) // 'true'
-   * normalize.unknown(Symbol('sym')) // 'Symbol(sym)'
-   * normalize.unknown(undefined) // ''
-   * normalize.unknown(null) // 'null'
-   * normalize.unknown({ key: 'value' }) // '{"key":"value"}'
-   * normalize.unknown([1, 2, 3]) // '[1,2,3]'
-   * normalize.unknown(() => {}) // '() => {}'
-   * ```
-   */
-  unknown: (input: unknown) => string;
 } = {
-  unknown: (input: unknown): string => {
-    switch (typeof input) {
-      case 'string':
-        return input;
-      case 'number':
-      case 'bigint':
-      case 'boolean':
-      case 'function':
-        return String(input);
-      case 'symbol':
-        return input.toString();
-      case 'undefined':
-        return '';
-      default:
-        return JSON.stringify(input);
-    }
-  },
   sentence: (str, { capitalizeFirst = true, endPunctuation = '.' } = {}) => {
-    let result = normalize.unknown(str).trim();
+    let result = Prim.coerce.string(str).trim();
+    if (!result) return '';
     if (capitalizeFirst && !capitalized.test(result))
       result = capitalize(result);
     if (endPunctuation && !punctuated.test(result)) result += endPunctuation;

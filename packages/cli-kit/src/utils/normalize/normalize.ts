@@ -219,7 +219,7 @@ export const flagArgs = <T>(
     if (spec.arrayFormat) {
       if (Array.isArray(value)) acc[key] = value;
       else if (typeof value === 'string')
-        (acc as StrRecord)[key] = Str.cleanArr(value.split(','), false);
+        (acc as StrRecord)[key] = Str.normalize.array(value.split(','));
       else (acc as StrRecord)[key] = [String(value)];
     } else (acc as StrRecord)[key] = value;
     return acc;

@@ -48,13 +48,13 @@ const all: TypeDefs = {
 
 export const definitions = {
   all: all,
-  graph: Obj.filter(all, (def) => def.kind === 'graph'),
-  report: Obj.filter(all, (def) => def.kind === 'report'),
+  graph: Obj.filter(all, (_, def) => def.kind === 'graph'),
+  report: Obj.filter(all, (_, def) => def.kind === 'report'),
   dotGraph: Obj.filter(
     all,
-    (def) => def.kind === 'graph' && def.fileExtension === '.dot'
+    (_, def) => def.kind === 'graph' && def.fileExtension === '.dot'
   ),
-  loggable: Obj.filter(all, (def) => def.loggable)
+  loggable: Obj.filter(all, (_, def) => def.loggable)
 };
 export const keys = {
   all: Obj.keys(definitions.all),

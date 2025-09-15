@@ -200,7 +200,7 @@ ${mermaidGraph}
         log,
         report,
         doNotFollow: { path: defaultConfig.options.doNotFollow.path },
-        includeOnly: { path: Str.parse.csvRow(includeOnly) },
+        includeOnly: { path: Str.split.csv(includeOnly) },
         combinedDependencies: isMonorepo,
         ...utils.normalize.nestWhen('tsConfig', tsConfig, {
           fileName: tsConfig

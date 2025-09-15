@@ -1,3 +1,4 @@
+/* c8 ignore start */
 export const api = '🌐';
 export const bug = '🐛';
 export const broom = '🧹';
@@ -53,3 +54,4 @@ export const toolbox = '🧰';
 export const chartBar = '📊';
 export const chartLineUp = '📈';
 export const chartLineDown = '📉';
+/* c8 ignore end */

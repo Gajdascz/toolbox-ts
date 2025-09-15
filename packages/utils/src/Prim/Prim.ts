@@ -238,7 +238,7 @@ const excludeStrategies = {
  * @param opts - Options for merging behavior and exclusion criteria
  * @returns The merged primitive value
  *
- * @throws {TypeError} If the base value `a` is nullish or not a primitive
+ * @throws `TypeError` If the base value `a` is nullish or not a primitive
  *
  * @example
  * ```ts

@@ -199,7 +199,7 @@ export const keys = <T>(obj: T) => {
  * Returns all entries (key-value pairs) of an object as a typed array.
  *
  * @template T - Object type
- * @throws {TypeError} If the input is not an object
+ * @throws `TypeError` If the input is not an object
  */
 export const entries = <T>(obj: T) => {
   if (!is.obj(obj))

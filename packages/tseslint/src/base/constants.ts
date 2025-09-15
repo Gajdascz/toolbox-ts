@@ -1,5 +1,10 @@
 export const ARRAYS = {
-  ALL_IGNORES: ['**/node_modules/**', '**/dist/**', '**/build/**'],
+  ALL_IGNORES: [
+    '**/node_modules/**',
+    '**/dist/**',
+    '**/build/**',
+    '**/docs/**'
+  ],
   DEV_DIRS: ['dev', '_dev', 'tools', '_tools'],
   EXTS: ['ts', 'tsx', 'js', 'jsx'],
   SRC_DIRS: ['src', 'packages', 'apps', 'bin'],

@@ -28,10 +28,10 @@ export const create = <N extends string>(
     severity = _severity,
     to = {}
   }: Partial<RuleFactoryCfg<N>> = {}): Rule<N> => {
-    const fromPath = Str.cleanArr([_from.path, from.path]);
-    const fromPathNot = Str.cleanArr([_from.pathNot, from.pathNot]);
-    const toPath = Str.cleanArr([_to.path, to.path]);
-    const toPathNot = Str.cleanArr([_to.pathNot, to.pathNot]);
+    const fromPath = Str.normalize.array([_from.path, from.path]);
+    const fromPathNot = Str.normalize.array([_from.pathNot, from.pathNot]);
+    const toPath = Str.normalize.array([_to.path, to.path]);
+    const toPathNot = Str.normalize.array([_to.pathNot, to.pathNot]);
     return {
       comment,
       from: {

@@ -37,7 +37,7 @@ const _extends = async (
     if (!loaded) throw new Error(`Failed to load extended config '${ext}'`);
 
     const resolved = await _extends(loaded, nextVisited);
-    merged = Obj.merge(resolved, merged, { array: { behavior: 'append' } });
+    merged = Obj.merge(resolved, merged);
   }
 
   return merged;
@@ -80,20 +80,14 @@ export const config = async ({
   const _input = await inputConfig(input);
 
   // Start from default + input
-  let merged = Obj.merge(defaultConfig, _input, {
-    array: { behavior: 'overwrite' }
-  }) as BaseConfig;
+  let merged = Obj.merge(defaultConfig, _input);
 
   // Resolve all extends recursively
   merged = await _extends(merged);
 
   merged.options.ruleSet = ruleSet(merged);
 
-  if (flags) {
-    merged.options = Obj.merge(merged.options, resolveFlags(flags), {
-      array: { behavior: 'overwrite' }
-    });
-  }
+  if (flags) merged.options = Obj.merge(merged.options, resolveFlags(flags));
 
   return await resolveOptions({ base: merged.options });
 };

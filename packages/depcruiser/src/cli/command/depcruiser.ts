@@ -148,7 +148,7 @@ export class DependencyCruiser extends BaseCommand {
     ).stdout;
   }
 
-  async emitActionsSummary(prBaseSha: string) {
+  async emitActionsSummary(prBaseSha: string): Promise<void> {
     const outputFile = process.env.GITHUB_STEP_SUMMARY;
     if (!outputFile) {
       this.warn(
@@ -156,15 +156,19 @@ export class DependencyCruiser extends BaseCommand {
       );
       return;
     }
-    const { result } = await cruise(['.'], { flags: { affected: prBaseSha } });
-    const mermaidGraph = await format(result, { outputType: 'mermaid' });
+    const { result, output: out } = await cruise(['.'], {
+      flags: { affected: prBaseSha, noOutput: true }
+    });
+    const mermaidGraph = await format(result, {
+      outputType: 'mermaid',
+      reaches: out.formatting.reaches as string
+    });
     await fs.appendFile(
       outputFile,
-      `## Modules changed and affected by this PR
-      Modules changed in this PR have a fluorescent green color. All other modules in the graph are those directly or indirectly affected.
-      \`\`\`mermaid
-      ${mermaidGraph}
-      \`\`\``
+      `# Modules changed and affected by this PR
+\`\`\`mermaid
+${mermaidGraph}
+\`\`\``
     );
   }
 
@@ -196,7 +200,7 @@ export class DependencyCruiser extends BaseCommand {
         log,
         report,
         doNotFollow: { path: defaultConfig.options.doNotFollow.path },
-        includeOnly: { path: Str.parse.csvRow(includeOnly) },
+        includeOnly: { path: Str.split.csv(includeOnly) },
         combinedDependencies: isMonorepo,
         ...utils.normalize.nestWhen('tsConfig', tsConfig, {
           fileName: tsConfig
@@ -235,26 +239,25 @@ export default cfg;
 
   public async run(): Promise<void> {
     const { args, flags: _flags } = await this.parse(DependencyCruiser);
-    if (!args.scan && !_flags.init && !_flags.emitActionsSummary) {
-      await DependencyCruiser.run(['--help']);
-      return;
-    }
     if (_flags.init) {
       const runNow = await this.initConfig();
       if (!runNow || !args.scan) return;
       this.cache.clear();
     }
+    if (!args.scan) {
+      await DependencyCruiser.run(['--help']);
+      return;
+    }
 
+    if (typeof _flags.emitActionsSummary === 'string')
+      await this.emitActionsSummary(_flags.emitActionsSummary);
     const cfg = await this.cache.get();
-    const { output: out, result } = await cruise([args.scan!], {
+    const { output: out, result } = await cruise([args.scan], {
       input: cfg,
       flags: _flags
     });
 
     if (out.log) this.log(await format(result, { outputType: out.log }));
-
-    if (typeof _flags.emitActionsSummary === 'string')
-      await this.emitActionsSummary(_flags.emitActionsSummary);
 
     if (out.report)
       await this.write({

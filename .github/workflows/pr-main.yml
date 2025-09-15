@@ -16,7 +16,7 @@ jobs:
         !contains(github.event.pull_request.title, 'ci') }}
       commitlint_mode: 'pr'
 
-  open-pr:
+  generate-affected-deps-graph:
     needs: validate-pr
     runs-on: ubuntu-latest
     steps:
@@ -30,4 +30,4 @@ jobs:
 
       - name: 🛠️ Generate Affected Dependency Graph
         run: |
-          pnpm depcruiser . --emit-actions-summary ${{ github.event.pull_request.base.sha }} --no-graph --no-report
+          pnpm depcruiser . --emit-actions-summary ${{ github.event.pull_request.base.sha }} --no-output

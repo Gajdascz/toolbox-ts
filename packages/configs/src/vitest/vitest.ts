@@ -21,7 +21,7 @@ type NestedPartial<T> = {
 };
 
 export const DEFAULTS: { cacheDir: string; test: ViteUserConfig['test'] } = {
-  cacheDir: 'node_modules/.cache/vitest',
+  cacheDir: 'node_modules/.cache',
 
   test: {
     coverage: {

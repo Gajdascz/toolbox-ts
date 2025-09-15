@@ -1,7 +1,7 @@
 import type { IViolation } from 'dependency-cruiser';
 
 import { reporters } from '@toolbox-ts/cli-kit';
-import { icons } from '@toolbox-ts/utils/constants';
+import { icons } from '@toolbox-ts/utils';
 import { EOL } from 'node:os';
 
 import { output } from '../../../definitions/index.js';

@@ -1,31 +1,158 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  camelToKebab,
+  camel,
   capitalize,
-  cleanArr,
   is,
-  kebabToCamel,
-  parse,
+  kebab,
+  normalize,
+  pascal,
   prefix,
+  split,
   suffix,
   uncapitalize
 } from './Str.ts';
 
-describe('camelToKebab', () => {
-  it('converts typical camelCase', () => {
-    expect(camelToKebab('noEdit')).toBe('no-edit');
-    expect(camelToKebab('myFlagName')).toBe('my-flag-name');
+describe('Str', () => {
+  describe('camel', () => {
+    const { is: isCamel, toKebab, toPascal } = camel;
+    it('is', () => {
+      expect(isCamel('fooBarBaz')).toBe(true);
+      expect(isCamel('f')).toBe(true);
+      expect(isCamel('FooBar')).toBe(false);
+      expect(isCamel('foo-bar')).toBe(false);
+      expect(isCamel('')).toBe(false);
+      expect(isCamel(123 as unknown)).toBe(false);
+    });
+    it('toKebab', () => {
+      expect(toKebab('noEdit')).toBe('no-edit');
+      expect(toKebab('myFlagName')).toBe('my-flag-name');
+      expect(toKebab('AAAAAA')).toBe('a-a-a-a-a-a');
+      expect(toKebab('  noVerify  ')).toBe('no-verify');
+      expect(toKebab('A')).toBe('a');
+      expect(toKebab('a')).toBe('a');
+    });
+    it('toPascal', () => {
+      expect(toPascal('myFlagName')).toBe('MyFlagName');
+      expect(toPascal('noEdit')).toBe('NoEdit');
+      expect(toPascal('a')).toBe('A');
+      expect(toPascal('A')).toBe('A');
+      expect(toPascal('aAaAaA')).toBe('AAaAaA');
+    });
   });
-  it('handles all uppercase letters', () => {
-    expect(camelToKebab('AAAAAA')).toBe('a-a-a-a-a-a');
+  describe('kebab', () => {
+    const { is: isKebab, toCamel, toPascal } = kebab;
+    it('is', () => {
+      expect(isKebab('foo-bar-baz')).toBe(true);
+      expect(isKebab('foo')).toBe(true);
+      expect(isKebab('Foo-bar')).toBe(false);
+      expect(isKebab('foo-')).toBe(false);
+      expect(isKebab('')).toBe(false);
+      expect(isKebab(null as unknown)).toBe(false);
+    });
+    it('toCamel', () => {
+      expect(toCamel('no-edit')).toBe('noEdit');
+      expect(toCamel('my-flag-name')).toBe('myFlagName');
+      expect(toCamel('a-a-a-a-a-a')).toBe('aAAAAA');
+      expect(toCamel('  no-verify  ')).toBe('noVerify');
+      expect(toCamel('a')).toBe('a');
+      expect(toCamel('A')).toBe('a');
+    });
+    it('toPascal', () => {
+      expect(toPascal('my-flag-name')).toBe('MyFlagName');
+      expect(toPascal('no-edit')).toBe('NoEdit');
+      expect(toPascal('a')).toBe('A');
+      expect(toPascal('A')).toBe('A');
+      expect(toPascal('a-a-a-a-a-a')).toBe('AAAAAA');
+    });
   });
-  it('trims whitespace', () => {
-    expect(camelToKebab('  noVerify  ')).toBe('no-verify');
+  describe('pascal', () => {
+    const { is: isPascal, toCamel, toKebab } = pascal;
+    it('is', () => {
+      expect(isPascal('FooBar')).toBe(true);
+      expect(isPascal('F')).toBe(true);
+      expect(isPascal('fooBar')).toBe(false);
+      expect(isPascal('Foo-Bar')).toBe(false);
+      expect(isPascal('')).toBe(false);
+      expect(isPascal(123 as unknown)).toBe(false);
+    });
+    it('toCamel', () => {
+      expect(toCamel('NoEdit')).toBe('noEdit');
+      expect(toCamel('MyFlagName')).toBe('myFlagName');
+      expect(toCamel('A')).toBe('a');
+      expect(toCamel('a')).toBe('a');
+      expect(toCamel('AAaAaA')).toBe('aAaAaA');
+    });
+    it('toKebab', () => {
+      expect(toKebab('NoEdit')).toBe('no-edit');
+      expect(toKebab('MyFlagName')).toBe('my-flag-name');
+      expect(toKebab('AAAAAA')).toBe('a-a-a-a-a-a');
+      expect(toKebab('  NoVerify  ')).toBe('no-verify');
+      expect(toKebab('A')).toBe('a');
+      expect(toKebab('a')).toBe('a');
+    });
   });
-  it('single letter stays lowercase', () => {
-    expect(camelToKebab('A')).toBe('a');
-    expect(camelToKebab('a')).toBe('a');
+  describe('is', () => {
+    it('prefixed', () => {
+      expect(is.prefixed('--flag', '--')).toBe(true);
+      expect(is.prefixed('flag', '--')).toBe(false);
+      expect(is.prefixed('flag', '--')).toBe(false);
+      expect(is.prefixed('no-prefix', '--')).toBe(false);
+    });
+    it('suffixed', () => {
+      expect(is.suffixed('file.ts', '.ts')).toBe(true);
+      expect(is.suffixed('file.js', '.js')).toBe(true);
+      expect(is.suffixed('file.js', '.ts')).toBe(false);
+      expect(is.suffixed('file', '.js')).toBe(false);
+    });
+    it('alphabetic', () => {
+      expect(is.alphabetic('hello')).toBe(true);
+      expect(is.alphabetic('HelloWorld')).toBe(true);
+      expect(is.alphabetic('ABCdef')).toBe(true);
+      expect(is.alphabetic('hello123')).toBe(false);
+      expect(is.alphabetic('hello_world')).toBe(false);
+      expect(is.alphabetic('hello-world')).toBe(false);
+      expect(is.alphabetic('')).toBe(false);
+      expect(is.alphabetic(123 as unknown)).toBe(false);
+    });
+    it('array', () => {
+      expect(is.array(['a', 'b', 'c'])).toBe(true);
+      expect(is.array([])).toBe(true);
+      expect(is.array(['a', 2, 'c'])).toBe(false);
+      expect(is.array([1, 2, 3])).toBe(false);
+      expect(is.array('not-an-array' as unknown)).toBe(false);
+      expect(is.array(null)).toBe(false);
+      expect(is.array(undefined)).toBe(false);
+    });
+    it('alphanumeric', () => {
+      expect(is.alphanumeric('hello123')).toBe(true);
+      expect(is.alphanumeric('HelloWorld2024')).toBe(true);
+      expect(is.alphanumeric('ABCdef456')).toBe(true);
+      expect(is.alphanumeric('hello_world')).toBe(false);
+      expect(is.alphanumeric('hello-world')).toBe(false);
+      expect(is.alphanumeric('hello!')).toBe(false);
+      expect(is.alphanumeric('')).toBe(false);
+      expect(is.alphanumeric(123 as unknown)).toBe(false);
+    });
+    it('char', () => {
+      expect(is.char('a')).toBe(true);
+      expect(is.char('Z')).toBe(true);
+      expect(is.char('1')).toBe(true);
+      expect(is.char('@')).toBe(true);
+      expect(is.char('ab')).toBe(false);
+      expect(is.char('')).toBe(false);
+      expect(is.char(1 as unknown)).toBe(false);
+    });
+    it('capitalized', () => {
+      expect(is.capitalized('Hello')).toBe(true);
+      expect(is.capitalized('A')).toBe(true);
+      expect(is.capitalized('HelloWorld')).toBe(true);
+      expect(is.capitalized('hello')).toBe(false);
+      expect(is.capitalized('HELLO')).toBe(true);
+      expect(is.capitalized('Hello123')).toBe(true);
+      expect(is.capitalized('')).toBe(false);
+      expect(is.capitalized(123 as unknown)).toBe(false);
+    });
   });
 });
 
@@ -40,119 +167,54 @@ describe('capitalize / uncapitalize', () => {
   });
 });
 
-describe('kebabToCamel', () => {
-  it('converts kebab-case to camelCase', () => {
-    expect(kebabToCamel('my-flag-name')).toBe('myFlagName');
-  });
-  it('single segment stays lowercase', () => {
-    expect(kebabToCamel('FOO')).toBe('foo');
-  });
-  it('handles already lowercase', () => {
-    expect(kebabToCamel('simple')).toBe('simple');
-  });
-  it('handles single characters', () => {
-    expect(kebabToCamel('a-a-a-a-a-a')).toBe('aAAAAA');
-    expect(kebabToCamel('a-A-A-a-a-A')).toBe('aAAAAA');
-  });
-});
-
-describe('cleanArr', () => {
-  it('returns [] for undefined', () => {
-    expect(cleanArr(undefined)).toEqual([]);
-  });
-  it('cleans, trims and filters invalid', () => {
-    const input = [' a ', '', 'b', '  ', 1, null, 'c '];
-    expect(cleanArr(input)).toEqual(['a', 'b', 'c']);
-  });
-  it('deduplicates when requested', () => {
-    const input = [' a ', 'a', 'b', 'b', 'c'];
-    expect(cleanArr(input, true)).toEqual(['a', 'b', 'c']);
-  });
-  it('handles non-array input', () => {
-    expect(cleanArr('not-an-array' as unknown)).toEqual([]);
-  });
-});
-describe('is', () => {
-  describe('camel', () => {
-    it('returns true for valid camelCase', () => {
-      expect(is.camel('fooBarBaz')).toBe(true);
-      expect(is.camel('f')).toBe(true);
-    });
-    it('returns false for invalid camelCase', () => {
-      expect(is.camel('FooBar')).toBe(false); // starts uppercase
-      expect(is.camel('foo-bar')).toBe(false); // hyphen
-      expect(is.camel('')).toBe(false); // empty
-      expect(is.camel(123 as unknown)).toBe(false); // non-string
-    });
-  });
-  describe('kebab', () => {
-    it('returns true for valid kebab-case', () => {
-      expect(is.kebab('foo-bar-baz')).toBe(true);
-      expect(is.kebab('foo')).toBe(true);
-    });
-    it('returns false for invalid kebab-case', () => {
-      expect(is.kebab('Foo-bar')).toBe(false); // uppercase
-      expect(is.kebab('foo-')).toBe(false); // trailing hyphen
-      expect(is.kebab('')).toBe(false);
-      expect(is.kebab(null as unknown)).toBe(false);
-    });
-  });
-  describe('prefixed', () => {
-    it('returns true for prefixed strings', () => {
-      expect(is.prefixed('--flag', '--')).toBe(true);
-      expect(is.prefixed('flag', '--')).toBe(false);
-    });
-    it('returns false for non-prefixed strings', () => {
-      expect(is.prefixed('flag', '--')).toBe(false);
-      expect(is.prefixed('no-prefix', '--')).toBe(false);
-    });
-  });
-  describe('suffixed', () => {
-    it('returns true for suffixed strings', () => {
-      expect(is.suffixed('file.ts', '.ts')).toBe(true);
-      expect(is.suffixed('file.js', '.js')).toBe(true);
-    });
-    it('returns false for non-suffixed strings', () => {
-      expect(is.suffixed('file.js', '.ts')).toBe(false);
-      expect(is.suffixed('file', '.js')).toBe(false);
-    });
-  });
-  describe('str', () => {
-    it('returns true for strings', () => {
-      expect(is.str('hello')).toBe(true);
-      expect(is.str('')).toBe(true);
-    });
-    it('returns false for non-strings', () => {
-      expect(is.str(123)).toBe(false);
-      expect(is.str(null)).toBe(false);
-      expect(is.str(undefined)).toBe(false);
-    });
-  });
-  describe('alphabetic', () => {
-    it('returns true for alphabetic strings', () => {
-      expect(is.alphabetic('hello')).toBe(true);
-      expect(is.alphabetic('HelloWorld')).toBe(true);
-      expect(is.alphabetic('ABCdef')).toBe(true);
-    });
-    it('returns false for non-alphabetic strings', () => {
-      expect(is.alphabetic('hello123')).toBe(false); // contains numbers
-      expect(is.alphabetic('hello_world')).toBe(false); // contains underscore
-      expect(is.alphabetic('hello-world')).toBe(false); // contains hyphen
-      expect(is.alphabetic('')).toBe(false); // empty string
-      expect(is.alphabetic(123 as unknown)).toBe(false); // non-string
-    });
-  });
+describe('normalize', () => {
   describe('array', () => {
-    it('returns true for string arrays', () => {
-      expect(is.array(['a', 'b', 'c'])).toBe(true);
-      expect(is.array([])).toBe(true);
+    it('returns [] for undefined', () => {
+      expect(normalize.array(undefined)).toEqual([]);
     });
-    it('returns false for non-string arrays', () => {
-      expect(is.array(['a', 2, 'c'])).toBe(false);
-      expect(is.array([1, 2, 3])).toBe(false);
-      expect(is.array('not-an-array' as unknown)).toBe(false);
-      expect(is.array(null)).toBe(false);
-      expect(is.array(undefined)).toBe(false);
+    it('cleans, trims and filters invalid', () => {
+      const input = [' a ', '', 'b', '  ', 1, null, 'c '];
+      expect(normalize.array(input)).toEqual(['a', 'b', 'c']);
+    });
+    it('deduplicates when requested', () => {
+      const input = [' a ', 'a', 'b', 'b', 'c'];
+      expect(normalize.array(input, { deduplicate: true })).toEqual([
+        'a',
+        'b',
+        'c'
+      ]);
+    });
+    it('handles non-array input', () => {
+      expect(normalize.array('not-an-array' as unknown)).toEqual([
+        'not-an-array'
+      ]);
+    });
+  });
+  describe('sentence', () => {
+    it('normalizes a sentence', () => {
+      expect(normalize.sentence(' hello world ')).toBe('Hello world.');
+    });
+    it('custom end punctuation', () => {
+      expect(normalize.sentence('hello world', { endPunctuation: '!' })).toBe(
+        'Hello world!'
+      );
+    });
+    it('does not double end punctuation', () => {
+      expect(normalize.sentence('Hello world.')).toBe('Hello world.');
+      expect(normalize.sentence('Hello world!')).toBe('Hello world!');
+    });
+    it('capitalizes first letter by default', () => {
+      expect(normalize.sentence('hello world')).toBe('Hello world.');
+    });
+    it('can disable first letter capitalization', () => {
+      expect(
+        normalize.sentence('hello world', { capitalizeFirst: false })
+      ).toBe('hello world.');
+    });
+    it('returns empty string for non-string input', () => {
+      expect(normalize.sentence(123)).toBe('123.');
+      expect(normalize.sentence(null)).toBe('Null.');
+      expect(normalize.sentence(undefined)).toBe('');
     });
   });
 });
@@ -166,18 +228,18 @@ describe('prefix / suffix', () => {
   });
 });
 
-describe('parse', () => {
-  it('csvRow', () => {
-    expect(parse.csvRow('a,b , c')).toEqual(['a', 'b', 'c']);
+describe('split', () => {
+  it('csv', () => {
+    expect(split.csv('a,b , c')).toEqual(['a', 'b', 'c']);
   });
   it('spaceSeparated', () => {
-    expect(parse.spaceSeparated('a b  c')).toEqual(['a', 'b', 'c']);
+    expect(split.space('a b  c')).toEqual(['a', 'b', 'c']);
   });
   it('lines', () => {
-    expect(parse.lines('a\nb\r\nc')).toEqual(['a', 'b', 'c']);
+    expect(split.lines('a\nb\r\nc')).toEqual(['a', 'b', 'c']);
   });
-  it('csv', () => {
-    expect(parse.csv('a,b,c\nd,e,f\r\ng,h,i')).toEqual([
+  it('csvRows', () => {
+    expect(split.csvRows('a,b,c\nd,e,f\r\ng,h,i')).toEqual([
       ['a', 'b', 'c'],
       ['d', 'e', 'f'],
       ['g', 'h', 'i']

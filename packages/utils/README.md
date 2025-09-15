@@ -1,7 +1,6 @@
 # @toolbox-ts/utils
 
-**Type-safe utility functions and constants for TypeScript packages.**  
-Provides reusable helpers for working with objects, primitives, strings, and common constants.
+**Type-safe utility functions**  
 
 ## Install
 
@@ -13,17 +12,28 @@ npm install @toolbox-ts/utils
 yarn add @toolbox-ts/utils
 ```
 
-## [Obj](https://github.com/Gajdascz/toolbox-ts/tree/main/packages/utils/src/Obj/README.md)
+## Overview
 
-`Obj` is a collection of **safe, type-aware object utilities**
+- Arr
+  - Flexible cloning and merging. Methods for zipping, initializing, partitioning, safe-access etc...
 
-## [Str](https://github.com/Gajdascz/toolbox-ts/tree/main/packages/utils/src/Str/README.md)
+- Num
+  - Base: Rounding, type guards, calculating range, summing sequences, clamping, etc...
+  - Bits: Bit-based operations and definitions.
+  - Unit-Interval: Working with a value between [0,1]
 
-The `Str` module provides **safe, type-aware string utilities**
+- Obj
+  - Deep cloning, freezing, merging.
+  - Array-like methods including filter, reduce, map, etc.
+  - Methods for getting typed keys, values, entries.
 
-## [Prim](https://github.com/Gajdascz/toolbox-ts/tree/main/packages/utils/src/Prim/README.md)
+- Prim: Type guards, string and number normalization, merge for handling semantics, type resolution, etc.
 
-`Prim` provides **type-safe, primitive-focused utilities**
+- Str: Camel, pascal, and kebab case. Normalizers, splitters, and other useful utilities.
+
+- Types: Wide range of useful types.
+
+- Icons: Constants for quick access to emoji-style icons.
 
 ## ⚖️ License
 

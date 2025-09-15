@@ -202,9 +202,7 @@ export const resolveOptions = async ({
   base,
   cruiseOptions = {}
 }: ResolveOptions): Promise<ResolvedOptions> => {
-  const merged = Obj.merge(base, cruiseOptions, {
-    array: { behavior: 'overwrite' }
-  });
+  const merged = Obj.merge(base, cruiseOptions);
 
   if (cruiseOptions.ruleSet && !Obj.is.empty(cruiseOptions.ruleSet)) {
     merged.ruleSet = resolve.ruleSet(base.ruleSet ?? {}, cruiseOptions.ruleSet);

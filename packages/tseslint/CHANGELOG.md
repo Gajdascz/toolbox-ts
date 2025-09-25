@@ -1,5 +1,11 @@
 # @toolbox-ts/tseslint
 
+## 0.1.2
+
+### Patch Changes
+
+- 614bfcc: make peers actual deps and resolve type error
+
 ## 0.1.1
 
 ### Patch Changes

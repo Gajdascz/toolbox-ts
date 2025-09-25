@@ -52,7 +52,7 @@
     }
   },
   "dependencies": {
-    "@oclif/core": "^4.5.2",
+    "@oclif/core": "^4.5.4",
     "@toolbox-ts/cli-kit": "workspace:^",
     "@toolbox-ts/file": "workspace:^",
     "@toolbox-ts/utils": "workspace:^",
@@ -60,7 +60,7 @@
     "watskeburt": "^4.2.3"
   },
   "devDependencies": {
-    "@types/node": "^18.19.124",
+    "@types/node": "^18.19.127",
     "tsx": "^4.20.5"
   },
   "bin": {

@@ -30,7 +30,7 @@ export const ROOT: ConfigWithExtends = Object.freeze({
     ...configs.stylisticTypeChecked,
     perfectionistPlugin.configs['recommended-alphabetical'],
     unicornPlugin.configs.recommended,
-    vitestPlugin.configs.recommended,
+    vitestPlugin.configs.recommended as never,
     prettierConfig
   ],
   files: ['**/*'],

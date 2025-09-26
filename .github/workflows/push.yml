@@ -6,8 +6,10 @@ on:
       - main
 
 jobs:
-  check-for-open-pr-and-validate:
+  check-for-open-pr:
     runs-on: ubuntu-latest
+    outputs:
+      has_open_pr: ${{ steps.pr-check.outputs.has_open_pr }}
     steps:
       - name: ⬇️ Check Out Repo
         uses: actions/checkout@v4
@@ -27,11 +29,12 @@ jobs:
               base: 'main',
               state: 'open'
             });
-            return prs.data.length > 0;
+            core.setOutput('has_open_pr', (prs.data.length > 0).toString());
 
-      - name: Run validation
-        if: steps.pr-check.outputs.result != 'true'
-        uses: ./.github/workflows/validate.yml
-        with:
-          changeset: false
-          commitlint_mode: 'last'
+  validate-push:
+    if: needs.check-for-open-pr.outputs.has_open_pr == 'false'
+    uses: ./.github/workflows/validate.yml
+    needs: check-for-open-pr
+    with:
+      changeset: false
+      commitlint_mode: 'last'

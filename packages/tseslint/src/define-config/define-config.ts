@@ -6,17 +6,20 @@ import type { BaseCfg } from '../base/types.js';
 
 /* c8 ignore start */
 import {
+  extendRoot as _extRoot,
   configs,
   create,
   type CreateInput,
   DEFAULT_CONFIG_ORDER,
-  type DefaultBaseConfigName
+  type DefaultBaseConfigName,
+  type ExtendRootOptions
 } from '../base/index.js';
 /* c8 ignore end */
 
 export interface DefineConfigInput {
   custom?: Record<string, CreateInput<string>>;
   defaults?: boolean | DefaultOverrides | undefined;
+  extendRoot?: ExtendRootOptions;
 }
 
 type DefaultOverrides = {
@@ -24,10 +27,11 @@ type DefaultOverrides = {
 };
 export const defineConfig = ({
   custom = {},
-  defaults
+  defaults = undefined,
+  extendRoot = undefined
 }: DefineConfigInput = {}) => {
   /* c8 ignore start */
-  const result: ConfigWithExtendsArray = [configs.__root];
+  const result: ConfigWithExtendsArray = [_extRoot(extendRoot)];
   if (defaults === true || defaults === undefined)
     result.push(
       create({ base: configs.build }),

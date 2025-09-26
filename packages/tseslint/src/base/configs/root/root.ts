@@ -22,7 +22,7 @@ import {
   unicorn
 } from './rules.js';
 
-export const ROOT: ConfigWithExtends = Object.freeze({
+export const ROOT: ConfigWithExtends = Object.freeze<ConfigWithExtends>({
   extends: [
     js.configs.recommended,
     jsdoc.configs['flat/stylistic-typescript'],
@@ -50,6 +50,22 @@ export const ROOT: ConfigWithExtends = Object.freeze({
     ...imports,
     ...perfectionist
   }
+});
+
+export interface ExtendRootOptions {
+  extends?: ConfigWithExtends['extends'];
+  plugins?: ConfigWithExtends['plugins'];
+  rules?: ConfigWithExtends['rules'];
+}
+export const extendRoot = ({
+  extends: _extends = [],
+  plugins = {},
+  rules = {}
+}: ExtendRootOptions = {}): ConfigWithExtends => ({
+  ...ROOT,
+  extends: [...ROOT.extends!, ..._extends],
+  plugins: { ...ROOT.plugins, ...plugins },
+  rules: { ...ROOT.rules, ...rules }
 });
 
 export const createBaseConfig = <N extends string>(

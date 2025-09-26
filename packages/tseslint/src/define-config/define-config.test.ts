@@ -7,7 +7,8 @@ vi.mock('eslint/config', () => ({
   defineConfig: vi.fn((configs: any[]) => configs)
 }));
 
-vi.mock('../base/index.js', () => ({
+vi.mock('../base/index.js', async (actual) => ({
+  ...((await actual()) as any),
   configs: {
     __root: { name: '__root' },
     build: {

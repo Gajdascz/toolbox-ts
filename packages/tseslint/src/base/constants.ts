@@ -7,7 +7,7 @@ export const ARRAYS = {
   ],
   DEV_DIRS: ['dev', '_dev', 'tools', '_tools'],
   EXTS: ['ts', 'tsx', 'js', 'jsx'],
-  SRC_DIRS: ['src', 'packages', 'apps', 'bin'],
+  SRC_DIRS: ['src', 'packages', 'apps', 'bin', 'app', 'package'],
   TEST_FILES: ['test', 'spec', 'bench']
 } as const;
 export const GLOBS = {

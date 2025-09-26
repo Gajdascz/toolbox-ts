@@ -1,5 +1,11 @@
 # @toolbox-ts/tseslint
 
+## 0.1.4
+
+### Patch Changes
+
+- 50d7537: add app to src dirs
+
 ## 0.1.3
 
 ### Patch Changes

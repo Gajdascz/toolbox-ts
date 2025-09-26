@@ -1,5 +1,11 @@
 # @toolbox-ts/tseslint
 
+## 0.1.3
+
+### Patch Changes
+
+- 80b520b: add ability to extend root config
+
 ## 0.1.2
 
 ### Patch Changes

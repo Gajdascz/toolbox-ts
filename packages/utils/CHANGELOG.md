@@ -1,5 +1,11 @@
 # @toolbox-ts/utils
 
+## 0.5.2
+
+### Patch Changes
+
+- 8f274b7: add conditional utility helper functions
+
 ## 0.5.1
 
 ### Patch Changes

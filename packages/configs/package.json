@@ -1,6 +1,6 @@
 {
   "name": "@toolbox-ts/configs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Configuration wrappers for @toolbox-ts monorepo.",
   "license": "MIT",
   "type": "module",

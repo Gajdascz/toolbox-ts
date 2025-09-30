@@ -1,4 +1,5 @@
 export * from './Arr/index.js';
+export * from './helpers/index.js';
 export * as icons from './icons.js';
 export * from './Num/index.js';
 export * from './Obj/index.js';

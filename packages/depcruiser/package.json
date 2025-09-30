@@ -60,8 +60,8 @@
     "watskeburt": "^4.2.3"
   },
   "devDependencies": {
-    "@types/node": "^18.19.127",
-    "tsx": "^4.20.5"
+    "@types/node": "^18.19.128",
+    "tsx": "^4.20.6"
   },
   "bin": {
     "depcruiser": "./dist/cli/bin/run.js"

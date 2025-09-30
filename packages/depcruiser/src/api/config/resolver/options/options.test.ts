@@ -1,14 +1,9 @@
-import type { IAllowedRuleType, IFlattenedRuleSet } from 'dependency-cruiser';
-
-import * as file from '@toolbox-ts/file';
-import extractWebpackResolveConfig from 'dependency-cruiser/config-utl/extract-webpack-resolve-config';
-import fs from 'node:fs';
+import file from '@toolbox-ts/file';
 import path from 'node:path';
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { list } from 'watskeburt';
 
-import type { flags } from '../../../../config/index.ts';
-import type { ResolvedCruiseOptions } from '../../../../config/types.ts';
+import type { ResolvedCruiseOptions } from '../../../../definitions/index.js';
 
 import { resolve, resolveOptions } from './options.ts';
 vi.mock('watskeburt', () => ({ list: vi.fn() }));

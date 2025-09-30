@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { parseJson } from './parse-json.ts';
+import { parseJson, parseJsonSync } from './parse-json.ts';
 
 // memfs is pre-setup
 const testFile = '/tmp/test.json';
@@ -63,5 +63,10 @@ describe('parseJson', () => {
     expect(res.error).toMatch(/Unexpected error/);
 
     mockReadFile.mockClear();
+  });
+  it('parseJsonSync works', () => {
+    const res = parseJsonSync<{ foo: number }>(testFile);
+    expect(res).toEqual({ result: { foo: 42 } });
+    expect(res).not.toHaveProperty('error');
   });
 });

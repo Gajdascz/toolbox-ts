@@ -1,4 +1,4 @@
-import * as file from '@toolbox-ts/file';
+import file from '@toolbox-ts/file';
 
 import {
   type InputConfig,

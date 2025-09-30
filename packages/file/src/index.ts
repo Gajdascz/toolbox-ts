@@ -1,5 +1,4 @@
-export * from './find/index.js';
-export * from './load-module/load-module.js';
-export * from './parse-json/parse-json.js';
-export type * from './types.js';
-export * from './write/index.js';
+import * as file from './modules/index.js';
+
+export default file;
+export * as file from './modules/index.js';

@@ -1,4 +1,4 @@
-import * as file from '@toolbox-ts/file';
+import file from '@toolbox-ts/file';
 import { Obj } from '@toolbox-ts/utils';
 
 import type { InputConfig } from '../../definitions/types.js';
@@ -8,9 +8,9 @@ import { defaultConfig } from './defaults.js';
 /* c8 ignore start */
 export const loadConfig = async (
   cfgFileName = defaultConfig.configFileName,
-  startingDir: string = process.cwd()
+  startDir: string = process.cwd()
 ): Promise<InputConfig | undefined> => {
-  const cfgPath = await file.find.firstUp(cfgFileName, startingDir);
+  const cfgPath = await file.find.firstUp(cfgFileName, { startDir });
   if (cfgPath) {
     const { result, error } = await file.loadModule<InputConfig>(cfgPath);
     if (error)

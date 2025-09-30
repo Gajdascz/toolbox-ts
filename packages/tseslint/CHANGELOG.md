@@ -1,5 +1,11 @@
 # @toolbox-ts/tseslint
 
+## 0.1.5
+
+### Patch Changes
+
+- d08c810: add title case to string utils
+
 ## 0.1.4
 
 ### Patch Changes

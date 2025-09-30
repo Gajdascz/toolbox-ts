@@ -1,6 +1,6 @@
 {
   "name": "@toolbox-ts/tseslint",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "TypeScript ESLint configuration and utilities.",
   "license": "MIT",
   "type": "module",

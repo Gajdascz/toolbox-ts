@@ -1,5 +1,11 @@
 # @toolbox-ts/configs
 
+## 0.1.2
+
+### Patch Changes
+
+- d08c810: add title case to string utils
+
 ## 0.1.1
 
 ### Patch Changes

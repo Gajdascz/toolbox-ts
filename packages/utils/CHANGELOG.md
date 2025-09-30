@@ -1,5 +1,11 @@
 # @toolbox-ts/utils
 
+## 0.5.3
+
+### Patch Changes
+
+- 2d66cab: export helper functions
+
 ## 0.5.2
 
 ### Patch Changes

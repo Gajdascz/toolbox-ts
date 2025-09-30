@@ -6,7 +6,7 @@ import type {
 } from 'dependency-cruiser';
 
 import { utils } from '@toolbox-ts/cli-kit';
-import * as file from '@toolbox-ts/file';
+import file from '@toolbox-ts/file';
 import { Obj } from '@toolbox-ts/utils';
 import extractTSConfig from 'dependency-cruiser/config-utl/extract-ts-config';
 import extractWebpackResolveConfig from 'dependency-cruiser/config-utl/extract-webpack-resolve-config';

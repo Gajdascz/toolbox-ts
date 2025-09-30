@@ -3,7 +3,7 @@ import type { ICruiseResult } from 'dependency-cruiser';
 import { checkbox, confirm, input, select } from '@inquirer/prompts';
 import { Args } from '@oclif/core';
 import { BaseCommand, utils } from '@toolbox-ts/cli-kit';
-import * as file from '@toolbox-ts/file';
+import file from '@toolbox-ts/file';
 import { Obj, Str } from '@toolbox-ts/utils';
 
 import { cruise, defaultConfig, format, loadConfig } from '../../api/index.js';

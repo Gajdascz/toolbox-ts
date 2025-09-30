@@ -10,7 +10,7 @@ const isValidObject = (value: unknown): value is Record<string, unknown> =>
 /**
  * The supported values for the exported module data
  */
-type ExportableValue<Module> = (() => Module | Promise<Module>) | Module;
+export type ExportableValue<Module> = (() => Module | Promise<Module>) | Module;
 
 const isExportableValue = <Module>(
   importedValue: unknown
@@ -26,7 +26,7 @@ const isExportableValue = <Module>(
  * 3. The entire module
  * 4. A function that returns a it's content
  */
-type ModuleExport<Module> =
+export type ModuleExport<Module> =
   | { [key: string]: ExportableValue<Module> }
   | { [key: string]: unknown }
   | { default: ExportableValue<Module> }
@@ -43,11 +43,41 @@ const resolveModuleExport = <Module>(
   }
   return isExportableValue<Module>(value) ? value : null;
 };
-interface LoadModuleOpts<Module> {
+
+/**
+ * Options for loading a module from a script file
+ */
+export interface LoadModuleOpts<Module> {
+  /**
+   * The name of the export to load from the module.
+   * - If not provided, it will first look for a `default` export, then fall back to the entire module.
+   *
+   * @default 'default'
+   */
   exportKey?: string;
+  /**
+   * A function to further process or validate the loaded module content.
+   * - If the function returns `null`, it indicates a failure to resolve the module content.
+   */
   resolverFn?: FileContentResolver<Module>;
 }
-const loadModule = async <Module>(
+
+/**
+ * Dynamically load and resolve a module from a given script file path.
+ * - Supports both default and named exports.
+ * - Can handle modules that export a function returning the desired content.
+ *
+ * @example
+ * ```ts
+ * // module.ts
+ * export default { key: 'value' };
+ *
+ * // load-module.ts
+ * const { result, error } = await loadModule<{ key: string }>('module.ts');
+ * console.log(result); // { key: 'value' }
+ * ```
+ */
+export const loadModule = async <Module>(
   cfgPath: string,
   { resolverFn, exportKey = 'default' }: LoadModuleOpts<Module> = {}
 ): Promise<ResultObj<Module>> => {
@@ -76,11 +106,4 @@ const loadModule = async <Module>(
       err instanceof Error ? err.message : String(err)
     }`
   };
-};
-
-export {
-  type ExportableValue,
-  loadModule,
-  type LoadModuleOpts,
-  type ModuleExport
 };

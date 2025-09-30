@@ -1,4 +1,4 @@
-import type * as file from '@toolbox-ts/file';
+import type file from '@toolbox-ts/file';
 import type {
   DependencyType,
   IConfiguration,

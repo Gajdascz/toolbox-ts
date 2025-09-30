@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { loadModule } from './load-module.ts';
 const mockImport = (modulePath = '', moduleExports: unknown) => {
   vi.doUnmock(modulePath);
-  vi.doMock(modulePath, async () => await Promise.resolve(moduleExports));
+  vi.doMock(modulePath, async () => await moduleExports);
 };
 vi.mock('jiti', () => {
   const mockImportFn = vi.fn();
@@ -75,7 +75,8 @@ describe('loadModule', () => {
   it('should load a module with a function that returns a promise', async () => {
     const configPath = '/test/promise-function.js';
     const mockData = {
-      default: () => Promise.resolve({ name: 'promise-function', value: 200 })
+      // eslint-disable-next-line @typescript-eslint/require-await
+      default: async () => ({ name: 'promise-function', value: 200 })
     };
     mockImportFn.mockResolvedValueOnce(mockData);
     const result = await loadModule(configPath);

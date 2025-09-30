@@ -2,7 +2,7 @@ import type { InferredFlags } from '@oclif/core/interfaces';
 
 import { Flags } from '@oclif/core';
 import { utils } from '@toolbox-ts/cli-kit';
-import * as file from '@toolbox-ts/file';
+import file from '@toolbox-ts/file';
 import { Obj } from '@toolbox-ts/utils';
 import { EOL } from 'node:os';
 

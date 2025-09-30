@@ -112,3 +112,29 @@ export const kebabCase = {
    */
   lowercaseAlphabetic: /^[a-z]+(-[a-z]+)*$/
 } as const;
+
+export const titleCase = {
+  /**
+   * Title Case with alphabetic characters, words separated by space or hyphen
+   */
+  alphabetic: /^[A-Z][a-z]*(?:[ -][A-Z][a-z]*)*$/,
+
+  /**
+   * Title Case with alphanumeric characters, words separated by space or hyphen
+   */
+  alphanumeric: /^[A-Z][a-zA-Z0-9]*(?:[ -][A-Z][a-zA-Z0-9]*)*$/
+};
+
+/**
+ * Pattern to match space-separated strings
+ */
+export const spaceSeparated = {
+  /**
+   * Checks if a string is in space-separated format (only alphabetic characters).
+   */
+  alphabetic: /^[A-Za-z]+( [A-Za-z]+)*$/,
+  /**
+   * Checks if a string is in space-separated format (alphanumeric characters).
+   */
+  alphanumeric: /^[0-9A-Za-z0-9]+( [0-9A-Za-z0-9]+)*$/
+} as const;

@@ -11,9 +11,12 @@ import type {
   CamelToKebab,
   KebabToCamel,
   KebabToPascal,
+  KebabToTitle,
   PascalToKebab,
+  PascalToTitle,
   Prefix,
-  Suffix
+  Suffix,
+  TitleToKebab
 } from './types.js';
 
 import { Arr } from '../Arr/index.js';
@@ -26,7 +29,8 @@ import {
   kebabCase,
   pascalCase,
   punctuated,
-  space
+  space,
+  titleCase
 } from './regex.js';
 
 export const SPACE = ' ';
@@ -71,7 +75,21 @@ export const camel = {
       .replaceAll(/([A-Z])/g, '-$1')
       .toLowerCase() as CamelToKebab<S>,
 
-  toPascal: (s: string) => capitalize(s.trim()),
+  /**
+   * Converts a camelCase string to PascalCase.
+   *
+   * @template S - The camelCase string to convert.
+   * @example
+   * ```ts
+   * camel.toPascal('camelCase') // 'CamelCase'
+   * camel.toPascal('helloWorld') // 'HelloWorld'
+   * ```
+   */
+  toPascal: <S extends string>(s: S): Capitalize<S> =>
+    capitalize<S>(s.trim() as S),
+
+  toTitle: <S extends string>(str: S): KebabToTitle<CamelToKebab<S>> =>
+    kebab.toTitle(camel.toKebab(str)),
 
   /**
    * Checks if a string is in camelCase format.
@@ -93,7 +111,10 @@ export const camel = {
 export const pascal = {
   toKebab: <S extends string>(str: S): PascalToKebab<S> =>
     camel.toKebab(uncapitalize(str)),
-  toCamel: (s: string) => uncapitalize(s).trim(),
+  toCamel: <S extends string>(s: S): Uncapitalize<S> =>
+    uncapitalize<S>(s.trim() as S),
+  toTitle: <S extends string>(str: S): PascalToTitle<S> =>
+    kebab.toTitle(pascal.toKebab(str)),
   is: <S extends string = string>(
     str: unknown,
     type: keyof typeof pascalCase = 'alphabetic'
@@ -129,6 +150,12 @@ export const kebab = {
     const [first, ...rest] = str.trim().split('-');
     return `${first.toLowerCase()}${rest.map(capitalize).join('')}` as KebabToCamel<S>;
   },
+  toTitle: <S extends string>(str: S): KebabToTitle<S> =>
+    str
+      .trim()
+      .split('-')
+      .map((word) => capitalize(word.toLowerCase()))
+      .join(SPACE) as KebabToTitle<S>,
   /**
    * Converts a kebab-case string to PascalCase.
    * @example
@@ -140,6 +167,19 @@ export const kebab = {
    */
   toPascal: <S extends string>(str: S): KebabToPascal<S> =>
     capitalize(kebab.toCamel(str))
+} as const;
+export const title = {
+  is: <S extends string = string>(
+    str: unknown,
+    type: keyof typeof titleCase = 'alphabetic'
+  ): str is S =>
+    Prim.is.string(str) && str.length > 0 && titleCase[type].test(str),
+  toKebab: <S extends string>(str: S): TitleToKebab<S> =>
+    str.trim().toLowerCase().replaceAll(/\s+/g, '-') as TitleToKebab<S>,
+  toCamel: <S extends string>(str: S): KebabToCamel<TitleToKebab<S>> =>
+    kebab.toCamel(title.toKebab(str)),
+  toPascal: <S extends string>(str: S): KebabToPascal<TitleToKebab<S>> =>
+    kebab.toPascal(title.toKebab(str))
 } as const;
 
 /**

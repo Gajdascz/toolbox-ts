@@ -56,6 +56,10 @@
       "import": "./dist/number/index.js",
       "types": "./dist/number/index.d.ts"
     },
+    "./helpers": {
+      "import": "./dist/helpers/index.js",
+      "types": "./dist/helpers/index.d.ts"
+    },
     "./types": {
       "import": "./dist/types/index.js",
       "types": "./dist/types/index.d.ts"

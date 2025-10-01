@@ -1,4 +1,5 @@
-import type { Filtered, Plucked, StripNullish, StrRecord } from './types.js';
+import type { Filter, Pluck, StripNullish, StrRecord } from '../types/obj.js';
+export type * from '../types/obj.js';
 
 import { Arr } from '../Arr/index.js';
 import { Prim } from '../Prim/index.js';
@@ -396,13 +397,13 @@ export function mergeAll<R>(base: R, other: unknown[], opts?: MergeOpts) {
 export const filter = <T, R extends T[keyof T]>(
   obj: T,
   predicate: (key: keyof T, value: R) => boolean
-): Filtered<T, R> => {
+): Filter<T, R> => {
   const result: Partial<T> = {};
-  if (!is.obj(obj)) return result as Filtered<T, R>;
+  if (!is.obj(obj)) return result as Filter<T, R>;
   for (const [key, value] of entries<T>(obj))
     if (predicate(key, value as R)) result[key] = value;
 
-  return result as Filtered<T, R>;
+  return result as Filter<T, R>;
 };
 
 /** Creates a new object by picking specified keys from the original object. */
@@ -486,7 +487,7 @@ export const reduce = <T, R>(
  * @template K - Key of the property to pluck
  * @example
  * ```ts
- * const plucked = pluck(
+ * const pluck = pluck(
  *   { a: { id: 1 }, b: { id: 2 }, c: { id: 3 } },
  *   'id'
  * ) // { a: 1, b: 2, c: 3 }
@@ -495,16 +496,14 @@ export const reduce = <T, R>(
 export const pluck = <T, K extends keyof T[keyof T]>(
   obj: T,
   key: K
-): Plucked<T, K> => {
-  if (!is.obj(obj)) return obj as Plucked<T, K>;
-  return reduce<T, Plucked<T, K>>(
+): Pluck<T, K> => {
+  if (!is.obj(obj)) return obj as Pluck<T, K>;
+  return reduce<T, Pluck<T, K>>(
     obj,
     (acc, item, StrKey) => {
       if (is.obj(item) && key in item) acc[StrKey] = item[key];
       return acc;
     },
-    {} as Plucked<T, K>
+    {} as Pluck<T, K>
   );
 };
-
-export type * from './types.ts';

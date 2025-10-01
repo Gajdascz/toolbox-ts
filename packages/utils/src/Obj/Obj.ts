@@ -410,7 +410,7 @@ export const pick = <T, K extends keyof T = keyof T>(
   /** Object to pick properties from */
   obj: T,
   /** Keys of properties to pick */
-  pickKeys: K[]
+  pickKeys: K[] | readonly K[]
 ): Pick<T, K> => {
   const result: Partial<T> = {};
   if (!is.obj(obj)) return result as Pick<T, K>;
@@ -422,7 +422,7 @@ export const omit = <T, K extends keyof T = keyof T>(
   /** Object to omit properties from */
   obj: T,
   /** Keys of properties to omit */
-  omitKeys: K[]
+  omitKeys: K[] | readonly K[]
 ): Omit<T, K> => {
   const result: Partial<T> = {};
   if (!is.obj(obj)) return result as Omit<T, K>;

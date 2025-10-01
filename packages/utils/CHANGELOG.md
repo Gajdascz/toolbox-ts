@@ -1,5 +1,11 @@
 # @toolbox-ts/utils
 
+## 0.5.6
+
+### Patch Changes
+
+- df57e97: refactor types and exports
+
 ## 0.5.5
 
 ### Patch Changes

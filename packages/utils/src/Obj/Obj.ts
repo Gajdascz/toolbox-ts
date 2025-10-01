@@ -388,7 +388,7 @@ export function mergeAll<R>(base: R, other: unknown[], opts?: MergeOpts) {
  * @template R - Value type to filter by
  * @example
  * ```ts
- * const filter = filter(
+ * const filtered = filter(
  *   { a: 1, b: '2', c: 3 },
  *   (v): v is number => typeof v === 'number'
  * ) // { a: 1, c: 3 }

@@ -63,6 +63,22 @@
     "./types": {
       "import": "./dist/types/index.js",
       "types": "./dist/types/index.d.ts"
+    },
+    "./types/obj": {
+      "import": "./dist/types/obj.js",
+      "types": "./dist/types/obj.d.ts"
+    },
+    "./types/spatial": {
+      "import": "./dist/types/spatial.js",
+      "types": "./dist/types/spatial.d.ts"
+    },
+    "./types/str": {
+      "import": "./dist/types/str.js",
+      "types": "./dist/types/str.d.ts"
+    },
+    "./types/general": {
+      "import": "./dist/types/general.js",
+      "types": "./dist/types/general.d.ts"
     }
   }
 }

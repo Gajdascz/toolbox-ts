@@ -1,5 +1,11 @@
 # @toolbox-ts/utils
 
+## 0.5.5
+
+### Patch Changes
+
+- 5e860fb: allow readonly key arrays in object pick and omit methods
+
 ## 0.5.4
 
 ### Patch Changes

@@ -8,6 +8,7 @@ import {
   normalize,
   pascal,
   prefix,
+  snake,
   split,
   suffix,
   title,
@@ -17,7 +18,7 @@ import {
 describe('Str', () => {
   describe('cases', () => {
     describe('camel', () => {
-      const { is: isCamel, toKebab, toPascal, toTitle } = camel;
+      const { is: isCamel, toKebab, toPascal, toTitle, toSnake } = camel;
       it('is', () => {
         expect(isCamel('fooBarBaz')).toBe(true);
         expect(isCamel('f')).toBe(true);
@@ -48,9 +49,16 @@ describe('Str', () => {
         expect(toTitle('A')).toBe('A');
         expect(toTitle('aAaAaA')).toBe('A Aa Aa A');
       });
+      it('toSnake', () => {
+        expect(toSnake('myFlagName')).toBe('my_flag_name');
+        expect(toSnake('noEdit')).toBe('no_edit');
+        expect(toSnake('a')).toBe('a');
+        expect(toSnake('A')).toBe('a');
+        expect(toSnake('aAaAaA')).toBe('a_aa_aa_a');
+      });
     });
     describe('kebab', () => {
-      const { is: isKebab, toCamel, toPascal, toTitle } = kebab;
+      const { is: isKebab, toCamel, toPascal, toTitle, toSnake } = kebab;
       it('is', () => {
         expect(isKebab('foo-bar-baz')).toBe(true);
         expect(isKebab('foo')).toBe(true);
@@ -81,9 +89,16 @@ describe('Str', () => {
         expect(toTitle('A')).toBe('A');
         expect(toTitle('a-a-a-a-a-a')).toBe('A A A A A A');
       });
+      it('toSnake', () => {
+        expect(toSnake('my-flag-name')).toBe('my_flag_name');
+        expect(toSnake('no-edit')).toBe('no_edit');
+        expect(toSnake('a')).toBe('a');
+        expect(toSnake('A')).toBe('a');
+        expect(toSnake('a-a-a-a-a-a')).toBe('a_a_a_a_a_a');
+      });
     });
     describe('pascal', () => {
-      const { is: isPascal, toCamel, toKebab, toTitle } = pascal;
+      const { is: isPascal, toCamel, toKebab, toTitle, toSnake } = pascal;
       it('is', () => {
         expect(isPascal('FooBar')).toBe(true);
         expect(isPascal('F')).toBe(true);
@@ -114,9 +129,16 @@ describe('Str', () => {
         expect(toTitle('A')).toBe('A');
         expect(toTitle('AAaAaA')).toBe('A Aa Aa A');
       });
+      it('toSnake', () => {
+        expect(toSnake('MyFlagName')).toBe('my_flag_name');
+        expect(toSnake('NoEdit')).toBe('no_edit');
+        expect(toSnake('a')).toBe('a');
+        expect(toSnake('A')).toBe('a');
+        expect(toSnake('AAaAaA')).toBe('a_aa_aa_a');
+      });
     });
     describe('title', () => {
-      const { is: isTitle, toKebab, toCamel, toPascal } = title;
+      const { is: isTitle, toKebab, toCamel, toPascal, toSnake } = title;
       it('is', () => {
         expect(isTitle('Hello World')).toBe(true);
         expect(isTitle('A')).toBe(true);
@@ -147,6 +169,55 @@ describe('Str', () => {
         expect(toPascal('A')).toBe('A');
         expect(toPascal('a')).toBe('A');
         expect(toPascal('This is a Test')).toBe('ThisIsATest');
+      });
+      it('toSnake', () => {
+        expect(toSnake('Hello World')).toBe('hello_world');
+        expect(toSnake('  Hello   World  ')).toBe('hello_world');
+        expect(toSnake('A')).toBe('a');
+        expect(toSnake('a')).toBe('a');
+        expect(toSnake('This is a Test')).toBe('this_is_a_test');
+      });
+    });
+    describe('snake', () => {
+      const { is: isSnake, toKebab, toCamel, toPascal, toTitle } = snake;
+      it('is', () => {
+        expect(isSnake('foo_bar_baz')).toBe(true);
+        expect(isSnake('foo')).toBe(true);
+        expect(isSnake('Foo_bar')).toBe(false);
+        expect(isSnake('foo-')).toBe(false);
+        expect(isSnake('foo_')).toBe(false);
+        expect(isSnake('')).toBe(false);
+        expect(isSnake(123 as unknown)).toBe(false);
+      });
+      it('toKebab', () => {
+        expect(toKebab('no_edit')).toBe('no-edit');
+        expect(toKebab('my_flag_name')).toBe('my-flag-name');
+        expect(toKebab('a_a_a_a_a_a')).toBe('a-a-a-a-a-a');
+        expect(toKebab('  no_verify  ')).toBe('no-verify');
+        expect(toKebab('a')).toBe('a');
+        expect(toKebab('A')).toBe('a');
+      });
+      it('toCamel', () => {
+        expect(toCamel('no_edit')).toBe('noEdit');
+        expect(toCamel('my_flag_name')).toBe('myFlagName');
+        expect(toCamel('a_a_a_a_a_a')).toBe('aAAAAA');
+        expect(toCamel('  no_verify  ')).toBe('noVerify');
+        expect(toCamel('a')).toBe('a');
+        expect(toCamel('A')).toBe('a');
+      });
+      it('toPascal', () => {
+        expect(toPascal('my_flag_name')).toBe('MyFlagName');
+        expect(toPascal('no_edit')).toBe('NoEdit');
+        expect(toPascal('a')).toBe('A');
+        expect(toPascal('A')).toBe('A');
+        expect(toPascal('a_a_a_a_a_a')).toBe('AAAAAA');
+      });
+      it('toTitle', () => {
+        expect(toTitle('my_flag_name')).toBe('My Flag Name');
+        expect(toTitle('no_edit')).toBe('No Edit');
+        expect(toTitle('a')).toBe('A');
+        expect(toTitle('A')).toBe('A');
+        expect(toTitle('a_a_a_a_a_a')).toBe('A A A A A A');
       });
     });
   });

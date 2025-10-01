@@ -118,12 +118,17 @@ export const titleCase = {
    * Title Case with alphabetic characters, words separated by space or hyphen
    */
   alphabetic: /^[A-Z][a-z]*(?:[ -][A-Z][a-z]*)*$/,
-
   /**
    * Title Case with alphanumeric characters, words separated by space or hyphen
    */
   alphanumeric: /^[A-Z][a-zA-Z0-9]*(?:[ -][A-Z][a-zA-Z0-9]*)*$/
 };
+export const snakeCase = {
+  /** Checks if a string is in snake_case format (only lowercase alphabetic characters). */
+  lowercaseAlphabetic: /^[a-z]+(_[a-z]+)*$/,
+  /** Checks if a string is in snake_case format (alphanumeric characters). */
+  lowercaseAlphanumeric: /^[a-z0-9]+(_[a-z0-9]+)*$/
+} as const;
 
 /**
  * Pattern to match space-separated strings

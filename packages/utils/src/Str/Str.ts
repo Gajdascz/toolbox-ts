@@ -17,7 +17,8 @@ import type {
   Prefix,
   Suffix,
   TitleToKebab
-} from './types.js';
+} from '../types/str.js';
+export type * from '../types/str.js';
 
 import { Arr } from '../Arr/index.js';
 import { Prim } from '../Prim/index.js';
@@ -379,4 +380,3 @@ export const normalize: {
   }
 } as const;
 export * as regex from './regex.js';
-export type * from './types.js';

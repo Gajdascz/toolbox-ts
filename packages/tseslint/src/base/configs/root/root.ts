@@ -5,9 +5,9 @@ import js from '@eslint/js';
 import vitestPlugin from '@vitest/eslint-plugin';
 import prettierConfig from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
-import jsdoc from 'eslint-plugin-jsdoc';
+import jsdocPlugin from 'eslint-plugin-jsdoc';
 import perfectionistPlugin from 'eslint-plugin-perfectionist';
-import tsdoc from 'eslint-plugin-tsdoc';
+import tsdocPlugin from 'eslint-plugin-tsdoc';
 import unicornPlugin from 'eslint-plugin-unicorn';
 import { configs, plugin } from 'typescript-eslint';
 
@@ -15,17 +15,20 @@ import type { BaseCfg } from '../../types.js';
 
 import { ARRAYS } from '../../constants.js';
 import {
-  docs,
-  imports,
-  perfectionist,
-  typescriptEslint,
-  unicorn
+  eslint as eslintRules,
+  imports as importsRules,
+  jsdoc as jsdocRules,
+  perfectionist as perfectionistRules,
+  tsdoc as tsdocRules,
+  typescriptEslint as typescriptEslintRules,
+  unicorn as unicornRules,
+  vitest as vitestRules
 } from './rules.js';
 
 export const ROOT: ConfigWithExtends = Object.freeze<ConfigWithExtends>({
   extends: [
     js.configs.recommended,
-    jsdoc.configs['flat/stylistic-typescript'],
+    jsdocPlugin.configs['flat/stylistic-typescript'],
     ...configs.strictTypeChecked,
     ...configs.stylisticTypeChecked,
     perfectionistPlugin.configs['recommended-alphabetical'],
@@ -39,16 +42,20 @@ export const ROOT: ConfigWithExtends = Object.freeze<ConfigWithExtends>({
   plugins: {
     '@typescript-eslint': plugin,
     import: importPlugin,
-    jsdoc,
-    tsdoc,
+    jsdoc: jsdocPlugin,
+    tsdoc: tsdocPlugin,
     vitest: vitestPlugin as never
   },
   rules: {
-    ...typescriptEslint,
-    ...unicorn,
-    ...docs,
-    ...imports,
-    ...perfectionist
+    ...eslintRules,
+    ...typescriptEslintRules,
+    ...unicornRules,
+    ...jsdocRules,
+    ...importsRules,
+    ...perfectionistRules,
+    ...vitestRules,
+    ...tsdocRules,
+    ...jsdocRules
   }
 });
 

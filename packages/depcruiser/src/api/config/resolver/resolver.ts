@@ -1,4 +1,4 @@
-import { Obj } from '@toolbox-ts/utils';
+import { obj } from '@toolbox-ts/utils';
 
 import type { flags, InputConfig } from '../../../definitions/index.js';
 
@@ -37,7 +37,7 @@ const _extends = async (
     if (!loaded) throw new Error(`Failed to load extended config '${ext}'`);
 
     const resolved = await _extends(loaded, nextVisited);
-    merged = Obj.merge(resolved, merged);
+    merged = obj.merge(resolved, merged);
   }
 
   return merged;
@@ -80,14 +80,14 @@ export const config = async ({
   const _input = await inputConfig(input);
 
   // Start from default + input
-  let merged = Obj.merge(defaultConfig, _input);
+  let merged = obj.merge(defaultConfig, _input);
 
   // Resolve all extends recursively
   merged = await _extends(merged);
 
   merged.options.ruleSet = ruleSet(merged);
 
-  if (flags) merged.options = Obj.merge(merged.options, resolveFlags(flags));
+  if (flags) merged.options = obj.merge(merged.options, resolveFlags(flags));
 
   return await resolveOptions({ base: merged.options });
 };

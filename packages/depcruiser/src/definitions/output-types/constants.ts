@@ -1,4 +1,4 @@
-import { Obj, type StrRecord } from '@toolbox-ts/utils';
+import { obj, type StrRecord } from '@toolbox-ts/utils';
 
 import type {
   DotGraph,
@@ -48,20 +48,20 @@ const all: TypeDefs = {
 
 export const definitions = {
   all: all,
-  graph: Obj.filter(all, (_, def) => def.kind === 'graph'),
-  report: Obj.filter(all, (_, def) => def.kind === 'report'),
-  dotGraph: Obj.filter(
+  graph: obj.filter(all, (_, def) => def.kind === 'graph'),
+  report: obj.filter(all, (_, def) => def.kind === 'report'),
+  dotGraph: obj.filter(
     all,
     (_, def) => def.kind === 'graph' && def.fileExtension === '.dot'
   ),
-  loggable: Obj.filter(all, (_, def) => def.loggable)
+  loggable: obj.filter(all, (_, def) => def.loggable)
 };
 export const keys = {
-  all: Obj.keys(definitions.all),
-  report: Obj.keys(definitions.report),
-  graph: Obj.keys(definitions.graph),
-  dotGraph: Obj.keys(definitions.dotGraph),
-  loggable: Obj.keys(definitions.loggable)
+  all: obj.keys(definitions.all),
+  report: obj.keys(definitions.report),
+  graph: obj.keys(definitions.graph),
+  dotGraph: obj.keys(definitions.dotGraph),
+  loggable: obj.keys(definitions.loggable)
 } as const;
 export const sets = {
   report: new Set<string>(keys.report),

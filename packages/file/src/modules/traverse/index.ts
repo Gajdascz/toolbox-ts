@@ -1,1 +1,1 @@
-export * as traverse from './traverse.js';
+export * from './traverse.js';

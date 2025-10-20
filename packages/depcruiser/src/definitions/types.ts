@@ -1,4 +1,4 @@
-import type file from '@toolbox-ts/file';
+import type { OverwriteBehavior } from '@toolbox-ts/file';
 import type {
   DependencyType,
   IConfiguration,
@@ -186,7 +186,7 @@ export interface InputCruiseOptions
    * - 'force': Always overwrite without asking
    * - 'skip': Never overwrite, return false if directory is not empty
    */
-  overwriteBehavior?: file.write.OverwriteBehavior;
+  overwriteBehavior?: OverwriteBehavior;
   report?: Toggleable<Partial<ReportCfg>>;
   tsConfig?: Partial<ITsConfig> | string;
   webpackConfig?: Partial<IWebpackConfig> | string;
@@ -216,7 +216,7 @@ export interface ResolvedCruiseOptions
    * - 'force': Always overwrite without asking
    * - 'skip': Never overwrite, return false if directory is not empty
    */
-  overwriteBehavior: file.write.OverwriteBehavior;
+  overwriteBehavior: OverwriteBehavior;
   progress: IProgress;
   reaches?: IReaches;
   report: Toggleable<ReportCfg>;

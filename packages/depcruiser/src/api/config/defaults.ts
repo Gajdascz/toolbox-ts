@@ -1,4 +1,4 @@
-import file from '@toolbox-ts/file';
+import { overwriteBehavior } from '@toolbox-ts/file';
 
 import {
   type InputConfig,
@@ -32,7 +32,7 @@ export const defaultConfig: BaseConfig = {
     peerDepsUsed: true
   },
   options: {
-    overwriteBehavior: file.write.overwriteBehaviors.force,
+    overwriteBehavior: overwriteBehavior.force,
     moduleSystems: ['es6', 'amd', 'cjs'],
     doNotFollow: {
       path: [

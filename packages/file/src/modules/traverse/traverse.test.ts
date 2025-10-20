@@ -2,7 +2,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { down, sync, toParent, up } from './traverse.js';
+import {
+  syncTraverseDown,
+  syncTraverseUp,
+  traverseDown,
+  traverseToParent,
+  traverseUp
+} from './traverse.js';
 
 const join = path.posix.join;
 const PROJECT_ROOT = '/project';
@@ -42,19 +48,19 @@ beforeEach(async () => {
   await fs.promises.mkdir(DEEPER_DIR, { recursive: true });
 });
 
-describe('toParent', () => {
+describe('traverseToParent', () => {
   it('returns the parent directory while respecting end boundaries', () => {
-    expect(toParent(DEEPER_DIR)).toBe(NESTED_DIR);
-    expect(toParent('/')).toBeNull();
-    expect(toParent(SRC_DIR, SRC_DIR)).toBeNull();
+    expect(traverseToParent(DEEPER_DIR)).toBe(NESTED_DIR);
+    expect(traverseToParent('/')).toBeNull();
+    expect(traverseToParent(SRC_DIR, SRC_DIR)).toBeNull();
   });
 });
 
-describe('up', () => {
+describe('traverseUp', () => {
   describe('(async)', () => {
     it('aggregates results until break', async () => {
       const visited: string[] = [];
-      const results = await up(
+      const results = await traverseUp(
         (dir) => {
           visited.push(dir);
           if (dir === PROJECT_ROOT) {
@@ -87,11 +93,10 @@ describe('up', () => {
         }
       );
 
-      const results = await up((dir) => ({ break: false, result: dir }), {
-        startDir: SRC_DIR,
-        endAtDir: SRC_DIR,
-        resultHandler: handler
-      });
+      const results = await traverseUp(
+        (dir) => ({ break: false, result: dir }),
+        { startDir: SRC_DIR, endAtDir: SRC_DIR, resultHandler: handler }
+      );
 
       expect(handler).toHaveBeenCalledTimes(1);
       expect(captured).toEqual([SRC_DIR]);
@@ -99,7 +104,7 @@ describe('up', () => {
     });
     it('does not traverse endAtDir', async () => {
       const visited: string[] = [];
-      const results = await up(
+      const results = await traverseUp(
         (dir) => {
           visited.push(dir);
           return { break: false, result: dir };
@@ -114,7 +119,7 @@ describe('up', () => {
   describe('(sync)', () => {
     it('mirrors upward traversal with break', () => {
       const visited: string[] = [];
-      const results = sync.up(
+      const results = syncTraverseUp(
         (dir) => {
           visited.push(dir);
           if (dir === PROJECT_ROOT) {
@@ -145,7 +150,7 @@ describe('up', () => {
         }
       );
 
-      const results = sync.up((dir) => ({ break: false, result: dir }), {
+      const results = syncTraverseUp((dir) => ({ break: false, result: dir }), {
         startDir: SRC_DIR,
         endAtDir: SRC_DIR,
         resultHandler: handler
@@ -158,7 +163,7 @@ describe('up', () => {
 
     it('does not traverse endAtDir', () => {
       const visited: string[] = [];
-      const results = sync.up(
+      const results = syncTraverseUp(
         (dir) => {
           visited.push(dir);
           return { break: false, result: dir };
@@ -172,12 +177,12 @@ describe('up', () => {
   });
 });
 
-describe('down', () => {
+describe('traverseDown', () => {
   describe('(async)', () => {
     it('performs breadth-first traversal and stops on break', async () => {
       const visited: string[] = [];
       await fs.promises.mkdir(STOP_DIR, { recursive: true });
-      const results = await down(
+      const results = await traverseDown(
         (dir) => {
           visited.push(dir);
           return { break: false, result: dir };
@@ -200,11 +205,10 @@ describe('down', () => {
         }
       );
 
-      const results = await down((dir) => ({ break: false, result: dir }), {
-        startDir: SRC_DIR,
-        endAtDir: SRC_DIR,
-        resultHandler: handler
-      });
+      const results = await traverseDown(
+        (dir) => ({ break: false, result: dir }),
+        { startDir: SRC_DIR, endAtDir: SRC_DIR, resultHandler: handler }
+      );
 
       expect(handler).toHaveBeenCalledTimes(1);
       expect(captured).toEqual([SRC_DIR]);
@@ -212,7 +216,7 @@ describe('down', () => {
     });
     it('breaks when onDir signals to break', async () => {
       const visited: string[] = [];
-      const results = await down(
+      const results = await traverseDown(
         (dir) => {
           visited.push(dir);
           return dir === NESTED_DIR ?
@@ -230,7 +234,7 @@ describe('down', () => {
     it('performs breadth-first traversal and stops on break', () => {
       const visited: string[] = [];
       fs.mkdirSync(STOP_DIR, { recursive: true });
-      const results = sync.down(
+      const results = syncTraverseDown(
         (dir) => {
           visited.push(dir);
           return { break: false, result: dir };
@@ -252,18 +256,17 @@ describe('down', () => {
         }
       );
 
-      const results = sync.down((dir) => ({ break: false, result: dir }), {
-        startDir: SRC_DIR,
-        endAtDir: SRC_DIR,
-        resultHandler: handler
-      });
+      const results = syncTraverseDown(
+        (dir) => ({ break: false, result: dir }),
+        { startDir: SRC_DIR, endAtDir: SRC_DIR, resultHandler: handler }
+      );
       expect(handler).toHaveBeenCalledTimes(1);
       expect(captured).toEqual([SRC_DIR]);
       expect(results).toEqual([SRC_DIR]);
     });
     it('breaks when onDir signals to break', () => {
       const visited: string[] = [];
-      const results = sync.down(
+      const results = syncTraverseDown(
         (dir) => {
           visited.push(dir);
           return dir === NESTED_DIR ?

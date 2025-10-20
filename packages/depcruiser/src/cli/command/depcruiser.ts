@@ -3,8 +3,12 @@ import type { ICruiseResult } from 'dependency-cruiser';
 import { checkbox, confirm, input, select } from '@inquirer/prompts';
 import { Args } from '@oclif/core';
 import { BaseCommand, utils } from '@toolbox-ts/cli-kit';
-import file from '@toolbox-ts/file';
-import { Obj, Str } from '@toolbox-ts/utils';
+import {
+  type OverwriteBehavior,
+  writeFile,
+  writeFileTemplates
+} from '@toolbox-ts/file';
+import { obj, str } from '@toolbox-ts/utils';
 
 import { cruise, defaultConfig, format, loadConfig } from '../../api/index.js';
 import {
@@ -81,11 +85,13 @@ export class DependencyCruiser extends BaseCommand {
       checkbox({
         message:
           'Which (if any) of the native rule sets do you want to disable?',
-        choices: Obj.keys(rules.forbidden.definitions).map((name) => ({
-          name: rules.forbidden.definitions[name].META.name,
-          description: rules.forbidden.definitions[name].META.comment,
-          value: { [name]: false }
-        }))
+        choices: obj
+          .keys(rules.forbidden.definitions)
+          .map((name) => ({
+            name: rules.forbidden.definitions[name].META.name,
+            description: rules.forbidden.definitions[name].META.comment,
+            value: { [name]: false }
+          }))
       }),
     outDir: () =>
       input({
@@ -172,7 +178,7 @@ ${mermaidGraph}
     );
   }
 
-  async initConfig(overwriteBehavior: file.write.OverwriteBehavior = 'force') {
+  async initConfig(overwriteBehavior: OverwriteBehavior = 'force') {
     const isTs = await this.prompt.isTs();
     const fileName = await this.prompt.fileName(
       'config',
@@ -200,7 +206,7 @@ ${mermaidGraph}
         log,
         report,
         doNotFollow: { path: defaultConfig.options.doNotFollow.path },
-        includeOnly: { path: Str.split.csv(includeOnly) },
+        includeOnly: { path: str.splitBy.punc(includeOnly) },
         combinedDependencies: isMonorepo,
         ...utils.normalize.nestWhen('tsConfig', tsConfig, {
           fileName: tsConfig
@@ -212,7 +218,7 @@ ${mermaidGraph}
       extends: [],
       required: []
     };
-    await file.write.file(
+    await writeFile(
       fileName,
       `import { config } from '@toolbox-ts/depcruiser';
 
@@ -293,9 +299,9 @@ export default cfg;
     filePath: string;
     formatOpts?: Partial<IFormattingOptions>;
     outputType: output.Graph | output.Report;
-    overwriteBehavior: file.write.OverwriteBehavior;
+    overwriteBehavior: OverwriteBehavior;
   }): Promise<void> {
-    await file.write.file(
+    await writeFile(
       filePath,
       typeof cruiseResult === 'string' ? cruiseResult : (
         await format(cruiseResult, { outputType, ...formatOpts })

@@ -10,11 +10,13 @@ const isValidObject = (value: unknown): value is Record<string, unknown> =>
 /**
  * The supported values for the exported module data
  */
-export type ExportableValue<Module> = (() => Module | Promise<Module>) | Module;
+export type LoadModuleExportableValue<Module> =
+  | (() => Module | Promise<Module>)
+  | Module;
 
 const isExportableValue = <Module>(
   importedValue: unknown
-): importedValue is ExportableValue<Module> =>
+): importedValue is LoadModuleExportableValue<Module> =>
   typeof importedValue === 'function' || isValidObject(importedValue);
 
 /**
@@ -26,16 +28,16 @@ const isExportableValue = <Module>(
  * 3. The entire module
  * 4. A function that returns a it's content
  */
-export type ModuleExport<Module> =
-  | { [key: string]: ExportableValue<Module> }
+export type LoadModuleExport<Module> =
+  | { [key: string]: LoadModuleExportableValue<Module> }
   | { [key: string]: unknown }
-  | { default: ExportableValue<Module> }
-  | ExportableValue<Module>;
+  | { default: LoadModuleExportableValue<Module> }
+  | LoadModuleExportableValue<Module>;
 
 const resolveModuleExport = <Module>(
   imported: unknown,
   exportKey = 'default'
-): ExportableValue<Module> | null => {
+): LoadModuleExportableValue<Module> | null => {
   let value: unknown = imported;
   if (isValidObject(imported)) {
     if (exportKey in imported) value = imported[exportKey];

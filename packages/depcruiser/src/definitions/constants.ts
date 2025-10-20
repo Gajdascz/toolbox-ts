@@ -1,4 +1,4 @@
-import type { Str } from '@toolbox-ts/utils';
+import type { str } from '@toolbox-ts/utils';
 import type {
   DependencyType,
   ModuleSystemType,
@@ -12,7 +12,7 @@ export const MODULE_SYSTEMS: { [S in ModuleSystemType]: S } = {
   tsd: 'tsd'
 } as const;
 export const DEPENDENCY_TYPES: {
-  [K in DependencyType as Str.KebabToCamel<K>]: K;
+  [K in DependencyType as str.KebabToCamel<K>]: K;
 } = {
   aliasedSubpathImport: 'aliased-subpath-import',
   aliasedTsconfigBaseUrl: 'aliased-tsconfig-base-url',
@@ -54,7 +54,7 @@ export const DEPENDENCY_TYPES: {
   undetermined: 'undetermined',
   unknown: 'unknown'
 } as const;
-export const PROGRESS_TYPES: { [P in ProgressType as Str.KebabToCamel<P>]: P } =
+export const PROGRESS_TYPES: { [P in ProgressType as str.KebabToCamel<P>]: P } =
   {
     cliFeedback: 'cli-feedback',
     performanceLog: 'performance-log',

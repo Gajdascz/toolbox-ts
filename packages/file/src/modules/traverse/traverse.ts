@@ -4,39 +4,39 @@ import path from 'node:path';
 
 import { initQueueLike, type QueueLike } from '../helpers/index.js';
 import {
-  toParent as _toParent,
   defaultResultHandler,
-  normalizeStartEnd
+  normalizeStartEnd,
+  toParent
 } from './utils/index.js';
 
 //#region> Types
+export interface TraverseDownOpts<R> extends TraverseOpts<R> {
+  queue?: QueueLike;
+}
+
 /**
  * Callback invoked for each directory during traversal.
  * - Can be asynchronous.
  * - Returning `{ break: true }` will stop the traversal.
  * - The `result` can be a single value or an array of values, which will be collected and returned.
  */
-export type OnDirAsync<R> = (
+export type TraverseOnDirAsync<R> = (
   dir: string
-) => OnDirResult<R> | Promise<OnDirResult<R>>;
+) => Promise<TraverseOnDirResult<R>> | TraverseOnDirResult<R>;
 
 /**
  * The result of the `onDir` callback.
  * - If `break` is `true`, the traversal will stop.
  * - The `result` can be a single value or an array of values, which will be collected and returned.
  */
-export type OnDirResult<R> =
+export type TraverseOnDirResult<R> =
   | { break: true; result: R | R[] }
   | { break?: false | null | undefined; result?: R | R[] };
 
 /**
- * Synchronous version of @see OnDirAsync.
+ * Synchronous version of @see TraverseOnDirAsync.
  */
-export type OnDirSync<R> = (dir: string) => OnDirResult<R>;
-
-export interface TraverseDownOpts<R> extends TraverseOpts<R> {
-  queue?: QueueLike;
-}
+export type TraverseOnDirSync<R> = (dir: string) => TraverseOnDirResult<R>;
 export interface TraverseOpts<R> {
   /**
    * An optional directory to stop at (exclusive).
@@ -71,43 +71,43 @@ const getSubDirOpts: fg.Options = {
 };
 
 /**
- * Traverse up to a parent directory.
+ * Traverse traverseUp to a parent directory.
  * - Returns `null` if the current directory is the same as or a parent of the end directory.
  *
  * @example
  * ```ts
- * console.log(toParent('/a/b/c', '/a')); // '/a/b'
- * console.log(toParent('/a/b/c', '/a/b')); // '/a/b'
- * console.log(toParent('/a/b/c', '/a/b/c')); // null
- * console.log(toParent('/a/b/c')); // '/a/b'
- * console.log(toParent('/')); // null
+ * console.log(traverseToParent('/a/b/c', '/a')); // '/a/b'
+ * console.log(traverseToParent('/a/b/c', '/a/b')); // '/a/b'
+ * console.log(traverseToParent('/a/b/c', '/a/b/c')); // null
+ * console.log(traverseToParent('/a/b/c')); // '/a/b'
+ * console.log(traverseToParent('/')); // null
  * ```
  */
-export const toParent = (dir: string, end?: null | string) => {
+export const traverseToParent = (dir: string, end?: null | string) => {
   const { start: curr, end: e } = normalizeStartEnd(
     dir,
     end ?? path.parse(dir).root
   );
-  return _toParent(curr, e);
+  return toParent(curr, e);
 };
 
 /**
- * Traverse up from a starting directory to an optional end directory, invoking a callback on each directory.
+ * Traverse upward from a starting directory to an optional end directory, invoking a callback on each directory.
  * - The traversal stops if the callback returns `{ break: true }`.
  * - The callback can return a result that will be collected and returned as an array.
  *
  * @example
  * ```ts
- * // Example: Collect names of all directories up to the root
- * const results = await up(
+ * // Example: Collect names of all directories traverseUp to the root
+ * const results = await traverseUp(
  *   async (dir) => ({ result: path.basename(dir) }),
  *   { startDir: '/a/b/c', endAtDir: '/a' }
  * );
  * console.log(results); // ['c', 'b']
  * ```
  */
-export const up = async <R>(
-  onDir: OnDirAsync<R>,
+export const traverseUp = async <R>(
+  onDir: TraverseOnDirAsync<R>,
   {
     startDir = process.cwd(),
     endAtDir = path.parse(startDir).root,
@@ -122,28 +122,28 @@ export const up = async <R>(
     const { break: shouldBreak, result } = await onDir(curr);
     if (result) resultHandler(result, results, curr);
     if (shouldBreak) return results;
-    curr = _toParent(curr, end);
+    curr = toParent(curr, end);
   }
   return results;
 };
 
 /**
- * Traverse down from a starting directory to an optional end directory, invoking a callback on each directory.
+ * Traverse traverseDown from a starting directory to an optional end directory, invoking a callback on each directory.
  * - The traversal stops if the callback returns `{ break: true }`.
  * - The callback can return a result that will be collected and returned as an array.
  *
  * @example
  * ```ts
- * // Example: Collect names of all directories down to a specific directory
- * const results = await down(
+ * // Example: Collect names of all directories traverseDown to a specific directory
+ * const results = await traverseDown(
  *   async (dir) => ({ result: path.basename(dir) }),
  *   { startDir: '/a', endAtDir: '/a/b/c' }
  * );
  * console.log(results); // ['a', 'b']
  * ```
  */
-export async function down<R>(
-  onDir: OnDirAsync<R>,
+export async function traverseDown<R>(
+  onDir: TraverseOnDirAsync<R>,
   {
     queue = undefined,
     startDir = process.cwd(),
@@ -172,58 +172,53 @@ export async function down<R>(
   return results;
 }
 
-/**
- * Synchronous versions of the traverse functions.
- */
-export const sync = {
-  /** Synchronous version of {@link up} */
-  up: <R>(
-    onDir: OnDirSync<R>,
-    {
-      startDir = process.cwd(),
-      endAtDir = path.parse(startDir).root,
-      resultHandler = defaultResultHandler
-    }: TraverseOpts<R> = {}
-  ) => {
-    const results: R[] = [];
-    const { start, end } = normalizeStartEnd(startDir, endAtDir);
-    let curr: null | string = start;
-    while (curr) {
-      const { break: shouldBreak, result } = onDir(curr);
-      if (result) resultHandler(result, results, curr);
-      if (shouldBreak) return results;
-      curr = _toParent(curr, end);
-    }
-    return results;
-  },
-  /** Synchronous version of {@link down} */
-  down: <R>(
-    onDir: OnDirSync<R>,
-    {
-      startDir = process.cwd(),
-      endAtDir,
-      resultHandler = defaultResultHandler,
-      queue = undefined
-    }: TraverseDownOpts<R> = {}
-  ) => {
-    const results: R[] = [];
-    const { start, end } = normalizeStartEnd(startDir, endAtDir);
-    if (start === end) {
-      const { result } = onDir(start);
-      if (result) resultHandler(result, results, start);
-      return results;
-    }
-    const q = initQueueLike(queue);
-    q.enqueue(start);
-    while (q.length > 0) {
-      const curr = q.dequeue();
-      if (!curr || curr === end) break;
-      const { break: shouldBreak, result } = onDir(curr);
-      if (result) resultHandler(result, results, curr);
-      if (shouldBreak) return results;
-      const subDirs = fg.sync('*', { ...getSubDirOpts, cwd: curr });
-      q.enqueue(...subDirs);
-    }
+/** Synchronous version of {@link traverseUp} */
+export const syncTraverseUp = <R>(
+  onDir: TraverseOnDirSync<R>,
+  {
+    startDir = process.cwd(),
+    endAtDir = path.parse(startDir).root,
+    resultHandler = defaultResultHandler
+  }: TraverseOpts<R> = {}
+) => {
+  const results: R[] = [];
+  const { start, end } = normalizeStartEnd(startDir, endAtDir);
+  let curr: null | string = start;
+  while (curr) {
+    const { break: shouldBreak, result } = onDir(curr);
+    if (result) resultHandler(result, results, curr);
+    if (shouldBreak) return results;
+    curr = toParent(curr, end);
+  }
+  return results;
+};
+/** Synchronous version of {@link traverseDown} */
+export const syncTraverseDown = <R>(
+  onDir: TraverseOnDirSync<R>,
+  {
+    startDir = process.cwd(),
+    endAtDir,
+    resultHandler = defaultResultHandler,
+    queue = undefined
+  }: TraverseDownOpts<R> = {}
+) => {
+  const results: R[] = [];
+  const { start, end } = normalizeStartEnd(startDir, endAtDir);
+  if (start === end) {
+    const { result } = onDir(start);
+    if (result) resultHandler(result, results, start);
     return results;
   }
-} as const;
+  const q = initQueueLike(queue);
+  q.enqueue(start);
+  while (q.length > 0) {
+    const curr = q.dequeue();
+    if (!curr || curr === end) break;
+    const { break: shouldBreak, result } = onDir(curr);
+    if (result) resultHandler(result, results, curr);
+    if (shouldBreak) return results;
+    const subDirs = fg.sync('*', { ...getSubDirOpts, cwd: curr });
+    q.enqueue(...subDirs);
+  }
+  return results;
+};

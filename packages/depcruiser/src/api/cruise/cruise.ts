@@ -1,4 +1,4 @@
-import { Obj } from '@toolbox-ts/utils';
+import { obj } from '@toolbox-ts/utils';
 import { cruise as _cruise, type ICruiseResult } from 'dependency-cruiser';
 
 import { resolve } from '../config/index.js';
@@ -27,7 +27,7 @@ export const cruise = async (
     resolveOptions,
     transpileOptions
   );
-  if (!Obj.is.obj(result.output))
+  if (!obj.guards.isObjPlain(result.output))
     throw new TypeError(
       `BaseDepCruiser cruise function should always return an ICruiseResult object, but got: ${typeof result === 'object' ? JSON.stringify(result, null, 1) : result}`
     );

@@ -3,17 +3,16 @@ import path from 'node:path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
-  file,
+  type FileWriteTemplate,
   isOverwriteBehavior,
-  normalizeData,
-  type OverwritePromptFn,
-  templates,
-  type WriteTemplate
+  normalizeWriteData,
+  writeFile,
+  writeFileTemplates
 } from './write.ts';
 
 const outDir = '/tmp/write-test';
 
-const tmplts: WriteTemplate<{ msg: string }>[] = [
+const templates: FileWriteTemplate<{ msg: string }>[] = [
   { filename: 'a.txt', generate: (cfg) => cfg.msg },
   {
     filename: 'b.txt',
@@ -28,9 +27,9 @@ beforeEach(async () => {
 });
 
 describe('write', () => {
-  describe('templates', () => {
+  describe('writeFileTemplates', () => {
     it('writes files when they do not exist (default skip)', async () => {
-      const res = await templates(outDir, { msg: 'hello' }, tmplts);
+      const res = await writeFileTemplates(outDir, { msg: 'hello' }, templates);
       expect(res.result[0].success).toBe(true);
       expect(res.result[1].success).toBe(true);
       expect(
@@ -41,11 +40,14 @@ describe('write', () => {
       ).toBe('HELLO');
     });
 
-    it('skips write when file exists and behavior is skip', async () => {
+    it('skips write when writeFile exists and behavior is skip', async () => {
       await fs.promises.writeFile(path.join(outDir, 'a.txt'), 'exists');
-      const res = await templates(outDir, { msg: 'hello' }, tmplts, {
-        overwrite: { behavior: 'skip' }
-      });
+      const res = await writeFileTemplates(
+        outDir,
+        { msg: 'hello' },
+        templates,
+        { overwrite: { behavior: 'skip' } }
+      );
       expect(res.result[0].success).toBe(false);
       expect(res.result[0].error).toBe('Skipped (exists)');
       expect(res.result[1].success).toBe(true);
@@ -56,9 +58,12 @@ describe('write', () => {
 
     it('forces write when behavior is force', async () => {
       await fs.promises.writeFile(path.join(outDir, 'a.txt'), 'exists');
-      const res = await templates(outDir, { msg: 'force' }, tmplts, {
-        overwrite: { behavior: 'force' }
-      });
+      const res = await writeFileTemplates(
+        outDir,
+        { msg: 'force' },
+        templates,
+        { overwrite: { behavior: 'force' } }
+      );
       expect(res.result[0].success).toBe(true);
       expect(
         await fs.promises.readFile(path.join(outDir, 'a.txt'), 'utf8')
@@ -67,10 +72,13 @@ describe('write', () => {
 
     it('prompts user and writes if confirmed', async () => {
       await fs.promises.writeFile(path.join(outDir, 'a.txt'), 'exists');
-      const promptFn: OverwritePromptFn = vi.fn().mockResolvedValue(true);
-      const res = await templates(outDir, { msg: 'prompted' }, tmplts, {
-        overwrite: { behavior: 'prompt', promptFn }
-      });
+      const promptFn = vi.fn().mockResolvedValue(true);
+      const res = await writeFileTemplates(
+        outDir,
+        { msg: 'prompted' },
+        templates,
+        { overwrite: { behavior: 'prompt', promptFn } }
+      );
       expect(promptFn).toHaveBeenCalled();
       expect(res.result[0].success).toBe(true);
       expect(
@@ -80,10 +88,13 @@ describe('write', () => {
 
     it('prompts user and cancels if not confirmed', async () => {
       await fs.promises.writeFile(path.join(outDir, 'a.txt'), 'exists');
-      const promptFn: OverwritePromptFn = vi.fn().mockResolvedValue(false);
-      const res = await templates(outDir, { msg: 'cancelled' }, tmplts, {
-        overwrite: { behavior: 'prompt', promptFn }
-      });
+      const promptFn = vi.fn().mockResolvedValue(false);
+      const res = await writeFileTemplates(
+        outDir,
+        { msg: 'cancelled' },
+        templates,
+        { overwrite: { behavior: 'prompt', promptFn } }
+      );
       expect(promptFn).toHaveBeenCalled();
       expect(res.result[0].success).toBe(false);
       expect(res.result[0].error).toBe('User skipped');
@@ -96,7 +107,7 @@ describe('write', () => {
       await fs.promises.writeFile(path.join(outDir, 'a.txt'), 'exists');
       // Should throw TypeError
       await expect(
-        templates(outDir, { msg: 'fail' }, tmplts, {
+        writeFileTemplates(outDir, { msg: 'fail' }, templates, {
           overwrite: { behavior: 'prompt' }
         })
       ).rejects.toThrow(
@@ -106,7 +117,7 @@ describe('write', () => {
 
     it('throws error for unexpected overwrite behavior', async () => {
       await expect(
-        templates(outDir, { msg: 'fail' }, tmplts, {
+        writeFileTemplates(outDir, { msg: 'fail' }, templates, {
           // @ts-expect-error: testing invalid behavior
           overwrite: { behavior: 'invalid' }
         })
@@ -114,7 +125,7 @@ describe('write', () => {
     });
 
     it('returns error if writeFile throws', async () => {
-      const badTemplates: WriteTemplate<{ msg: string }>[] = [
+      const badTemplates: FileWriteTemplate<{ msg: string }>[] = [
         {
           filename: 'bad.txt',
           generate: () => {
@@ -122,21 +133,25 @@ describe('write', () => {
           }
         }
       ];
-      const res = await templates(outDir, { msg: 'oops' }, badTemplates);
+      const res = await writeFileTemplates(
+        outDir,
+        { msg: 'oops' },
+        badTemplates
+      );
       expect(res.result[0].success).toBe(false);
       expect(res.result[0].error).toMatch(/fail-generate/);
     });
   });
-  describe('file', () => {
+  describe('writeFile', () => {
     const filePath = path.join(outDir, 'single.txt');
-    it('writes file when it does not exist (default skip)', async () => {
-      await file(filePath, 'hello');
+    it('writes writeFile when it does not exist (default skip)', async () => {
+      await writeFile(filePath, 'hello');
       expect(await fs.promises.readFile(filePath, 'utf8')).toBe('hello');
     });
 
-    it('skips write when file exists and behavior is skip', async () => {
+    it('skips write when writeFile exists and behavior is skip', async () => {
       await fs.promises.writeFile(filePath, 'exists');
-      await expect(file(filePath, 'should-skip')).rejects.toThrow(
+      await expect(writeFile(filePath, 'should-skip')).rejects.toThrow(
         /Cannot write to .* Write aborted: Skipped \(exists\)/
       );
       expect(await fs.promises.readFile(filePath, 'utf8')).toBe('exists');
@@ -144,14 +159,14 @@ describe('write', () => {
 
     it('forces write when behavior is force', async () => {
       await fs.promises.writeFile(filePath, 'exists');
-      await file(filePath, 'forced', { overwrite: { behavior: 'force' } });
+      await writeFile(filePath, 'forced', { overwrite: { behavior: 'force' } });
       expect(await fs.promises.readFile(filePath, 'utf8')).toBe('forced');
     });
 
     it('prompts user and writes if confirmed', async () => {
       await fs.promises.writeFile(filePath, 'exists');
-      const promptFn: OverwritePromptFn = vi.fn().mockResolvedValue(true);
-      await file(filePath, 'prompted', {
+      const promptFn = vi.fn().mockResolvedValue(true);
+      await writeFile(filePath, 'prompted', {
         overwrite: { behavior: 'prompt', promptFn }
       });
       expect(promptFn).toHaveBeenCalled();
@@ -160,9 +175,9 @@ describe('write', () => {
 
     it('prompts user and cancels if not confirmed', async () => {
       await fs.promises.writeFile(filePath, 'exists');
-      const promptFn: OverwritePromptFn = vi.fn().mockResolvedValue(false);
+      const promptFn = vi.fn().mockResolvedValue(false);
       await expect(
-        file(filePath, 'cancelled', {
+        writeFile(filePath, 'cancelled', {
           overwrite: { behavior: 'prompt', promptFn }
         })
       ).rejects.toThrow(/Cannot write to .* Write aborted: User skipped/);
@@ -173,7 +188,7 @@ describe('write', () => {
     it('throws error if promptFn is missing for prompt behavior', async () => {
       await fs.promises.writeFile(filePath, 'exists');
       await expect(
-        file(filePath, 'fail', { overwrite: { behavior: 'prompt' } })
+        writeFile(filePath, 'fail', { overwrite: { behavior: 'prompt' } })
       ).rejects.toThrow(
         'Prompt function is required when overwrite behavior is set to "prompt".'
       );
@@ -183,27 +198,29 @@ describe('write', () => {
       await fs.promises.writeFile(filePath, 'exists');
       await expect(
         // @ts-expect-error: testing invalid behavior
-        file(filePath, 'fail', { overwrite: { behavior: 'invalid' } })
+        writeFile(filePath, 'fail', { overwrite: { behavior: 'invalid' } })
       ).rejects.toThrow('Unexpected overwrite behavior: invalid');
     });
 
     it('writes normalized data for Uint8Array', async () => {
       const buf = new Uint8Array([104, 105]); // 'hi'
-      await file(filePath, buf);
+      await writeFile(filePath, buf);
       expect(await fs.promises.readFile(filePath, 'utf8')).toBe('hi');
     });
 
     it('writes normalized data for object', async () => {
-      await file(filePath, { foo: 'bar' });
+      await writeFile(filePath, { foo: 'bar' });
       expect(await fs.promises.readFile(filePath, 'utf8')).toBe(
         JSON.stringify({ foo: 'bar' }, null, 2)
       );
     });
 
     it('writes empty string for null/undefined', async () => {
-      await file(filePath, null, { overwrite: { behavior: 'force' } });
+      await writeFile(filePath, null, { overwrite: { behavior: 'force' } });
       expect(await fs.promises.readFile(filePath, 'utf8')).toBe('');
-      await file(filePath, undefined, { overwrite: { behavior: 'force' } });
+      await writeFile(filePath, undefined, {
+        overwrite: { behavior: 'force' }
+      });
       expect(await fs.promises.readFile(filePath, 'utf8')).toBe('');
     });
   });
@@ -215,17 +232,17 @@ describe('write', () => {
     expect(isOverwriteBehavior(123)).toBe(false);
   });
   it('normalizes data correctly', () => {
-    expect(normalizeData('test')).toBe('test');
-    expect(normalizeData(null)).toBe('');
-    expect(normalizeData(undefined)).toBe('');
-    expect(normalizeData(new Uint8Array([104, 101, 108, 108, 111]))).toBe(
+    expect(normalizeWriteData('test')).toBe('test');
+    expect(normalizeWriteData(null)).toBe('');
+    expect(normalizeWriteData(undefined)).toBe('');
+    expect(normalizeWriteData(new Uint8Array([104, 101, 108, 108, 111]))).toBe(
       'hello'
     );
-    expect(normalizeData(Buffer.from('world'))).toBe('world');
-    expect(normalizeData({ key: 'value' })).toBe(
+    expect(normalizeWriteData(Buffer.from('world'))).toBe('world');
+    expect(normalizeWriteData({ key: 'value' })).toBe(
       JSON.stringify({ key: 'value' }, null, 2)
     );
-    expect(normalizeData(1n)).toBe('1');
-    expect(normalizeData(new Date())).toEqual(expect.any(String));
+    expect(normalizeWriteData(1n)).toBe('1');
+    expect(normalizeWriteData(new Date())).toEqual(expect.any(String));
   });
 });

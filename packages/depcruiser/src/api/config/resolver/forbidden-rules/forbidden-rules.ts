@@ -1,6 +1,6 @@
 import type { IForbiddenRuleType } from 'dependency-cruiser';
 
-import { Obj } from '@toolbox-ts/utils';
+import { obj } from '@toolbox-ts/utils';
 
 import { rules } from '../../../../definitions/index.js';
 
@@ -17,7 +17,7 @@ export const resolveForbiddenRules = (
   extended: IForbiddenRuleType[] = []
 ) => {
   const result: rules.forbidden.Rule<string>[] = [];
-  const keys = Obj.keys(rules.forbidden.factories);
+  const keys = obj.keys(rules.forbidden.factories);
   for (const key of keys) {
     const val = cfg[key];
     if (val === false) continue;

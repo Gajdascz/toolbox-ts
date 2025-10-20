@@ -1,7 +1,7 @@
 import type { IViolation } from 'dependency-cruiser';
 
 import { reporters } from '@toolbox-ts/cli-kit';
-import { icons } from '@toolbox-ts/utils';
+import { ICONS } from '@toolbox-ts/utils';
 import { EOL } from 'node:os';
 
 import { output } from '../../../definitions/index.js';
@@ -26,9 +26,9 @@ export const outputTypeFormatMap = {
   [output.maps.all['gh-actions-json']]: reporter.toJson.bind(reporter),
   [output.maps.all['gh-actions-annotations']]: (violations: IViolation[]) =>
     violations.length === 0 ?
-      `${icons.success} No violations`
+      `${ICONS.SUCCESS} No violations`
     : reporter.stringify(violations, {
-        header: `::group::${icons.rotatingLight} Dependency-Cruiser violations:${EOL}`,
+        header: `::group::${ICONS.ALERT} Dependency-Cruiser violations:${EOL}`,
         footer: '::endgroup::'
       })
 } as const;

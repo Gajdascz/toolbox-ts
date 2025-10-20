@@ -54,8 +54,7 @@ export const parseJson = async <TParsed, TResolved = TParsed>(
     const read = await fs.promises.readFile(filePath, 'utf8');
     return parse(read, filePath, resolverFn);
   } catch (error) {
-    const errMsg = formatError(filePath, error);
-    return { result: null, error: errMsg };
+    return { result: null, error: formatError(filePath, error) };
   }
 };
 
@@ -73,11 +72,11 @@ export const parseJson = async <TParsed, TResolved = TParsed>(
  * }
  *
  * // parse-json.ts
- * const { result, error } = parseJsonSync<{ key: string }>('config.json');
+ * const { result, error } = syncParseJson<{ key: string }>('config.json');
  * console.log(result); // { key: 'value' }
  * ```
  */
-export const parseJsonSync = <TParsed, TResolved = TParsed>(
+export const syncParseJson = <TParsed, TResolved = TParsed>(
   filePath: string,
   { resolverFn }: ParseJsonOpts<TParsed, TResolved> = {}
 ): ResultObj<TResolved> =>

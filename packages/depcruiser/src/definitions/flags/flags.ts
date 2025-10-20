@@ -2,7 +2,7 @@ import type { InferredFlags } from '@oclif/core/interfaces';
 
 import { Flags } from '@oclif/core';
 import { utils } from '@toolbox-ts/cli-kit';
-import file from '@toolbox-ts/file';
+import { overwriteBehavior } from '@toolbox-ts/file';
 import { Obj } from '@toolbox-ts/utils';
 import { EOL } from 'node:os';
 
@@ -74,7 +74,7 @@ export const definitions = {
       'what to do when the output file already exists',
       { helpGroup: 'Output' }
     ),
-    options: Obj.keys(file.write.overwriteBehaviors)
+    options: Obj.keys(overwriteBehavior)
   }),
   outputTo: Flags.directory({
     ...utils.flagMeta('outputTo', 'the folder to write output files to', {

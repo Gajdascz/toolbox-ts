@@ -143,4 +143,11 @@ describe('resolveFlags', () => {
     expect(res.graph).toBe(false);
     expect(res.report).toBe(false);
   });
+  it('omits dependencyTypes when doNotFollowDependencyTypes is not set', () => {
+    const res = resolveFlags({ doNotFollow: 'a,b' });
+    const doNotFollow = res.doNotFollow as any;
+    expect(doNotFollow).toBeDefined();
+    expect(doNotFollow.path).toEqual(['a', 'b']);
+    expect(doNotFollow.dependencyTypes).toBeUndefined();
+  });
 });

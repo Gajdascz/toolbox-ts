@@ -1,1 +1,1 @@
-export * as write from './write.js';
+export * from './write.js';

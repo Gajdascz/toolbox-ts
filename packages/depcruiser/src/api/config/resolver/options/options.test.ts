@@ -19,7 +19,7 @@ vi.mock('dependency-cruiser/config-utl/extract-ts-config', () => ({
   })
 }));
 
-const findFileSpy = vi.spyOn(file.find, 'firstUp');
+const findFileSpy = vi.spyOn(file, 'findFirstUp');
 
 const repoRoot = process.cwd();
 const tsConfigName = 'vitest.tsconfig.json';

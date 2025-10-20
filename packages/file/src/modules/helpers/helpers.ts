@@ -57,8 +57,8 @@ export const hasFiles = async (
  * console.log(await hasDirs('/path/to/dir', ['subdir1', 'subdir2'])); // true or false
  * ```
  */
-export const hasFilesSync = (p: string, files: string[]): boolean => {
-  for (const file of files) if (!isFileSync(`${p}/${file}`)) return false;
+export const syncHasFiles = (p: string, files: string[]): boolean => {
+  for (const file of files) if (!syncIsFile(`${p}/${file}`)) return false;
   return true;
 };
 /**
@@ -81,8 +81,8 @@ export const hasDirs = async (p: string, dirs: string[]): Promise<boolean> => {
  * console.log(hasDirsSync('/path/to/dir', ['subdir1', 'subdir2'])); // true or false
  * ```
  */
-export const hasDirsSync = (p: string, dirs: string[]): boolean => {
-  for (const dir of dirs) if (!isDirSync(`${p}/${dir}`)) return false;
+export const syncHasDirs = (p: string, dirs: string[]): boolean => {
+  for (const dir of dirs) if (!syncIsDir(`${p}/${dir}`)) return false;
   return true;
 };
 /**
@@ -104,7 +104,7 @@ export const size = async (p: string): Promise<null | number> => {
 /**
  * Synchronous version of {@link isDir}
  */
-export const isDirSync = (p: string): boolean => {
+export const syncIsDir = (p: string): boolean => {
   try {
     const stat = fs.statSync(p);
     return stat.isDirectory();
@@ -115,7 +115,7 @@ export const isDirSync = (p: string): boolean => {
 /**
  * Synchronous version of {@link isFile}
  */
-export const isFileSync = (p: string): boolean => {
+export const syncIsFile = (p: string): boolean => {
   try {
     const stat = fs.statSync(p);
     return stat.isFile();

@@ -60,14 +60,14 @@ const normalize: { [key: string]: Normalize } = {
       toSvg: output.is.dotGraph(t) ? toSvg : undefined
     })),
   focus: ({ focus: path, focusDepth: depth }) =>
-    nestWhen('focus', path, {
-      path: Str.split.csv(path),
+    nestWhen('focus', path, (p) => ({
+      path: Str.split.csv(p),
       depth: strOrNum(depth)
-    }),
+    })),
   doNotFollow: ({ doNotFollow: path, doNotFollowDependencyTypes: types }) =>
     nestWhen('doNotFollow', path, (p) => ({
       path: Str.split.csv(p),
-      dependencyTypes: Str.split.csv(types)
+      dependencyTypes: types ? Str.split.csv(types) : undefined
     })),
   progress: ({ progressType, progressMaximumLevel }) =>
     nestWhen('progress', progressType, (type) => ({

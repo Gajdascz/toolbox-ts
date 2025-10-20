@@ -4,17 +4,17 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   arrayToQueueLike,
   hasDirs,
-  hasDirsSync,
   hasFiles,
-  hasFilesSync,
   initQueueLike,
   isDir,
-  isDirSync,
   isFile,
-  isFileSync,
   type QueueLike,
   size,
-  sizeSync
+  sizeSync,
+  syncHasDirs,
+  syncHasFiles,
+  syncIsDir,
+  syncIsFile
 } from './helpers.ts';
 
 const CWD = '/test/mock';
@@ -43,15 +43,15 @@ describe('helpers', () => {
     describe('(sync)', () => {
       it('returns true for directories', () => {
         fs.mkdirSync(CWD, { recursive: true });
-        expect(isDirSync(CWD)).toBe(true);
+        expect(syncIsDir(CWD)).toBe(true);
       });
       it('returns false for files', () => {
         const file = CWD + '/file.txt';
         fs.writeFileSync(file, 'x');
-        expect(isDirSync(file)).toBe(false);
+        expect(syncIsDir(file)).toBe(false);
       });
       it('returns false for non-existent paths', () => {
-        expect(isDirSync(CWD + '/nope')).toBe(false);
+        expect(syncIsDir(CWD + '/nope')).toBe(false);
       });
     });
   });
@@ -74,14 +74,14 @@ describe('helpers', () => {
       it('returns true for files', () => {
         const file = CWD + '/file2.txt';
         fs.writeFileSync(file, 'x');
-        expect(isFileSync(file)).toBe(true);
+        expect(syncIsFile(file)).toBe(true);
       });
       it('returns false for directories', () => {
         fs.mkdirSync(CWD + '/adir', { recursive: true });
-        expect(isFileSync(CWD + '/adir')).toBe(false);
+        expect(syncIsFile(CWD + '/adir')).toBe(false);
       });
       it('returns false for non-existent paths', () => {
-        expect(isFileSync(CWD + '/nope2')).toBe(false);
+        expect(syncIsFile(CWD + '/nope2')).toBe(false);
       });
     });
   });
@@ -201,17 +201,17 @@ describe('helpers', () => {
         fs.mkdirSync(dir, { recursive: true });
         fs.writeFileSync(dir + '/file1.txt', 'x');
         fs.writeFileSync(dir + '/file2.txt', 'y');
-        expect(hasFilesSync(dir, ['file1.txt', 'file2.txt'])).toBe(true);
+        expect(syncHasFiles(dir, ['file1.txt', 'file2.txt'])).toBe(true);
       });
       it('returns false if any specified file does not exist in directory', () => {
         const dir = CWD + '/dir2-sync';
         fs.mkdirSync(dir, { recursive: true });
         fs.writeFileSync(dir + '/file1.txt', 'x');
-        expect(hasFilesSync(dir, ['file1.txt', 'file2.txt'])).toBe(false);
+        expect(syncHasFiles(dir, ['file1.txt', 'file2.txt'])).toBe(false);
       });
       it('returns false if directory does not exist', () => {
         expect(
-          hasFilesSync(CWD + '/nope-dir-sync', ['file1.txt', 'file2.txt'])
+          syncHasFiles(CWD + '/nope-dir-sync', ['file1.txt', 'file2.txt'])
         ).toBe(false);
       });
     });
@@ -238,15 +238,15 @@ describe('helpers', () => {
         const dir = CWD + '/dir1-sync';
         fs.mkdirSync(dir + '/sub1', { recursive: true });
         fs.mkdirSync(dir + '/sub2', { recursive: true });
-        expect(hasDirsSync(dir, ['sub1', 'sub2'])).toBe(true);
+        expect(syncHasDirs(dir, ['sub1', 'sub2'])).toBe(true);
       });
       it('returns false if any specified dir does not exist in directory', () => {
         const dir = CWD + '/dir2-sync';
         fs.mkdirSync(dir + '/sub1', { recursive: true });
-        expect(hasDirsSync(dir, ['sub1', 'sub2'])).toBe(false);
+        expect(syncHasDirs(dir, ['sub1', 'sub2'])).toBe(false);
       });
       it('returns false if directory does not exist', () => {
-        expect(hasDirsSync(CWD + '/nope-dir-sync', ['sub1', 'sub2'])).toBe(
+        expect(syncHasDirs(CWD + '/nope-dir-sync', ['sub1', 'sub2'])).toBe(
           false
         );
       });

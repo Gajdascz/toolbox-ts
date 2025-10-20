@@ -278,7 +278,7 @@ const pushWithSep = (
  *```
  */
 export const objToFlags = <T>(
-  obj: T,
+  o: T,
   opts: ObjToFlagSpec = {},
   localSpec: Partial<Record<keyof T, ObjToFlagSpec>> = {}
 ): string[] => {
@@ -286,8 +286,8 @@ export const objToFlags = <T>(
     arrayFormat: opts.arrayFormat ?? 'comma',
     sep: opts.sep ?? 'space'
   };
-  return Obj.keys(obj).reduce<string[]>((acc, key) => {
-    const value = obj[key];
+  return Obj.keys(o).reduce<string[]>((acc, key) => {
+    const value = o[key];
     if (value !== undefined && value !== null && value !== false) {
       const { arrayFormat, sep } = { ...defaults, ...localSpec[key] };
       const flag = toFlag(key);

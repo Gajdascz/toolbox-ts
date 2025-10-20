@@ -1,3 +1,4 @@
+import type file from '@toolbox-ts/file';
 import type {
   ICruiseOptions,
   IFlattenedRuleSet,
@@ -6,7 +7,7 @@ import type {
 } from 'dependency-cruiser';
 
 import { utils } from '@toolbox-ts/cli-kit';
-import file from '@toolbox-ts/file';
+import { findFirstUp, type OverwriteBehavior } from '@toolbox-ts/file';
 import { Obj } from '@toolbox-ts/utils';
 import extractTSConfig from 'dependency-cruiser/config-utl/extract-ts-config';
 import extractWebpackResolveConfig from 'dependency-cruiser/config-utl/extract-webpack-resolve-config';
@@ -63,7 +64,7 @@ export const resolve = {
     let resolveOptions: IResolveOptions | undefined;
     const webpackConfigFileName = webpackConfig?.fileName;
     if (webpackConfigFileName) {
-      const webpackConfigPath = await file.find.firstUp(webpackConfigFileName);
+      const webpackConfigPath = await findFirstUp(webpackConfigFileName);
       if (!webpackConfigPath)
         throw new Error(
           `Webpack config file provided but not found: ${webpackConfigFileName}`
@@ -86,7 +87,7 @@ export const resolve = {
 
     const tsConfigFileName = tsConfig?.fileName;
     if (tsConfigFileName) {
-      const tsconfigPath = await file.find.firstUp(tsConfigFileName);
+      const tsconfigPath = await findFirstUp(tsConfigFileName);
       if (!tsconfigPath)
         throw new Error(
           `TypeScript config file not found: ${tsConfigFileName}`
@@ -95,7 +96,7 @@ export const resolve = {
     }
     const babelConfigFileName = babelConfig?.fileName;
     if (babelConfigFileName) {
-      const babelConfigPath = await file.find.firstUp(babelConfigFileName);
+      const babelConfigPath = await findFirstUp(babelConfigFileName);
       if (!babelConfigPath)
         throw new Error(`Babel config file not found: ${babelConfigFileName}`);
       resolveOptions = {
@@ -140,7 +141,7 @@ export const resolve = {
     formatting: Partial<IFormattingOptions>;
     graph: false | output.ResolvedOutput<output.Graph>;
     log: false | output.Loggable;
-    overwriteBehavior: file.write.OverwriteBehavior;
+    overwriteBehavior: OverwriteBehavior;
     report: false | output.ResolvedOutput<output.Report>;
   } => ({
     graph:
@@ -188,7 +189,7 @@ export interface ResolvedOptions {
     formatting: Partial<IFormattingOptions>;
     graph: false | output.ResolvedOutput<output.Graph>;
     log: false | output.Loggable;
-    overwriteBehavior: file.write.OverwriteBehavior;
+    overwriteBehavior: OverwriteBehavior;
     report: false | output.ResolvedOutput<output.Report>;
   };
   resolveOptions?: IResolveOptions;

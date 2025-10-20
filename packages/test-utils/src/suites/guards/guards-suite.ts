@@ -1,4 +1,3 @@
-/* eslint-disable vitest/valid-title */
 import { describe, expect, it } from 'vitest';
 
 import { DATA, EXPECT } from '../../helpers/index.js';

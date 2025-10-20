@@ -1,5 +1,13 @@
 # @toolbox-ts/utils
 
+## 0.5.7
+
+### Patch Changes
+
+- 197ad54: update utils/str module
+  - add snake_case utilities
+  - complete case conversion types
+
 ## 0.5.6
 
 ### Patch Changes

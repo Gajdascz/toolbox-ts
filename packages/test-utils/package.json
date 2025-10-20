@@ -48,6 +48,10 @@
     "./helpers": {
       "import": "./dist/helpers/index.js",
       "types": "./dist/helpers/index.d.ts"
+    },
+    "./suites": {
+      "import": "./dist/suites/index.js",
+      "types": "./dist/suites/index.d.ts"
     }
   },
   "dependencies": {

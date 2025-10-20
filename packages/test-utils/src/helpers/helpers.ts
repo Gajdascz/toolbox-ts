@@ -1,5 +1,5 @@
 import { isDeepStrictEqual } from 'node:util';
-import { vi } from 'vitest';
+import { expect, vi } from 'vitest';
 
 import { recursiveReset } from '../core/index.js';
 
@@ -58,3 +58,13 @@ export const mockConsole = {
   reset: () => recursiveReset(_console)
 } as const;
 /* c8 ignore end */
+
+export const EXPECT = {
+  toThrow: (fn: () => void, err: ErrorConstructor) =>
+    expect(() => fn()).toThrow(err),
+  notToThrow: (fn: () => void) => expect(() => fn()).not.toThrow(),
+  every: <T>(arr: T | T[], predicate: (v: T) => boolean) =>
+    expect((Array.isArray(arr) ? arr : [arr]).every(predicate)).toBe(true),
+  some: <T>(arr: T | T[], predicate: (v: T) => boolean) =>
+    expect((Array.isArray(arr) ? arr : [arr]).some(predicate)).toBe(true)
+} as const;

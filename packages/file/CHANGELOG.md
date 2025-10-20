@@ -1,5 +1,12 @@
 # @toolbox-ts/file
 
+## 0.4.0
+
+### Minor Changes
+
+- 38d5283: - file: update and refactor
+  - depcruiser: patch changes from file in depcruiser
+
 ## 0.3.0
 
 ### Minor Changes

@@ -8,7 +8,7 @@ import {
   writeFile,
   writeFileTemplates
 } from '@toolbox-ts/file';
-import { obj, str } from '@toolbox-ts/utils';
+import { Obj, Str } from '@toolbox-ts/utils';
 
 import { cruise, defaultConfig, format, loadConfig } from '../../api/index.js';
 import {
@@ -85,13 +85,11 @@ export class DependencyCruiser extends BaseCommand {
       checkbox({
         message:
           'Which (if any) of the native rule sets do you want to disable?',
-        choices: obj
-          .keys(rules.forbidden.definitions)
-          .map((name) => ({
-            name: rules.forbidden.definitions[name].META.name,
-            description: rules.forbidden.definitions[name].META.comment,
-            value: { [name]: false }
-          }))
+        choices: Obj.keys(rules.forbidden.definitions).map((name) => ({
+          name: rules.forbidden.definitions[name].META.name,
+          description: rules.forbidden.definitions[name].META.comment,
+          value: { [name]: false }
+        }))
       }),
     outDir: () =>
       input({
@@ -206,7 +204,7 @@ ${mermaidGraph}
         log,
         report,
         doNotFollow: { path: defaultConfig.options.doNotFollow.path },
-        includeOnly: { path: str.splitBy.punc(includeOnly) },
+        includeOnly: { path: Str.split.csv(includeOnly) },
         combinedDependencies: isMonorepo,
         ...utils.normalize.nestWhen('tsConfig', tsConfig, {
           fileName: tsConfig

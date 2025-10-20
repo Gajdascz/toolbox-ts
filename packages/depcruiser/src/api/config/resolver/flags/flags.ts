@@ -1,7 +1,7 @@
 import type { ModuleSystemType } from 'dependency-cruiser';
 
 import { utils } from '@toolbox-ts/cli-kit';
-import { obj, str, type StrRecord } from '@toolbox-ts/utils';
+import { Obj, Str, type StrRecord } from '@toolbox-ts/utils';
 
 import {
   type flags,
@@ -15,13 +15,11 @@ const { nestWhen, strOrNum } = utils.normalize;
 type Normalize = (flags: Partial<flags.ParsedResult>) => StrRecord | undefined;
 const normalize: { [key: string]: Normalize } = {
   exclude: ({ exclude }) =>
-    nestWhen('exclude', exclude, (e) => ({ path: str.splitBy.punc(e) })),
+    nestWhen('exclude', exclude, (e) => ({ path: Str.split.csv(e) })),
   includeOnly: ({ includeOnly }) =>
-    nestWhen('includeOnly', includeOnly, (i) => ({
-      path: str.splitBy.punc(i)
-    })),
+    nestWhen('includeOnly', includeOnly, (i) => ({ path: Str.split.csv(i) })),
   reaches: ({ reaches }) =>
-    nestWhen('reaches', reaches, (r) => ({ path: str.splitBy.punc(r) })),
+    nestWhen('reaches', reaches, (r) => ({ path: Str.split.csv(r) })),
   maxDepth: ({ maxDepth }) => nestWhen('maxDepth', maxDepth, strOrNum),
   collapse: ({ collapse }) => nestWhen('collapse', collapse, strOrNum),
   tsConfig: ({ tsConfig }) =>
@@ -32,8 +30,8 @@ const normalize: { [key: string]: Normalize } = {
     nestWhen('babelConfig', babelConfig, { fileName: babelConfig }),
   moduleSystems: ({ moduleSystems }) =>
     nestWhen('moduleSystems', moduleSystems, (m) =>
-      str.splitBy
-        .punc(m)
+      Str.split
+        .csv(m)
         .filter((ms): ms is ModuleSystemType => ms in MODULE_SYSTEMS)
     ),
   cache: ({
@@ -63,13 +61,13 @@ const normalize: { [key: string]: Normalize } = {
     })),
   focus: ({ focus: path, focusDepth: depth }) =>
     nestWhen('focus', path, (p) => ({
-      path: str.splitBy.punc(p),
+      path: Str.split.csv(p),
       depth: strOrNum(depth)
     })),
   doNotFollow: ({ doNotFollow: path, doNotFollowDependencyTypes: types }) =>
     nestWhen('doNotFollow', path, (p) => ({
-      path: str.splitBy.punc(p),
-      dependencyTypes: types ? str.splitBy.punc(types) : undefined
+      path: Str.split.csv(p),
+      dependencyTypes: types ? Str.split.csv(types) : undefined
     })),
   progress: ({ progressType, progressMaximumLevel }) =>
     nestWhen('progress', progressType, (type) => ({
@@ -88,10 +86,11 @@ export const resolveFlags = ({
   noOutput,
   ...rest
 }: Partial<flags.ParsedResult>): ResolvedCruiseOptions => {
-  const result = obj.stripNullish(
-    obj
-      .keys(normalize)
-      .reduce((acc, curr) => ({ ...acc, ...normalize[curr](rest) }), {})
+  const result = Obj.stripNullish(
+    Obj.keys(normalize).reduce(
+      (acc, curr) => ({ ...acc, ...normalize[curr](rest) }),
+      {}
+    )
   ) as ResolvedCruiseOptions;
 
   if (noOutput) {

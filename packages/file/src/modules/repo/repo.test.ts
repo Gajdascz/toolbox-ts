@@ -2,22 +2,29 @@ import { exec, execSync } from 'node:child_process';
 import { promisify } from 'node:util';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { find } from '../find/index.ts';
+import {
+  findFirstDown,
+  findFirstWhen,
+  findLastUp,
+  syncFindFirstDown,
+  syncFindFirstWhen,
+  syncFindLastUp
+} from '../find/index.js';
 import * as helpers from '../helpers/helpers.js';
 import * as parse from '../parse-json/parse-json.js';
 import * as repo from './repo.ts';
 vi.mock('../find/index.js', () => ({
-  find: {
-    lastUp: vi.fn(),
-    firstWhen: vi.fn(),
-    firstDown: vi.fn(),
-    sync: { lastUp: vi.fn(), firstWhen: vi.fn(), firstDown: vi.fn() }
-  }
+  findLastUp: vi.fn(),
+  findFirstWhen: vi.fn(),
+  findFirstDown: vi.fn(),
+  syncFindLastUp: vi.fn(),
+  syncFindFirstWhen: vi.fn(),
+  syncFindFirstDown: vi.fn()
 }));
 
 vi.mock('../helpers/helpers.js', () => ({
   hasFiles: vi.fn(),
-  hasFilesSync: vi.fn(),
+  syncHasFiles: vi.fn(),
   isFile: vi.fn(),
   syncIsFile: vi.fn()
 }));
@@ -36,7 +43,14 @@ let execMock, execSyncMock, mockedPromisify, mockFind, mockHelpers, mockParse;
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockFind = vi.mocked(find);
+  mockFind = {
+    findLastUp: vi.mocked(findLastUp),
+    findFirstWhen: vi.mocked(findFirstWhen),
+    findFirstDown: vi.mocked(findFirstDown),
+    syncLastUp: vi.mocked(syncFindLastUp),
+    syncFindFirstWhen: vi.mocked(syncFindFirstWhen),
+    syncFindFirstDown: vi.mocked(syncFindFirstDown)
+  };
   mockHelpers = vi.mocked(helpers);
   mockParse = vi.mocked(parse);
   execMock = vi.mocked(exec);
@@ -76,7 +90,7 @@ describe('findRoot', () => {
   });
   describe('byFiles', () => {
     it('(async)', async () => {
-      mockFind.firstWhen.mockImplementation(
+      mockFind.findFirstWhen.mockImplementation(
         async (cb: (dir: string) => Promise<null | string>, _opts: any) => {
           for (const d of ['/x/one', '/x/two', '/repo']) {
             const res = await cb(d);
@@ -95,7 +109,7 @@ describe('findRoot', () => {
       );
       expect(result).toBe('/repo');
       expect(helpers.hasFiles).toHaveBeenCalledTimes(3);
-      expect(mockFind.firstWhen).toHaveBeenCalled();
+      expect(mockFind.findFirstWhen).toHaveBeenCalled();
     });
     it('(sync)', () => {
       mockFind.syncFindFirstWhen.mockImplementation(
@@ -107,7 +121,7 @@ describe('findRoot', () => {
           return null;
         }
       );
-      mockHelpers.hasFilesSync.mockImplementation(
+      mockHelpers.syncHasFiles.mockImplementation(
         (dir: string) => dir === '/repo'
       );
       const result = repo.syncFindRootByFiles(

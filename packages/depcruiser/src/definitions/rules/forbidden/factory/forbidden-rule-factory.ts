@@ -1,4 +1,4 @@
-import { str } from '@toolbox-ts/utils';
+import { Str } from '@toolbox-ts/utils';
 
 import type { Rule } from '../types.js';
 
@@ -28,10 +28,10 @@ export const create = <N extends string>(
     severity = _severity,
     to = {}
   }: Partial<RuleFactoryCfg<N>> = {}): Rule<N> => {
-    const fromPath = str.normalize.array([_from.path, from.path]);
-    const fromPathNot = str.normalize.array([_from.pathNot, from.pathNot]);
-    const toPath = str.normalize.array([_to.path, to.path]);
-    const toPathNot = str.normalize.array([_to.pathNot, to.pathNot]);
+    const fromPath = Str.normalize.array([_from.path, from.path]);
+    const fromPathNot = Str.normalize.array([_from.pathNot, from.pathNot]);
+    const toPath = Str.normalize.array([_to.path, to.path]);
+    const toPathNot = Str.normalize.array([_to.pathNot, to.pathNot]);
     return {
       comment,
       from: {

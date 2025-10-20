@@ -1,5 +1,5 @@
 import { findFirstUp, loadModule } from '@toolbox-ts/file';
-import { obj } from '@toolbox-ts/utils';
+import { Obj } from '@toolbox-ts/utils';
 
 import type { InputConfig } from '../../definitions/types.js';
 
@@ -17,7 +17,7 @@ export const loadConfig = async (
       throw new Error(
         `Failed to load configuration from ${cfgPath}\nError: ${error}`
       );
-    else if (!result || !obj.guards.isObjPlain(result))
+    else if (!result || !Obj.is.obj(result))
       throw new TypeError(
         `Configuration file ${cfgPath} should export a Configuration object, but got: ${typeof result}`
       );

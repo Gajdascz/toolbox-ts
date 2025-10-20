@@ -8,7 +8,7 @@ import type {
 
 import { utils } from '@toolbox-ts/cli-kit';
 import { findFirstUp, type OverwriteBehavior } from '@toolbox-ts/file';
-import { obj } from '@toolbox-ts/utils';
+import { Obj } from '@toolbox-ts/utils';
 import extractTSConfig from 'dependency-cruiser/config-utl/extract-ts-config';
 import extractWebpackResolveConfig from 'dependency-cruiser/config-utl/extract-webpack-resolve-config';
 import path from 'node:path';
@@ -115,7 +115,7 @@ export const resolve = {
       required = []
     }: IFlattenedRuleSet = {}
   ) => {
-    const result: IFlattenedRuleSet = obj.clone(base);
+    const result: IFlattenedRuleSet = Obj.clone(base);
     if (allowed.length > 0)
       result.allowed = [...(result.allowed ?? []), ...allowed];
     if (forbidden.length > 0)
@@ -203,9 +203,9 @@ export const resolveOptions = async ({
   base,
   cruiseOptions = {}
 }: ResolveOptions): Promise<ResolvedOptions> => {
-  const merged = obj.merge(base, cruiseOptions);
+  const merged = Obj.merge(base, cruiseOptions);
 
-  if (cruiseOptions.ruleSet && !obj.guards.isObjEmpty(cruiseOptions.ruleSet)) {
+  if (cruiseOptions.ruleSet && !Obj.is.empty(cruiseOptions.ruleSet)) {
     merged.ruleSet = resolve.ruleSet(base.ruleSet ?? {}, cruiseOptions.ruleSet);
   }
   const {

@@ -9,7 +9,7 @@ import {
   syncFindFirstDown,
   syncFindFirstWhen,
   syncFindLastUp
-} from '../find/find.js';
+} from '../find/index.js';
 import {
   hasFiles,
   isFile,

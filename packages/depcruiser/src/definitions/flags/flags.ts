@@ -3,7 +3,7 @@ import type { InferredFlags } from '@oclif/core/interfaces';
 import { Flags } from '@oclif/core';
 import { utils } from '@toolbox-ts/cli-kit';
 import { overwriteBehavior } from '@toolbox-ts/file';
-import { obj } from '@toolbox-ts/utils';
+import { Obj } from '@toolbox-ts/utils';
 import { EOL } from 'node:os';
 
 import { CACHE_STRATEGIES, MODULE_SYSTEMS } from '../constants.js';
@@ -74,7 +74,7 @@ export const definitions = {
       'what to do when the output file already exists',
       { helpGroup: 'Output' }
     ),
-    options: obj.keys(overwriteBehavior)
+    options: Obj.keys(overwriteBehavior)
   }),
   outputTo: Flags.directory({
     ...utils.flagMeta('outputTo', 'the folder to write output files to', {
@@ -118,7 +118,7 @@ export const definitions = {
       `the strategy to use for caching${EOL}- 'metadata': use git metadata to detect changes;${EOL}- 'content': use (a checksum of) the contents of files to detect changes.`,
       { helpGroup: 'Cache' }
     ),
-    options: obj.keys(CACHE_STRATEGIES)
+    options: Obj.keys(CACHE_STRATEGIES)
   }),
   cacheCompression: Flags.boolean({
     ...utils.flagMeta(
@@ -179,7 +179,7 @@ export const definitions = {
       char: 'M',
       helpGroup: 'Resolution'
     }),
-    options: obj.keys(MODULE_SYSTEMS)
+    options: Obj.keys(MODULE_SYSTEMS)
   }),
   //#endregion
 

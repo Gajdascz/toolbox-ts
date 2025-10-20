@@ -1,5 +1,12 @@
 # @toolbox-ts/tseslint
 
+## 0.1.6
+
+### Patch Changes
+
+- 85ec5ca: - test-utils: add type-guard testing suite and utils
+  - tseslint: integrate mkRules util in root config and change some rules.
+
 ## 0.1.5
 
 ### Patch Changes

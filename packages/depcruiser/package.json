@@ -52,7 +52,7 @@
     }
   },
   "dependencies": {
-    "@oclif/core": "^4.5.4",
+    "@oclif/core": "^4.8.0",
     "@toolbox-ts/cli-kit": "workspace:^",
     "@toolbox-ts/file": "workspace:^",
     "@toolbox-ts/utils": "workspace:^",
@@ -60,8 +60,8 @@
     "watskeburt": "^4.2.3"
   },
   "devDependencies": {
-    "@types/node": "^18.19.128",
-    "tsx": "^4.20.6"
+    "@types/node": "^18.19.130",
+    "tsx": "^4.21.0"
   },
   "bin": {
     "depcruiser": "./dist/cli/bin/run.js"

@@ -85,7 +85,7 @@ export const isOverwriteBehavior = (
  */
 export interface FileWriteTemplate<Content extends object = object> {
   filename: string;
-  generate: (cfg: Content, ...args: unknown[]) => string;
+  generate: (cfg?: Content, ...args: unknown[]) => unknown;
   outDir?: string;
   relativePath?: string;
 }
@@ -203,7 +203,7 @@ export const writeFileTemplates = async <Content extends object>(
           continue;
         }
       }
-      await fs.promises.writeFile(filePath, generate(data));
+      await fs.promises.writeFile(filePath, normalizeWriteData(generate(data)));
       results.push({ writeFile: filePath, success: true });
     } catch (error) {
       results.push({

@@ -1,5 +1,9 @@
 import type { ConfigWithExtends } from '@eslint/config-helpers';
-import type { parser } from 'typescript-eslint';
+import type {
+  parser,
+  ConfigWithExtends as TSESLintConfig
+} from 'typescript-eslint';
+
 /** Represents the base configuration for TypeScript ESLint. */
 export type BaseCfg<N extends string> = {
   extends?: ConfigWithExtends['extends'];
@@ -23,7 +27,7 @@ export interface ProcessedCfg<N extends string> extends ConfigWithExtends {
       projectService:
         | boolean
         | NonNullable<
-            NonNullable<ConfigWithExtends['languageOptions']>['parserOptions']
+            NonNullable<TSESLintConfig['languageOptions']>['parserOptions']
           >['projectService'];
       tsconfigRootDir: string;
     };

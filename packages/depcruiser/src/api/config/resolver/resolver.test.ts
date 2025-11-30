@@ -168,6 +168,7 @@ describe('config', () => {
     );
     expect(names).toContain('from-extended-config-1');
     if (defaultExts.length > 0) {
+      // eslint-disable-next-line vitest/no-conditional-expect
       expect(names).toContain('from-default-config');
     }
   });

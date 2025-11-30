@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "fast-glob": "^3.3.3",
-    "jiti": "^2.6.0"
+    "jiti": "^2.6.1"
   },
   "devDependencies": {
     "@toolbox-ts/test-utils": "workspace:^"

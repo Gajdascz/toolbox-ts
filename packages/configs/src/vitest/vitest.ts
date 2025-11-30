@@ -7,11 +7,10 @@ import {
   type ViteUserConfig
 } from 'vitest/config';
 
-export interface TestConfig
-  extends Omit<
-    NestedPartial<typeof configDefaults> & ViteUserConfig['test'],
-    'cache'
-  > {
+export interface TestConfig extends Omit<
+  NestedPartial<typeof configDefaults> & ViteUserConfig['test'],
+  'cache'
+> {
   cacheDir?: string;
   tsconfigFilename?: string;
 }

@@ -79,8 +79,8 @@ export abstract class BaseCommand extends Command {
      */
     execWithStdio<
       S extends SyncOptions['stdio'],
-      O extends
-        CommandOptionsNoStdio<SyncOptions> = CommandOptionsNoStdio<SyncOptions>
+      O extends CommandOptionsNoStdio<SyncOptions> =
+        CommandOptionsNoStdio<SyncOptions>
     >(cmd: CommandInput, stdio: S, opts?: O) {
       return this.exec<{ stdio: S }>(cmd, {
         execaOpts: { ...opts?.execaOpts, stdio },
@@ -268,8 +268,8 @@ export abstract class BaseCommand extends Command {
       },
       execWithStdio: <
         S extends SyncOptions['stdio'],
-        O extends
-          CommandOptionsNoStdio<SyncOptions> = CommandOptionsNoStdio<SyncOptions>
+        O extends CommandOptionsNoStdio<SyncOptions> =
+          CommandOptionsNoStdio<SyncOptions>
       >(
         cmd: CommandInput,
         stdio: S,
@@ -278,8 +278,8 @@ export abstract class BaseCommand extends Command {
         return this.sync.execWithStdio(normalizeInput(cmd), stdio, opts);
       },
       string: <
-        O extends
-          CommandOptionsNoStdio<SyncOptions> = CommandOptionsNoStdio<SyncOptions>
+        O extends CommandOptionsNoStdio<SyncOptions> =
+          CommandOptionsNoStdio<SyncOptions>
       >(
         cmd: CommandInput,
         opts?: O

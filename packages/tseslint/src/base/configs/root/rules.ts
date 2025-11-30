@@ -1,9 +1,9 @@
-import type { ConfigWithExtends, RuleEntry } from '@eslint/config-helpers';
+import type { ConfigWithExtends, RuleConfig } from '@eslint/config-helpers';
 
 /* c8 ignore start */
 const mkRules = (
   p: string,
-  defs: [rule: string, val: 'error' | 'off' | 'warn' | 0 | 1 | 2 | RuleEntry][]
+  defs: [rule: string, val: 'error' | 'off' | 'warn' | 0 | 1 | 2 | RuleConfig][]
 ) => Object.fromEntries(defs.map(([r, v]) => [`${p}/${r}`, v]));
 
 export const unicorn: ConfigWithExtends['rules'] = mkRules('unicorn', [

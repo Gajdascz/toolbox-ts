@@ -155,8 +155,10 @@ export interface IWebpackConfig {
 }
 //#endregion
 
-export interface InputConfig
-  extends Omit<IConfiguration, 'forbidden' | 'options'> {
+export interface InputConfig extends Omit<
+  IConfiguration,
+  'forbidden' | 'options'
+> {
   configFileName?: string;
   extendForbidden?: IConfiguration['forbidden'];
   /**
@@ -169,11 +171,10 @@ export interface InputConfig
   forbidden?: Partial<forbidden.Config>;
   options?: InputCruiseOptions;
 }
-export interface InputCruiseOptions
-  extends Omit<
-    ICruiseOptions,
-    'babelConfig' | 'doNotFollow' | 'outputType' | 'tsConfig' | 'webpackConfig'
-  > {
+export interface InputCruiseOptions extends Omit<
+  ICruiseOptions,
+  'babelConfig' | 'doNotFollow' | 'outputType' | 'tsConfig' | 'webpackConfig'
+> {
   affected?: string;
   babelConfig?: Partial<IBabelConfig> | string;
   cache?: boolean | Partial<ICache>;
@@ -197,8 +198,10 @@ export interface ResolvedConfig extends IConfiguration {
   options: ResolvedCruiseOptions;
 }
 
-export interface ResolvedCruiseOptions
-  extends Omit<ICruiseOptions, 'outputType'> {
+export interface ResolvedCruiseOptions extends Omit<
+  ICruiseOptions,
+  'outputType'
+> {
   affected?: string;
   babelConfig?: IBabelConfig;
   cache: Toggleable<Partial<ICache>>;

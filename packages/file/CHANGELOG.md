@@ -1,5 +1,14 @@
 # @toolbox-ts/file
 
+## 0.4.1
+
+### Patch Changes
+
+- dd01931: - update: dependencies
+  - fix: correct type imports in tseslint package
+  - feat: make file writeTemplate's more flexible
+    - allow generator to return unknown type and make content options optional
+
 ## 0.4.0
 
 ### Minor Changes

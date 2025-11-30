@@ -1,5 +1,17 @@
 # @toolbox-ts/depcruiser
 
+## 0.1.4
+
+### Patch Changes
+
+- dd01931: - update: dependencies
+  - fix: correct type imports in tseslint package
+  - feat: make file writeTemplate's more flexible
+    - allow generator to return unknown type and make content options optional
+- Updated dependencies [dd01931]
+  - @toolbox-ts/cli-kit@0.1.2
+  - @toolbox-ts/file@0.4.1
+
 ## 0.1.3
 
 ### Patch Changes

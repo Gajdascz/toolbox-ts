@@ -39,7 +39,7 @@ export const findRootByDirName = async (
 /**
  * Find the repo root by looking for files that typically indicate a repo root (like .git or package.json).
  * - You can customize the files to look for by providing an array of file names.
- * - Returns the first directory found that contains all specified files “so ensure the files you provide are all together exclusively in the root” → could be shorter: “Returns the first directory that contains all specified files.”
+ * - Returns the first directory found that contains all specified files “so ensure the files you provide are all together exclusively in the root”
  * @example
  * ```ts
  * const root = await findRootByFiles(['.git', 'package.json']);

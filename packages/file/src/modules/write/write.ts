@@ -85,7 +85,8 @@ export const isOverwriteBehavior = (
  */
 export interface FileWriteTemplate<Content extends object = object> {
   filename: string;
-  generate: (cfg?: Content, ...args: unknown[]) => unknown;
+  generate: (cfg?: Content) => unknown;
+  generateCfg?: Content;
   outDir?: string;
   relativePath?: string;
 }
@@ -149,19 +150,19 @@ const getFileOverwriteHandler = (
  * - Creates the output directory if it does not exist.
  * - Handles existing files based on the specified overwrite behavior.
  *
- * @template Content - The type of the configuration object passed to the template generate functions.
- *
  * @example
  * ```ts
  * const writeFileTemplates: FileWriteTemplate<{ name: string }>[] = [
  *   {
  *     filename: 'greeting.txt',
- *     generate: (cfg) => `Hello, ${cfg.name}!`,
+ *     generateCfg: { name: 'Alice' },
+ *     generate: ({ name }) => `Hello, ${name}!`,
  *     relativePath: 'messages'
  *   },
  *   {
  *     filename: 'farewell.txt',
- *     generate: (cfg) => `Goodbye, ${cfg.name}!`,
+ *     generateCfg: { name: 'Alice' },
+ *     generate: ({ name }) => `Goodbye, ${name}!`,
  *     relativePath: 'messages'
  *   }
  * ];
@@ -175,10 +176,6 @@ export const writeFileTemplates = async <Content extends object>(
    */
   defaultOutDir: string,
   /**
-   * The object-formatted data to pass to each template's generate function.
-   */
-  data: Content,
-  /**
    * An array of writeFileTemplates to write.
    */
   templates: FileWriteTemplate<Content>[],
@@ -188,7 +185,13 @@ export const writeFileTemplates = async <Content extends object>(
   const overwriteHandler = getFileOverwriteHandler(behavior, promptFn);
   const results: OverwriteResult[] = [];
 
-  for (const { filename, generate, relativePath, outDir } of templates) {
+  for (const {
+    filename,
+    generate,
+    relativePath,
+    outDir,
+    generateCfg
+  } of templates) {
     const targetDir = outDir ?? defaultOutDir;
     const filePath = path.join(targetDir, relativePath ?? '', filename);
 
@@ -203,7 +206,10 @@ export const writeFileTemplates = async <Content extends object>(
           continue;
         }
       }
-      await fs.promises.writeFile(filePath, normalizeWriteData(generate(data)));
+      await fs.promises.writeFile(
+        filePath,
+        normalizeWriteData(generate(generateCfg))
+      );
       results.push({ writeFile: filePath, success: true });
     } catch (error) {
       results.push({

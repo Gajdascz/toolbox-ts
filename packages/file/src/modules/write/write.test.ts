@@ -68,6 +68,41 @@ describe('write', () => {
         await fs.promises.readFile(path.join(outDir, 'a.txt'), 'utf8')
       ).toBe('Alice');
     });
+
+    it('throws error if promptFn is missing for prompt behavior', async () => {
+      await fs.promises.writeFile(path.join(outDir, 'a.txt'), 'exists');
+      // Should throw TypeError
+      await expect(
+        writeFileTemplates(outDir, templates, {
+          overwrite: { behavior: 'prompt' }
+        })
+      ).rejects.toThrow(
+        'Prompt function is required when overwrite behavior is set to "prompt".'
+      );
+    });
+
+    it('throws error for unexpected overwrite behavior', async () => {
+      await expect(
+        writeFileTemplates(outDir, templates, {
+          // @ts-expect-error: testing invalid behavior
+          overwrite: { behavior: 'invalid' }
+        })
+      ).rejects.toThrow('Unexpected overwrite behavior: invalid');
+    });
+
+    it('returns error if writeFile throws', async () => {
+      const badTemplates: FileWriteTemplate<{ msg: string }>[] = [
+        {
+          filename: 'bad.txt',
+          generate: () => {
+            throw new Error('fail-generate');
+          }
+        }
+      ];
+      const res = await writeFileTemplates(outDir, badTemplates);
+      expect(res.result[0].success).toBe(false);
+      expect(res.result[0].error).toMatch(/fail-generate/);
+    });
   });
   describe('writeFile', () => {
     const filePath = path.join(outDir, 'single.txt');

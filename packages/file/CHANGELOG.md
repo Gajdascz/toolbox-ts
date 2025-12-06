@@ -1,5 +1,16 @@
 # @toolbox-ts/file
 
+## 0.4.2
+
+### Patch Changes
+
+- 8ffdc22: - file:
+  - Change file result object type for easier resolution.
+  - Change parseJson to have NonNullable<object> as default parsed type.
+  - configs:
+    - Change vitestConfig export to vitest.
+  - Update dependencies
+
 ## 0.4.1
 
 ### Patch Changes

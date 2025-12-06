@@ -4,7 +4,6 @@ export type FileContentResolver<TLoaded, TResolved = TLoaded> = (
 
 export type FileContentResolverArg<T> = Parameters<FileContentResolver<T>>[0];
 
-export interface ResultObj<T> {
-  error?: string;
-  result: null | T;
-}
+export type ResultObj<T> =
+  | { error: string; result: null }
+  | { error?: undefined; result: T };

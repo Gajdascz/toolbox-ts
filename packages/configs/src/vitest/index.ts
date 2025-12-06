@@ -1,1 +1,1 @@
-export * as vitestConfig from './vitest.js';
+export * as vitest from './vitest.js';

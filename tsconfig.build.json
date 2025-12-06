@@ -20,7 +20,6 @@
     { "path": "./packages/test-utils" },
     //#endregion
     { "path": "./packages/file" },
-    { "path": "./packages/cli-kit" },
-    { "path": "./packages/depcruiser" }
+    { "path": "./packages/cli-kit" }
   ]
 }

@@ -1,8 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import type { ResultObj } from '../types.ts';
-
 interface NormalizeWriteDataOptions {
   encoding?: Parameters<InstanceType<typeof Buffer>['toString']>[0];
 }
@@ -64,32 +62,7 @@ export const isOverwriteBehavior = (
   value: unknown
 ): value is OverwriteBehavior =>
   typeof value === 'string' && value in overwriteBehavior;
-/**
- * A template for generating a writeFile.
- * - `filename`: The name of the writeFile to generate.
- * - `generate`: A function that takes a configuration object and returns the writeFile content as a string.
- * - `outDir`: Optional output directory. If not provided, the default output directory will be used.
- * - `relativePath`: Optional relative path within the output directory. If not provided, the writeFile will be written directly to the output directory.
- *
- * @template Content - The type of the configuration object passed to the `generate` function.
- *
- * @example
- * ```ts
- * const template: FileWriteTemplate<{ name: string }> = {
- *   filename: 'greeting.txt',
- *   generate: (cfg) => `Hello, ${cfg.name}!`,
- *   outDir: './output',
- *   relativePath: 'messages'
- * };
- * ```
- */
-export interface FileWriteTemplate<Content extends object = object> {
-  filename: string;
-  generate: (cfg?: Content) => unknown;
-  generateCfg?: Content;
-  outDir?: string;
-  relativePath?: string;
-}
+
 /**
  * Optional prompts function to use if overwriteBehavior is 'prompt'
  */
@@ -97,8 +70,8 @@ export type OverwritePromptFn = () => Promise<boolean>;
 
 export interface OverwriteResult {
   error?: string;
+  filePath: string;
   success: boolean;
-  writeFile: string;
 }
 
 /**
@@ -117,7 +90,7 @@ const getFileOverwriteHandler = (
 ): ((filePath: string) => OverwriteResult | Promise<OverwriteResult>) => {
   switch (behavior) {
     case 'force': {
-      return (filePath: string) => ({ writeFile: filePath, success: true });
+      return (filePath: string) => ({ filePath, success: true });
     }
     case 'prompt': {
       if (typeof promptFn !== 'function') {
@@ -128,13 +101,13 @@ const getFileOverwriteHandler = (
       return async (filePath: string) => {
         const result = await promptFn();
         return result ?
-            { writeFile: filePath, success: true }
-          : { writeFile: filePath, error: 'User skipped', success: false };
+            { filePath, success: true }
+          : { filePath, error: 'User skipped', success: false };
       };
     }
     case 'skip': {
       return (filePath: string) => ({
-        writeFile: filePath,
+        filePath,
         success: false,
         error: 'Skipped (exists)'
       });
@@ -143,84 +116,6 @@ const getFileOverwriteHandler = (
       throw new Error(`Unexpected overwrite behavior: ${behavior}`);
     }
   }
-};
-
-/**
- * Write multiple writeFileTemplates to files in a specified output directory.
- * - Creates the output directory if it does not exist.
- * - Handles existing files based on the specified overwrite behavior.
- *
- * @example
- * ```ts
- * const writeFileTemplates: FileWriteTemplate<{ name: string }>[] = [
- *   {
- *     filename: 'greeting.txt',
- *     generateCfg: { name: 'Alice' },
- *     generate: ({ name }) => `Hello, ${name}!`,
- *     relativePath: 'messages'
- *   },
- *   {
- *     filename: 'farewell.txt',
- *     generateCfg: { name: 'Alice' },
- *     generate: ({ name }) => `Goodbye, ${name}!`,
- *     relativePath: 'messages'
- *   }
- * ];
- * const results = await writeFileTemplates('./output', { name: 'Alice' }, writeFileTemplates, { overwrite: { behavior: 'prompt', promptFn: async () => true } });
- * console.log(results);
- * ```
- */
-export const writeFileTemplates = async <Content extends object>(
-  /**
-   * The default output directory where files will be written.
-   */
-  defaultOutDir: string,
-  /**
-   * An array of writeFileTemplates to write.
-   */
-  templates: FileWriteTemplate<Content>[],
-  { overwrite = {} }: WriteFileOpts = {}
-): Promise<ResultObj<OverwriteResult[]>> => {
-  const { behavior = 'skip', promptFn } = overwrite;
-  const overwriteHandler = getFileOverwriteHandler(behavior, promptFn);
-  const results: OverwriteResult[] = [];
-
-  for (const {
-    filename,
-    generate,
-    relativePath,
-    outDir,
-    generateCfg
-  } of templates) {
-    const targetDir = outDir ?? defaultOutDir;
-    const filePath = path.join(targetDir, relativePath ?? '', filename);
-
-    try {
-      await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
-
-      const exists = fs.existsSync(filePath);
-      if (exists) {
-        const result = await overwriteHandler(filePath);
-        if (!result.success) {
-          results.push(result);
-          continue;
-        }
-      }
-      await fs.promises.writeFile(
-        filePath,
-        normalizeWriteData(generate(generateCfg))
-      );
-      results.push({ writeFile: filePath, success: true });
-    } catch (error) {
-      results.push({
-        writeFile: filePath,
-        success: false,
-        error: (error as Error).message
-      });
-    }
-  }
-
-  return { result: results };
 };
 
 /**
@@ -254,4 +149,76 @@ export const writeFile = async (
   }
   await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
   await fs.promises.writeFile(filePath, _data);
+};
+
+export interface FileEntry {
+  /**
+   * Data to write to the writeFile. Can be any type; will be normalized to string.
+   */
+  data: unknown;
+  /**
+   * Name of the writeFile to write.
+   */
+  filename: string;
+  /**
+   * Optional path relative to the output directory to write the file to.
+   */
+  pathFromOutDir?: string;
+}
+interface WriteFilesResult {
+  error?: string;
+  filename: string;
+  success: boolean;
+}
+/**
+ * Write multiple files to a specified output directory.
+ * - Creates directories as needed.
+ * - Handles existing files based on the specified overwrite behavior.
+ * - Returns results for each file indicating success or failure.
+ *
+ * @param outDir - The base output directory where files will be written.
+ * @param files - An array of file entries to write.
+ * @param opts - Optional write options (overwrite behavior).
+ * @returns An array of results for each file write operation.
+ *
+ * @example
+ * ```ts
+ * const files: FileEntry[] = [
+ *   { filename: 'greeting.txt', data: 'Hello, Alice!' },
+ *   { filename: 'config.json', data: { name: 'app' }, pathFromOutDir: 'configs' }
+ * ];
+ *
+ * const results = await writeFiles('./output', files);
+ * // Writes: ./output/greeting.txt, ./output/configs/config.json
+ *
+ * // With overwrite options:
+ * const results = await writeFiles('./output', files, {
+ *   overwrite: { behavior: 'force' }
+ * });
+ * ```
+ */
+export const writeFiles = async (
+  outDir: string,
+  files: FileEntry[],
+  opts?: WriteFileOpts
+): Promise<WriteFilesResult[]> => {
+  const results: WriteFilesResult[] = [];
+  for (const file of files) {
+    const filePath = path.join(
+      outDir,
+      file.pathFromOutDir ?? '',
+      file.filename
+    );
+    try {
+      await writeFile(filePath, file.data, opts);
+      results.push({ filename: filePath, success: true });
+    } catch (error) {
+      results.push({
+        filename: filePath,
+        success: false,
+        error: (error as Error).message
+      });
+    }
+  }
+  return results;
 };

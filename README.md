@@ -10,10 +10,9 @@ A monorepo for Typescript utility packages and libraries.
 ## Packages
 
 | Package                                    | Version                                            | Description                            |
-| ------------------------------------------ | -------------------------------------------------- | -------------------------------------- |
+|--------------------------------------------|----------------------------------------------------|----------------------------------------|
 | [`@toolbox-ts/configs`][configs-pkg]       | [![npm version][configs-badge]][configs-npm]       | Repository config utils                |
 | [`@toolbox-ts/cli-kit`][cli-kit-pkg]       | [![npm version][cli-kit-badge]][cli-kit-npm]       | CLI building utils                     |
-| [`@toolbox-ts/depcruiser`][depcruiser-pkg] | [![npm version][depcruiser-badge]][depcruiser-npm] | Dependency-Cruiser wrapper             |
 | [`@toolbox-ts/file`][file-pkg]             | [![npm version][file-badge]][file-npm]             | Node filesystem utils                  |
 | [`@toolbox-ts/test-utils`][test-utils-pkg] | [![npm version][test-utils-badge]][test-utils-npm] | Vitest utilities and environment setup |
 | [`@toolbox-ts/tseslint`][tseslint-pkg]     | [![npm version][tseslint-badge]][tseslint-npm]     | TS-ESlint configuration and utilities  |
@@ -28,10 +27,6 @@ A monorepo for Typescript utility packages and libraries.
 [cli-kit-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/cli-kit
 [cli-kit-badge]: https://img.shields.io/npm/v/@toolbox-ts/cli-kit?label=
 [cli-kit-npm]: https://www.npmjs.com/package/@toolbox-ts/cli-kit
-
-[depcruiser-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/depcruiser
-[depcruiser-badge]: https://img.shields.io/npm/v/@toolbox-ts/depcruiser?label=
-[depcruiser-npm]: https://www.npmjs.com/package/@toolbox-ts/depcruiser
 
 [file-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/file
 [file-badge]: https://img.shields.io/npm/v/@toolbox-ts/file?label=

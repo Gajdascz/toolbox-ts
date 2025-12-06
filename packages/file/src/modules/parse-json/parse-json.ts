@@ -5,14 +5,17 @@ import type { FileContentResolver, ResultObj } from '../types.ts';
 /**
  * Options for parsing JSON content from a file
  */
-export interface ParseJsonOpts<TParsed, TResolved = TParsed> {
+export interface ParseJsonOpts<
+  TParsed = NonNullable<object>,
+  TResolved = TParsed
+> {
   resolverFn?: FileContentResolver<TParsed, TResolved>;
 }
 const formatError = (filePath: string, error: unknown): string =>
   `Failed to parse JSON config from ${filePath}\n`
   + (error instanceof Error ? `Error: ${error.message}` : String(error));
 
-const parse = <TParsed, TResolved = TParsed>(
+const parse = <TParsed = NonNullable<object>, TResolved = TParsed>(
   content: string,
   filePath: string,
   r: FileContentResolver<TParsed, TResolved> | undefined
@@ -46,7 +49,10 @@ const parse = <TParsed, TResolved = TParsed>(
  * console.log(result); // { key: 'value' }
  * ```
  */
-export const parseJson = async <TParsed, TResolved = TParsed>(
+export const parseJson = async <
+  TParsed = NonNullable<object>,
+  TResolved = TParsed
+>(
   filePath: string,
   { resolverFn }: ParseJsonOpts<TParsed, TResolved> = {}
 ): Promise<ResultObj<TResolved>> => {
@@ -76,7 +82,10 @@ export const parseJson = async <TParsed, TResolved = TParsed>(
  * console.log(result); // { key: 'value' }
  * ```
  */
-export const syncParseJson = <TParsed, TResolved = TParsed>(
+export const syncParseJson = <
+  TParsed = NonNullable<object>,
+  TResolved = TParsed
+>(
   filePath: string,
   { resolverFn }: ParseJsonOpts<TParsed, TResolved> = {}
 ): ResultObj<TResolved> =>

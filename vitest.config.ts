@@ -1,8 +1,8 @@
-import { vitestConfig } from '@toolbox-ts/configs';
+import { vitest } from '@toolbox-ts/configs';
 
 const root = import.meta.dirname;
 
-export default vitestConfig.define({
+export default vitest.define({
   root,
   coverage: { reportsDirectory: `${root}/docs/reports/vitest-ui` },
   dir: import.meta.dirname,

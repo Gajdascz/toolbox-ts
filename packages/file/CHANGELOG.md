@@ -1,5 +1,12 @@
 # @toolbox-ts/file
 
+## 0.4.3
+
+### Patch Changes
+
+- 571e7e2: change write templates to take per template config instead of a
+  single shared config for every template
+
 ## 0.4.2
 
 ### Patch Changes

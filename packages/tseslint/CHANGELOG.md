@@ -1,5 +1,12 @@
 # @toolbox-ts/tseslint
 
+## 0.1.9
+
+### Patch Changes
+
+- 1a1a5a1: remove file write templates and replace with simpler writeFiles
+  remove depcruiser packages and use depcruise cli directly
+
 ## 0.1.8
 
 ### Patch Changes

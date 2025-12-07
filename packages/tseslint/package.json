@@ -39,6 +39,7 @@
     }
   },
   "dependencies": {
+    "@eslint/config-helpers": "^0.5.0",
     "@eslint/js": "^9.39.1",
     "@vitest/eslint-plugin": "^1.5.1",
     "eslint": "^9.39.1",
@@ -50,9 +51,7 @@
     "eslint-plugin-tsdoc": "^0.4.0",
     "eslint-plugin-unicorn": "^60.0.0",
     "jiti": "^2.6.1",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^8.48.1"
-  },
-  "devDependencies": {
-    "typescript": "^5.9.3"
   }
 }

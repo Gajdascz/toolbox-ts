@@ -6,7 +6,7 @@ import type {
   Reporter as IReporter,
   ReporterOptions,
   StringifyOptions
-} from '../types.ts';
+} from '../types.js';
 
 /**
  * Adapter function type to convert input items to GitHub Actions annotation messages.

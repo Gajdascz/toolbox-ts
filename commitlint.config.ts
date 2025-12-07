@@ -5,7 +5,6 @@ export default commitlint.define({
     'repo',
     'cli-kit',
     'configs',
-    'depcruiser',
     'file',
     'test-utils',
     'tseslint',

@@ -1,5 +1,16 @@
 # @toolbox-ts/file
 
+## 0.5.0
+
+### Minor Changes
+
+- 8a03bd7: fix missing exports (helpers and traversal)
+
+### Patch Changes
+
+- 8a03bd7: remove file write templates and replace with simpler writeFiles
+  remove depcruiser packages and use depcruise cli directly
+
 ## 0.4.4
 
 ### Patch Changes

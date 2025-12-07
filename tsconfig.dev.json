@@ -9,7 +9,7 @@
     "allowImportingTsExtensions": true,
     "allowJs": true
   },
-  "files": ["./prettier.config.js"],
+  "files": ["./prettier.config.js", "./.dependency-cruiser.cjs"],
   "include": ["_dev/**/*", "dev/**/*", "*.config.*"],
   "exclude": [
     "**/dist/**",

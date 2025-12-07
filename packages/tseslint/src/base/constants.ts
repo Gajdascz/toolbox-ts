@@ -6,7 +6,7 @@ export const ARRAYS = {
     '**/docs/**'
   ],
   DEV_DIRS: ['dev', '_dev', 'tools', '_tools'],
-  EXTS: ['ts', 'tsx', 'js', 'jsx'],
+  EXTS: ['ts', 'tsx', 'js', 'jsx', 'mjs', 'cjs'],
   SRC_DIRS: ['src', 'packages', 'apps', 'bin', 'app', 'package'],
   TEST_FILES: ['test', 'spec', 'bench']
 } as const;

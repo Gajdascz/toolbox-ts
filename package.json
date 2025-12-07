@@ -30,7 +30,6 @@
     "@oclif/plugin-help": "^6.2.36",
     "@oclif/plugin-plugins": "^5.4.54",
     "@toolbox-ts/configs": "workspace:^",
-    "@toolbox-ts/depcruiser": "workspace:^",
     "@toolbox-ts/file": "workspace:^",
     "@toolbox-ts/test-utils": "workspace:^",
     "@toolbox-ts/tseslint": "workspace:^",
@@ -84,7 +83,7 @@
     "clean": "pnpm clean:cache && pnpm clean:dist",
     "build": "tsc -b tsconfig.build.json",
     "build:clean": "pnpm clean && pnpm build && pnpm install",
-    "check:dependencies": "pnpm depcruiser --no-graph --no-report --log-type gh-actions-text",
+    "check:dependencies": "pnpm depcruise ./packages/*/src",
     "check:types": "tsc -b tsconfig.build.json --noEmit",
     "check:format": "prettier . --check",
     "check:lint": "eslint . --max-warnings=0",
@@ -93,7 +92,7 @@
     "prepare": "husky",
     "test": "pnpm vitest --config vitest.config.ts",
     "test:ui": "pnpm test --ui",
-    "generate:dependency-info": "pnpm depcruiser",
+    "generate:dependency-report": "pnpm depcruise ./packages/*/src --output-type dot | dot -T svg > ./docs/reports/dependency-report.svg",
     "up": "pnpm -r up"
   }
 }

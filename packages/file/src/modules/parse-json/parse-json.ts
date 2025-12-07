@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-import type { FileContentResolver, ResultObj } from '../types.ts';
+import type { FileContentResolver, ResultObj } from '../types.js';
 
 /**
  * Options for parsing JSON content from a file

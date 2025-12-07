@@ -1,6 +1,6 @@
 import { createJiti } from 'jiti';
 
-import type { FileContentResolver, ResultObj } from '../types.ts';
+import type { FileContentResolver, ResultObj } from '../types.js';
 
 const jiti = createJiti(process.cwd());
 

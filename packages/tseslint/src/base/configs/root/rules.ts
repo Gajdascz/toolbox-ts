@@ -93,7 +93,10 @@ export const unicorn: ConfigWithExtends['rules'] = mkRules('unicorn', [
    * Causes errors when methods on data-structures other than
    * array mirror signatures.
    */
-  ['no-array-callback-reference', 'off']
+  ['no-array-callback-reference', 'off'],
+
+  /** Disabling to allow ESLint-disable comments when necessary */
+  ['no-abusive-eslint-disable', 'off']
 ]);
 
 export const typescriptEslint: ConfigWithExtends['rules'] = mkRules(

@@ -1,5 +1,12 @@
 # @toolbox-ts/configs
 
+## 0.1.4
+
+### Patch Changes
+
+- 1a1a5a1: remove file write templates and replace with simpler writeFiles
+  remove depcruiser packages and use depcruise cli directly
+
 ## 0.1.3
 
 ### Patch Changes

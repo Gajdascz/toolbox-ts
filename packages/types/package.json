@@ -1,0 +1,64 @@
+{
+  "name": "@toolbox-ts/types",
+  "version": "0.1.0",
+  "description": "Types",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/types",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "Nolan Gajdascz",
+    "email": "dev.gajdascz@gmail.com",
+    "url": "https://github.com/gajdascz"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "keywords": [
+    "typescript",
+    "types",
+    "tsconfig",
+    "package.json",
+    "toolbox-ts",
+    "utilities"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gajdascz/toolbox-ts.git"
+  },
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts"
+    },
+    "./general": {
+      "types": "./dist/general.d.ts"
+    },
+    "./spatial": {
+      "types": "./dist/spatial.d.ts"
+    },
+    "./string": {
+      "types": "./dist/string.d.ts"
+    },
+    "./object": {
+      "types": "./dist/object.d.ts"
+    },
+    "./configs": {
+      "types": "./dist/configs/index.d.ts"
+    },
+    "./tsconfig": {
+      "types": "./dist/configs/tsconfig.d.ts"
+    },
+    "./package-json": {
+      "types": "./dist/configs/package-json.d.ts"
+    },
+    "./tsdoc": {
+      "types": "./dist/configs/tsdoc.d.ts"
+    }
+  }
+}

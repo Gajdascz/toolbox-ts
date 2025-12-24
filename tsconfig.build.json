@@ -13,9 +13,9 @@
   "files": [],
   // Order matters - dependencies first
   "references": [
-    //#region> 0 Internal Dependencies
+    { "path": "./packages/types" },
+    //#region> 0 Internal Dependencies (or just imports types package)
     { "path": "./packages/configs" },
-    { "path": "./packages/tseslint" },
     { "path": "./packages/utils" },
     { "path": "./packages/test-utils" },
     //#endregion

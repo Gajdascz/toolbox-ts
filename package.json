@@ -23,7 +23,7 @@
     "@commitlint/cz-commitlint": "^19.8.1",
     "@commitlint/types": "^19.8.1",
     "@eslint/config-inspector": "^1.4.2",
-    "@eslint/js": "^9.39.1",
+    "@eslint/js": "^9.39.2",
     "@inquirer/prompts": "^7.10.1",
     "@microsoft/tsdoc-config": "^0.17.1",
     "@oclif/core": "^4.8.0",
@@ -31,17 +31,16 @@
     "@oclif/plugin-plugins": "^5.4.54",
     "@toolbox-ts/configs": "workspace:^",
     "@toolbox-ts/file": "workspace:^",
+    "@toolbox-ts/repo-kit": "workspace:^",
     "@toolbox-ts/test-utils": "workspace:^",
-    "@toolbox-ts/tseslint": "workspace:^",
-    "@toolbox-ts/utils": "workspace:^",
-    "@types/node": "^22.19.1",
-    "@typescript-eslint/utils": "^8.48.1",
+    "@types/node": "^22.19.3",
+    "@typescript-eslint/utils": "^8.50.1",
     "@vitest/coverage-v8": "3.0.9",
-    "@vitest/eslint-plugin": "^1.5.1",
+    "@vitest/eslint-plugin": "^1.6.4",
     "@vitest/ui": "3.1.2",
     "commitizen": "^4.3.1",
     "dependency-cruiser": "^16.10.4",
-    "eslint": "^9.39.1",
+    "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
@@ -58,11 +57,10 @@
     "prettier": "^3.7.4",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.48.1",
-    "vitest": "^3.2.4",
-    "zod": "^4.1.13"
+    "typescript-eslint": "^8.50.1",
+    "vitest": "^3.2.4"
   },
-  "packageManager": "pnpm@10.24.0+sha512.01ff8ae71b4419903b65c60fb2dc9d34cf8bb6e06d03bde112ef38f7a34d6904c424ba66bea5cdcf12890230bf39f9580473140ed9c946fef328b6e5238a345a",
+  "packageManager": "pnpm@10.26.2",
   "config": {
     "commitizen": {
       "path": "@commitlint/cz-commitlint"
@@ -85,7 +83,7 @@
     "build:clean": "pnpm clean && pnpm build && pnpm install",
     "check:dependencies": "pnpm depcruise ./packages/*/src",
     "check:types": "tsc -b tsconfig.build.json --noEmit",
-    "check:format": "prettier . --check",
+    "check:format": "pnpm prettier --check .",
     "check:lint": "eslint . --max-warnings=0",
     "check": "pnpm check:format && pnpm check:lint && pnpm check:types && pnpm check:dependencies && pnpm test",
     "lint-staged": "lint-staged",
@@ -93,6 +91,8 @@
     "test": "pnpm vitest --config vitest.config.ts",
     "test:ui": "pnpm test --ui",
     "generate:dependency-report": "pnpm depcruise ./packages/*/src --output-type dot | dot -T svg > ./docs/reports/dependency-report.svg",
-    "up": "pnpm -r up"
+    "up": "corepack up && pnpm -r up",
+    "check:deps": "pnpm depcruise src",
+    "gen:deps-report": "pnpm depcruise src --output-type dot | dot -T svg > .artifacts/reports/dependencies/graph.svg"
   }
 }

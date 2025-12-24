@@ -200,7 +200,7 @@ describe('isMonorepo', () => {
     it('returns false when package.json has the monorepo property set to false', async () => {
       mockFind.findLastUp.mockResolvedValue('/root/repo');
       mockHelpers.isFile.mockResolvedValue(true);
-      mockParse.parseJson.mockResolvedValue({ result: { isMonorepo: false } });
+      mockParse.parseJson.mockResolvedValue({ isMonorepo: false });
       const p = await repo.isMonorepo('repo', { cwd: '/root/a/b' });
       expect(p).toBe(false);
     });
@@ -255,9 +255,7 @@ describe('isMonorepo', () => {
     it('returns false when package.json has the monorepo property set to false', () => {
       mockFind.syncLastUp.mockReturnValue('/root/repo');
       mockHelpers.syncIsFile.mockReturnValue(true);
-      mockParse.syncParseJson.mockReturnValue({
-        result: { isMonorepo: false }
-      });
+      mockParse.syncParseJson.mockReturnValue({ isMonorepo: false });
       const p = repo.syncIsMonorepo('repo', { cwd: '/root/a/b' });
       expect(p).toBe(false);
     });

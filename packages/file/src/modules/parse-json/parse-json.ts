@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-import type { FileContentResolver, ResultObj } from '../types.js';
+import type { FileContentResolver } from '../types.js';
 
 /**
  * Options for parsing JSON content from a file
@@ -19,15 +19,14 @@ const parse = <TParsed = NonNullable<object>, TResolved = TParsed>(
   content: string,
   filePath: string,
   r: FileContentResolver<TParsed, TResolved> | undefined
-): ResultObj<TResolved> => {
+): TResolved => {
   try {
     let parsed: null | TParsed | TResolved = JSON.parse(content) as TParsed;
     if (r) parsed = r(parsed);
     if (parsed === null) throw new Error(`Resolver function returned null`);
-    return { result: parsed as TResolved };
+    return parsed as TResolved;
   } catch (error) {
-    const errMsg = formatError(filePath, error);
-    return { result: null, error: errMsg };
+    throw new Error(formatError(filePath, error));
   }
 };
 
@@ -55,12 +54,12 @@ export const parseJson = async <
 >(
   filePath: string,
   { resolverFn }: ParseJsonOpts<TParsed, TResolved> = {}
-): Promise<ResultObj<TResolved>> => {
+): Promise<TResolved> => {
   try {
     const read = await fs.promises.readFile(filePath, 'utf8');
     return parse(read, filePath, resolverFn);
   } catch (error) {
-    return { result: null, error: formatError(filePath, error) };
+    throw new Error(formatError(filePath, error));
   }
 };
 
@@ -88,5 +87,4 @@ export const syncParseJson = <
 >(
   filePath: string,
   { resolverFn }: ParseJsonOpts<TParsed, TResolved> = {}
-): ResultObj<TResolved> =>
-  parse(fs.readFileSync(filePath, 'utf8'), filePath, resolverFn);
+): TResolved => parse(fs.readFileSync(filePath, 'utf8'), filePath, resolverFn);

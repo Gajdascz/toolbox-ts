@@ -1,5 +1,10 @@
-import type { Filter, Pluck, StripNullish, StrRecord } from '../types/obj.js';
-export type * from '../types/obj.js';
+import type {
+  Filter,
+  Pluck,
+  StripNullish,
+  StrRecord
+} from '../types/object.js';
+export type * from '../types/object.js';
 
 import { Arr } from '../Arr/index.js';
 import { Prim } from '../Prim/index.js';

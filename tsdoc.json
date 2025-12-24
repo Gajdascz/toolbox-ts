@@ -4,6 +4,8 @@
     { "tagName": "@important", "syntaxKind": "block", "allowMultiple": true },
     { "tagName": "@module", "syntaxKind": "block", "allowMultiple": false },
     { "tagName": "@default", "syntaxKind": "block", "allowMultiple": false },
-    { "tagName": "@template", "syntaxKind": "block", "allowMultiple": true }
+    { "tagName": "@template", "syntaxKind": "block", "allowMultiple": true },
+    { "tagName": "@shallow", "syntaxKind": "modifier", "allowMultiple": false },
+    { "tagName": "@deep", "syntaxKind": "modifier", "allowMultiple": false }
   ]
 }

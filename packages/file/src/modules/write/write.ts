@@ -151,11 +151,11 @@ export const writeFile = async (
   await fs.promises.writeFile(filePath, _data);
 };
 
-export interface FileEntry {
+export interface FileEntry<D = unknown> {
   /**
    * Data to write to the writeFile. Can be any type; will be normalized to string.
    */
-  data: unknown;
+  data: D;
   /**
    * Name of the writeFile to write.
    */

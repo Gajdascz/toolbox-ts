@@ -1,0 +1,79 @@
+{
+  "name": "@toolbox-ts/repo-kit",
+  "version": "0.1.0",
+  "description": "Setup a TypeScript project.",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/repo-kit",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "Nolan Gajdascz",
+    "email": "dev.gajdascz@gmail.com",
+    "url": "https://github.com/gajdascz"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "keywords": [
+    "typescript",
+    "cli",
+    "scaffolding",
+    "toolbox-ts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gajdascz/toolbox-ts.git"
+  },
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "dependencies": {
+    "@commitlint/config-conventional": "^19.8.1",
+    "@commitlint/types": "^19.8.1",
+    "@eslint/js": "^9.39.1",
+    "@inquirer/prompts": "^7.10.1",
+    "@oclif/core": "^4.8.0",
+    "@toolbox-ts/cli-kit": "workspace:^",
+    "@toolbox-ts/configs": "workspace:^",
+    "@toolbox-ts/file": "workspace:^",
+    "@toolbox-ts/utils": "workspace:^",
+    "@vitest/eslint-plugin": "^1.5.1",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsdoc": "^52.0.4",
+    "eslint-plugin-perfectionist": "^4.15.1",
+    "eslint-plugin-tsdoc": "^0.4.0",
+    "eslint-plugin-unicorn": "^60.0.0",
+    "execa": "^9.6.1",
+    "jiti": "^2.6.1",
+    "prettier": "^3.7.4",
+    "typescript-eslint": "^8.48.1",
+    "vitest": "^3.2.4"
+  },
+  "devDependencies": {
+    "@toolbox-ts/test-utils": "workspace:^",
+    "typescript": "^5.9.3",
+    "@toolbox-ts/types": "workspace:^"
+  },
+  "oclif": {
+    "bin": "repo-kit",
+    "commands": {
+      "strategy": "pattern",
+      "target": "./dist/cli/commands"
+    },
+    "dirname": "repo-kit",
+    "topicSeparator": " "
+  }
+}

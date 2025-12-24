@@ -3,7 +3,3 @@ export type FileContentResolver<TLoaded, TResolved = TLoaded> = (
 ) => null | TResolved;
 
 export type FileContentResolverArg<T> = Parameters<FileContentResolver<T>>[0];
-
-export type ResultObj<T> =
-  | { error: string; result: null }
-  | { error?: undefined; result: T };

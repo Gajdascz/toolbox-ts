@@ -1,7 +1,8 @@
 # @toolbox-ts/configs
 
-**Centralized configuration utilities for TypeScript monorepos.**  
-This package provides reusable config factories for tools like Prettier, Vitest, and Commitlint, enabling consistent standards and easy sharing across projects.
+**Centralized configuration utilities end standardized architecture for TypeScript projects**
+
+
 
 ## Install
 
@@ -15,53 +16,33 @@ yarn add --dev @toolbox-ts/configs
 
 ## Features
 
-- **Prettier config**: Opinionated formatting, easy to extend and override.
-- **Vitest config**: Sensible defaults for coverage, caching, and type-checking.
-- **Commitlint config**: Conventional commit enforcement with customizable scopes and rules.
-- **Type-safe config factories**: All configs are provided as `define()` functions with type hints.
+- **Runtime Config Functions**: Modules for defining runtime configurations. Every module exports a `define` function that's exported and picked up by corresponding tooling.
+- **Static Config Utilities**: Modules for defining static json-based configurations. Does not generate/write, only builds in-memory configuration objects
 
 ---
 
-## Prettier
+## Architecture
+For tooling to simply work in harmony the configurations have shared expectations about the repository structure and organization. Expectations vary _slightly_ based on the type of repository `singlePackage` or `monorepo` but constraints are kept as closely aligned as possible.
 
-```typescript
-// prettier.config.js
-import { prettier } from '@toolbox-ts/configs';
+All projects regardless of type have these shared expectations (applies to both `monorepo` and `singlePackage`):
+  - Three primary "Domains"
+    - `dev` 
+      - Covers all js/ts root configuration files and all contents of `dev` directories (`dev`, `_dev`, `.dev`)
+      - Never compiled or built, only local utilities for development and management.
+    - `build`
+      - Covers all source code that is compiled, built, and shipped to consumers
+    - `test`
+      - Covers all test files (`*.test.*`, `*.bench*`, `*.spec.*`)
 
-export default prettier.define({
-  printWidth: 100,
-  semi: false,
-  // ...override any defaults
-});
-```
 
-### Vitest
+## ToDo
+- [ ] Update Documentation
+  - [ ] Outline opinionated expectations and requirements
+  - [ ] Add Examples
+  - [ ] Add Comments
 
-```typescript
-// vitest.config.ts
-import { vitest } from '@toolbox-ts/configs';
 
-export default vitestConfig.define({
-  test: {
-    coverage: { enabled: true, reporter: ['text', 'lcov'] },
-    include: ['src/**/*.test.ts']
-  }
-});
-```
 
-### Commitlint
-
-```typescript
-// commitlint.config.ts
-import { commitlint } from '@toolbox-ts/configs';
-
-export default commitlint.define({
-  scopes: ['ui', 'core', 'repo'],
-  rules: {
-    'header-max-length': [2, 'always', 72]
-  }
-});
-```
 
 ---
 

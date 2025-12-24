@@ -17,37 +17,28 @@ beforeEach(async () => {
 describe('parseJson', () => {
   it('parses valid JSON file', async () => {
     const res = await parseJson<{ foo: number }>(testFile);
-    expect(res).toEqual({ result: { foo: 42 } });
-    expect(res).not.toHaveProperty('error');
+    expect(res).toEqual({ foo: 42 });
   });
 
   it('parses and resolves with resolverFn', async () => {
     const res = await parseJson<{ foo: number }, string>(testFile, {
       resolverFn: (obj) => `foo=${obj.foo}`
     });
-    expect(res).toEqual({ result: 'foo=42' });
+    expect(res).toEqual('foo=42');
   });
 
-  it('returns error if resolverFn returns null', async () => {
-    const res = await parseJson<{ foo: number }, null>(testFile, {
-      resolverFn: () => null
-    });
-    expect(res.result).toBeNull();
-    expect(res.error).toMatch(/Resolver function returned null/);
+  it('throws error if resolverFn returns null', async () => {
+    await expect(
+      parseJson(testFile, { resolverFn: () => null })
+    ).rejects.toThrowError();
   });
 
-  it('returns error for invalid JSON', async () => {
-    const res = await parseJson(invalidFile);
-    expect(res.result).toBeNull();
-    expect(res.error).toMatch(/Failed to parse JSON config/);
-    expect(res.error).toMatch(/Error:/);
+  it('throws error for invalid JSON', async () => {
+    await expect(parseJson(invalidFile)).rejects.toThrowError();
   });
 
-  it('returns error for missing file', async () => {
-    const res = await parseJson(missingFile);
-    expect(res.result).toBeNull();
-    expect(res.error).toMatch(/Failed to parse JSON config/);
-    expect(res.error).toMatch(/Error:/);
+  it('throws error for missing file', async () => {
+    await expect(parseJson(missingFile)).rejects.toThrowError();
   });
   it('handles non-Error exceptions gracefully', async () => {
     const mockReadFile = vi
@@ -57,16 +48,12 @@ describe('parseJson', () => {
         throw 'Unexpected error';
       });
 
-    const res = await parseJson(testFile);
-    expect(res.result).toBeNull();
-    expect(res.error).toMatch(/Failed to parse JSON config/);
-    expect(res.error).toMatch(/Unexpected error/);
+    await expect(parseJson(missingFile)).rejects.toThrowError();
 
     mockReadFile.mockClear();
   });
   it('syncParseJson works', () => {
     const res = syncParseJson<{ foo: number }>(testFile);
-    expect(res).toEqual({ result: { foo: 42 } });
-    expect(res).not.toHaveProperty('error');
+    expect(res).toEqual({ foo: 42 });
   });
 });

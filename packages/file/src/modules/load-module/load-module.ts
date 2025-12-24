@@ -1,6 +1,6 @@
 import { createJiti } from 'jiti';
 
-import type { FileContentResolver, ResultObj } from '../types.js';
+import type { FileContentResolver } from '../types.js';
 
 const jiti = createJiti(process.cwd());
 
@@ -80,12 +80,12 @@ export interface LoadModuleOpts<Module> {
  * ```
  */
 export const loadModule = async <Module>(
-  cfgPath: string,
+  modulePath: string,
   { resolverFn, exportKey = 'default' }: LoadModuleOpts<Module> = {}
-): Promise<ResultObj<Module>> => {
+): Promise<Module> => {
   let err: unknown;
   try {
-    const module = await jiti.import(cfgPath);
+    const module = await jiti.import(modulePath);
     const importedValue = resolveModuleExport<Module>(module, exportKey);
     if (importedValue !== null) {
       const value = (
@@ -97,15 +97,13 @@ export const loadModule = async <Module>(
         throw new Error(
           `Resolver function returned null for the module export`
         );
-      return { result };
+      return result;
     }
   } catch (error) {
     err = error;
   }
-  return {
-    result: null,
-    error: `Failed to load script from ${cfgPath}: ${
-      err instanceof Error ? err.message : String(err)
-    }`
-  };
+  throw new Error(
+    `Failed to load module from ${modulePath}\n`
+      + (err instanceof Error ? `Error: ${err.message}` : String(err))
+  );
 };

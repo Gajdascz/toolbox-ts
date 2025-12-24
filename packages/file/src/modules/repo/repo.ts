@@ -134,10 +134,10 @@ export const isMonorepo = async (
   if (!root) throw new Error('cannot determine repo root');
   const pkgPath = path.join(root, 'package.json');
   if (await isFile(path.join(root, 'package.json'))) {
-    const { result } = await parseJson<{ [packageJsonMonorepoProp]?: unknown }>(
+    const result = await parseJson<{ [packageJsonMonorepoProp]?: unknown }>(
       pkgPath
     );
-    if (result && packageJsonMonorepoProp in result)
+    if (packageJsonMonorepoProp in result)
       return result[packageJsonMonorepoProp] === true;
   }
   let requiredCount = Math.min(
@@ -202,10 +202,10 @@ export const syncIsMonorepo = (
   if (!root) throw new Error('cannot determine repo root');
   if (syncIsFile(path.join(root, 'package.json'))) {
     const pkgPath = path.join(root, 'package.json');
-    const { result } = syncParseJson<{ [packageJsonMonorepoProp]?: unknown }>(
+    const result = syncParseJson<{ [packageJsonMonorepoProp]?: unknown }>(
       pkgPath
     );
-    if (result && packageJsonMonorepoProp in result)
+    if (packageJsonMonorepoProp in result)
       return result[packageJsonMonorepoProp] === true;
   }
   let requiredCount = Math.min(

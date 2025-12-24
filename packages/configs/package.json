@@ -1,7 +1,7 @@
 {
   "name": "@toolbox-ts/configs",
   "version": "0.1.5",
-  "description": "Configuration wrappers for @toolbox-ts monorepo.",
+  "description": "Configuration wrappers and utilities.",
   "license": "MIT",
   "type": "module",
   "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/configs",
@@ -38,16 +38,64 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./static": {
+      "import": "./dist/static/index.js",
+      "types": "./dist/static/index.d.ts"
+    },
+    "./runtime": {
+      "import": "./dist/runtime/index.js",
+      "types": "./dist/runtime/index.d.ts"
+    },
+    "./core": {
+      "import": "./dist/core/index.js",
+      "types": "./dist/core/index.d.ts"
     }
   },
+  "devDependencies": {
+    "@commitlint/types": "^19.5.0",
+    "eslint": "^9.39.1",
+    "prettier": "^3.6.0",
+    "dependency-cruiser": "^16.10.4",
+    "@toolbox-ts/types": "workspace:*"
+  },
+  "dependencies": {
+    "@eslint/config-helpers": "^0.5.0",
+    "@eslint/js": "^9.39.1",
+    "@toolbox-ts/file": "workspace:*",
+    "@vitest/eslint-plugin": "^1.5.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsdoc": "^52.0.4",
+    "eslint-plugin-perfectionist": "^4.15.1",
+    "eslint-plugin-tsdoc": "^0.4.0",
+    "eslint-plugin-unicorn": "^60.0.0",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "jiti": "^2.6.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.48.1",
+    "vitest": "^3.2.4",
+    "watskeburt": "^5.0.0"
+  },
   "peerDependencies": {
+    "dependency-cruiser": "^16.10.4",
+    "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@commitlint/types": "^19.5.0",
+    "@eslint/config-helpers": "^0.5.0",
+    "@eslint/js": "^9.39.1",
+    "@vitest/eslint-plugin": "^1.5.1",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsdoc": "^52.0.4",
+    "eslint-plugin-perfectionist": "^4.15.1",
+    "eslint-plugin-tsdoc": "^0.4.0",
+    "eslint-plugin-unicorn": "^60.0.0",
     "prettier": "^3.6.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.48.1",
     "vitest": "^3.2.4"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "typescript": "^5.9.3"
   }
 }

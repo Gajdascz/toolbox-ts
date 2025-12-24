@@ -1,3 +1,3 @@
-import { defineConfig } from '@toolbox-ts/tseslint';
+import { tseslint } from '@toolbox-ts/configs';
 
-export default defineConfig();
+export default tseslint.define();

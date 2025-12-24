@@ -1,5 +1,4 @@
 **/node_modules
-**/build
 **/dist
 **/artifacts
 **/coverage
@@ -11,5 +10,5 @@
 *.log
 .env
 .env.*
-
+.artifacts
 **/docs/reports

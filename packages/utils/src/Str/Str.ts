@@ -18,8 +18,8 @@ import type {
   Prefix,
   Suffix,
   TitleToKebab
-} from '../types/str.js';
-export type * from '../types/str.js';
+} from '../types/string.js';
+export type * from '../types/string.js';
 
 import { Arr } from '../Arr/index.js';
 import { Prim } from '../Prim/index.js';

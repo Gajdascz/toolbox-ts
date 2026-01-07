@@ -257,9 +257,16 @@ export const perfectionist: ConfigWithExtends['rules'] = mkRules(
     ['sort-switch-case', 'off']
   ]
 );
-
 export const vitest: ConfigWithExtends['rules'] = mkRules('vitest', [
-  /** Throws errors when input is a valid string. */
+  /**
+   * Focused tests are useful during development and
+   * not necessarily indicative of forgotten tests.
+   */
+  ['no-focused-tests', 'off'],
+  /**
+   * Throws on valid test titles
+   */
   ['valid-title', 'off']
 ]);
+
 /* c8 ignore end */

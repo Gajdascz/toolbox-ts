@@ -11,7 +11,10 @@ import {
   strOrNum,
   when
 } from './normalize.ts';
-
+vi.mock('execa', async (act) => ({
+  ...(await act()),
+  parseCommandString: vi.fn()
+}));
 vi.mocked(parseCommandString).mockImplementation((cmd: string) =>
   cmd.split(' ')
 );

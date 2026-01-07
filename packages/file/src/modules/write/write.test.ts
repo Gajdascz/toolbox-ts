@@ -101,7 +101,6 @@ describe('write', () => {
         // @ts-expect-error: testing invalid behavior
         overwrite: { behavior: 'invalid' }
       });
-      console.log(res);
       expect(res[2].success).toBe(false);
       expect(res[2].error).toMatch(/Unexpected overwrite behavior/);
     });

@@ -186,9 +186,7 @@ export const arrayToQueueLike = <T = string>(arr: T[] = []): QueueLike<T> => {
  * console.log(q2.dequeue()); // 'x'
  * ```
  */
-export const initQueueLike = <T = string>(
-  queue?: QueueLike<T> | T[]
-): QueueLike<T> =>
-  Array.isArray(queue) || !queue ? arrayToQueueLike(queue)
+export const initQueueLike = <T = string>(queue?: QueueLike<T> | T[]) =>
+  Array.isArray(queue) || !queue ? arrayToQueueLike<T>(queue)
   : queue.clone ? queue.clone()
   : queue;

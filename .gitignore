@@ -11,5 +11,6 @@
 *.log
 .env
 .env.*
+**/.artifacts
 
 **/docs/reports

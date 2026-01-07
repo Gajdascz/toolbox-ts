@@ -23,6 +23,6 @@
     "noImplicitOverride": false,
     "exactOptionalPropertyTypes": false
   },
-  "include": ["**/*.test.*", "**/*.spec.*", "**/*.bench.*"],
+  "include": ["**/*.test.*", "**/*.spec.*", "**/*.bench.*", "**/*.test-d.*"],
   "exclude": ["dist", "node_modules"]
 }

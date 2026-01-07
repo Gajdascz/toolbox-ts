@@ -8,7 +8,7 @@ export const ARRAYS = {
   DEV_DIRS: ['dev', '_dev', 'tools', '_tools'],
   EXTS: ['ts', 'tsx', 'js', 'jsx', 'mjs', 'cjs'],
   SRC_DIRS: ['src', 'packages', 'apps', 'bin', 'app', 'package'],
-  TEST_FILES: ['test', 'spec', 'bench']
+  TEST_FILES: ['test', 'spec', 'bench', 'test-d']
 } as const;
 export const GLOBS = {
   DEV_DIRS: `{${ARRAYS.DEV_DIRS.join(',')}}`,

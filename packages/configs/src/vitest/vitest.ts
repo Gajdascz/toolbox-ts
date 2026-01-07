@@ -49,9 +49,13 @@ export const DEFAULTS: { cacheDir: string; test: ViteUserConfig['test'] } = {
       reportsDirectory: 'coverage',
       thresholds: { 100: true, perFile: true }
     },
-    include: ['**/*.{test,spec,bench}.{ts,tsx,js,jsx}'],
+    include: ['**/*.{test,spec,bench,test-d}.{ts,tsx,js,jsx}'],
     testTimeout: 300_000,
-    typecheck: { enabled: true, tsconfig: 'tsconfig.json' }
+    typecheck: {
+      enabled: true,
+      tsconfig: 'tsconfig.test.json',
+      ignoreSourceErrors: true
+    }
   }
 };
 

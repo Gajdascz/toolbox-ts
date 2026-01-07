@@ -15,6 +15,7 @@
     "**/dist/**",
     "**/node_modules/**",
     "**/*.test.*",
+    "**/*.test-d.*",
     "**/*.spec.*",
     "**/*.bench.*",
     "packages/**/*",

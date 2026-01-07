@@ -83,7 +83,8 @@ module.exports = {
         + 'available on live with an non-guaranteed version. Fix it by adding the package to the dependencies '
         + 'in your package.json.',
       from: {
-        pathNot: '\\.(?:spec|test|bench)[.](?:js|mjs|cjs|jsx|ts|mts|cts|tsx)$'
+        pathNot:
+          '\\.(?:spec|test|bench|test-d)[.](?:js|mjs|cjs|jsx|ts|mts|cts|tsx)$'
       },
       to: { dependencyTypes: ['npm-no-pkg', 'npm-unknown'] }
     },
@@ -123,7 +124,9 @@ module.exports = {
         + 'responsibility anymore. Factor it out into (e.g.) a separate utility/ helper or a mock.',
       severity: 'error',
       from: {},
-      to: { path: '[.](?:spec|test)[.](?:js|mjs|cjs|jsx|ts|mts|cts|tsx)$' }
+      to: {
+        path: '[.](?:spec|test|test-d)[.](?:js|mjs|cjs|jsx|ts|mts|cts|tsx)$'
+      }
     },
     {
       name: 'not-to-dev-dep',
@@ -136,7 +139,7 @@ module.exports = {
         + 'from.pathNot re of the not-to-dev-dep rule in the dependency-cruiser configuration',
       from: {
         path: '^(packages)',
-        pathNot: '[.](?:spec|test)[.](?:js|mjs|cjs|jsx|ts|mts|cts|tsx)$'
+        pathNot: '[.](?:spec|test|test-d)[.](?:js|mjs|cjs|jsx|ts|mts|cts|tsx)$'
       },
       to: {
         dependencyTypes: ['npm-dev'],
@@ -349,7 +352,7 @@ module.exports = {
            this collapsePattern to your situation.
         */
         collapsePattern:
-          '^(?:packages|src|lib(s?)|app(s?)|bin|test(s?)|spec(s?))/[^/]+|node_modules/(?:@[^/]+/[^/]+|[^/]+)'
+          '^(?:packages|src|lib(s?)|app(s?)|bin|test(s?)|test-d(s?)|spec(s?))/[^/]+|node_modules/(?:@[^/]+/[^/]+|[^/]+)'
 
         /* Options to tweak the appearance of your graph. If you don't specify a
            theme for 'archi' dependency-cruiser will use the one specified in the

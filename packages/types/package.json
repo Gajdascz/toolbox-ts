@@ -1,0 +1,65 @@
+{
+  "name": "@toolbox-ts/types",
+  "version": "0.1.0",
+  "description": "TypeScript Types",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/types",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": {
+    "name": "Nolan Gajdascz",
+    "email": "dev.gajdascz@gmail.com",
+    "url": "https://github.com/gajdascz"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "keywords": [
+    "typescript",
+    "types",
+    "toolbox-ts",
+    "utilities"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gajdascz/toolbox-ts.git"
+  },
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts"
+    },
+    "./array": {
+      "types": "./dist/array/index.d.ts"
+    },
+    "./configs": {
+      "types": "./dist/configs/index.d.ts"
+    },
+    "./css": {
+      "types": "./dist/css/index.d.ts"
+    },
+    "./number": {
+      "types": "./dist/number/index.d.ts"
+    },
+    "./object": {
+      "types": "./dist/object/index.d.ts"
+    },
+    "./spatial": {
+      "types": "./dist/spatial/index.d.ts"
+    },
+    "./string": {
+      "types": "./dist/string/index.d.ts"
+    },
+    "./tuple": {
+      "types": "./dist/tuple/index.d.ts"
+    },
+    "./general": {
+      "types": "./dist/general.d.ts"
+    }
+  }
+}

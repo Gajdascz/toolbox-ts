@@ -12,6 +12,7 @@ A monorepo for Typescript utility packages and libraries.
 | Package                                    | Version                                            | Description                            |
 |--------------------------------------------|----------------------------------------------------|----------------------------------------|
 | [`@toolbox-ts/configs`][configs-pkg]       | [![npm version][configs-badge]][configs-npm]       | Repository config utils                |
+| [`@toolbox-ts/types`][types-pkg]           | [![npm version][types-badge]][types-npm]           | Type definitions                       |
 | [`@toolbox-ts/cli-kit`][cli-kit-pkg]       | [![npm version][cli-kit-badge]][cli-kit-npm]       | CLI building utils                     |
 | [`@toolbox-ts/file`][file-pkg]             | [![npm version][file-badge]][file-npm]             | Node filesystem utils                  |
 | [`@toolbox-ts/test-utils`][test-utils-pkg] | [![npm version][test-utils-badge]][test-utils-npm] | Vitest utilities and environment setup |
@@ -43,6 +44,11 @@ A monorepo for Typescript utility packages and libraries.
 [utils-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/utils
 [utils-badge]: https://img.shields.io/npm/v/@toolbox-ts/utils?label=
 [utils-npm]: https://www.npmjs.com/package/@toolbox-ts/utils
+
+[types-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/types
+[types-badge]: https://img.shields.io/npm/v/@toolbox-ts/types?label=
+[types-npm]: https://www.npmjs.com/package/@toolbox-ts/types
+
 
 ## Tooling
 

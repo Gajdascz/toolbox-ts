@@ -56,7 +56,8 @@ export const ROOT: ConfigWithExtends = Object.freeze<ConfigWithExtends>({
     ...vitestRules,
     ...tsdocRules,
     ...jsdocRules
-  }
+  },
+  settings: { vitest: { typecheck: true } }
 });
 
 export interface ExtendRootOptions {

@@ -13,7 +13,8 @@
   "files": [],
   // Order matters - dependencies first
   "references": [
-    //#region> 0 Internal Dependencies
+    { "path": "./packages/types" },
+    //#region> 0 Internal Dependencies (except types)
     { "path": "./packages/configs" },
     { "path": "./packages/tseslint" },
     { "path": "./packages/utils" },

@@ -8,7 +8,8 @@ export default commitlint.define({
     'file',
     'test-utils',
     'tseslint',
-    'utils'
+    'utils',
+    'types'
   ],
   usingChangeset: true
 });

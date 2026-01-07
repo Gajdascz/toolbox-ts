@@ -3,7 +3,9 @@
   "tagDefinitions": [
     { "tagName": "@important", "syntaxKind": "block", "allowMultiple": true },
     { "tagName": "@module", "syntaxKind": "block", "allowMultiple": false },
-    { "tagName": "@default", "syntaxKind": "block", "allowMultiple": false },
-    { "tagName": "@template", "syntaxKind": "block", "allowMultiple": true }
+    { "tagName": "@default", "syntaxKind": "modifier", "allowMultiple": false },
+    { "tagName": "@template", "syntaxKind": "modifier", "allowMultiple": true },
+    { "tagName": "@shallow", "syntaxKind": "modifier", "allowMultiple": true },
+    { "tagName": "@deep", "syntaxKind": "modifier", "allowMultiple": true }
   ]
 }

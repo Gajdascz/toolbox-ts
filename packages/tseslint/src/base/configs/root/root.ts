@@ -33,7 +33,6 @@ export const ROOT: ConfigWithExtends = Object.freeze<ConfigWithExtends>({
     ...configs.stylisticTypeChecked,
     perfectionistPlugin.configs['recommended-alphabetical'],
     unicornPlugin.configs.recommended,
-    vitestPlugin.configs.recommended as never,
     prettierConfig
   ],
   files: ['**/*'],
@@ -44,19 +43,20 @@ export const ROOT: ConfigWithExtends = Object.freeze<ConfigWithExtends>({
     import: importPlugin,
     jsdoc: jsdocPlugin,
     tsdoc: tsdocPlugin,
-    vitest: vitestPlugin as never
+    vitest: vitestPlugin
   },
   rules: {
+    ...vitestPlugin.configs.recommended.rules,
     ...eslintRules,
     ...typescriptEslintRules,
     ...unicornRules,
     ...jsdocRules,
     ...importsRules,
     ...perfectionistRules,
-    ...vitestRules,
     ...tsdocRules,
-    ...jsdocRules
-  }
+    ...vitestRules
+  },
+  settings: { vitest: { typecheck: true } }
 });
 
 export interface ExtendRootOptions {

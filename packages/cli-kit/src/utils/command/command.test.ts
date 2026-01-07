@@ -2,7 +2,9 @@ import { execa, ExecaError, execaSync, ExecaSyncError } from 'execa';
 import { describe, expect, it, vi } from 'vitest';
 
 import { chain, resolveError, spawn, spawnSync } from './command.ts';
-
+vi.mock('execa', async (actual) => {
+  return { ...(await actual()), execa: vi.fn(), execaSync: vi.fn() };
+});
 const mockExeca = vi.mocked(execa);
 const mockExecaSync = vi.mocked(execaSync);
 

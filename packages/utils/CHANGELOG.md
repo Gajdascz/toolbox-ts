@@ -1,5 +1,14 @@
 # @toolbox-ts/utils
 
+## 0.6.0
+
+### Minor Changes
+
+- 9c5d838: - completely rework utils package from the ground up
+  - updated types package
+  - updated cli-kit package to use updated utils and types packages
+  - updated dependencies
+
 ## 0.5.7
 
 ### Patch Changes

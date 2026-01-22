@@ -27,7 +27,7 @@ type DefaultOverrides = {
 };
 export const defineConfig = ({
   custom = {},
-  defaults = undefined,
+  defaults,
   extendRoot = {}
 }: DefineConfigInput = {}) => {
   /* c8 ignore start */

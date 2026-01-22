@@ -11,8 +11,6 @@ npm install @toolbox-ts/utils
 yarn add @toolbox-ts/utils
 ```
 
-## TODO: generate full docs using TypeDoc
-
 ---
 
 ## Features

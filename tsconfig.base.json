@@ -18,6 +18,7 @@
     "isolatedModules": true,
     "exactOptionalPropertyTypes": false,
     "strict": true,
+    "strictNullChecks": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   }

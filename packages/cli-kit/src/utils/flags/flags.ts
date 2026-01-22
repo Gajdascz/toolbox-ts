@@ -19,7 +19,7 @@ import type { FlagToken } from '../../types.js';
 export const kebabToFlagEntry = <T extends string>(
   key: T
 ): Readonly<[Str.KebabToCamel<T>, FlagToken<T>]> =>
-  [Str.kebab.toCamel(key), Str.prefix('--', key)] as const;
+  [Str.Cases.kebab.toCamel(key), Str.prefix('--', key)] as const;
 
 /**
  * Converts a camelCase string to its corresponding command-line flag format
@@ -32,7 +32,8 @@ export const kebabToFlagEntry = <T extends string>(
  */
 export const toFlag = <T extends string>(
   key: T
-): FlagToken<Str.CamelToKebab<T>> => Str.prefix('--', Str.camel.toKebab(key));
+): FlagToken<Str.CamelToKebab<T>> =>
+  Str.prefix('--', Str.Cases.camel.toKebab(key));
 
 export interface FlagMetaOpts {
   acceptsCommaSeparated?: boolean;
@@ -75,7 +76,7 @@ export const flagMeta = (
     helpGroup
   }: FlagMetaOpts = {}
 ) => {
-  const toKebab = Str.camel.toKebab(name);
+  const toKebab = Str.Cases.camel.toKebab(name);
   const aliases = [...otherAliases];
   if (toKebab !== name) aliases.push(toKebab);
   let desc = Str.capitalize(description.trim());

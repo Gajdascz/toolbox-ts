@@ -1,13 +1,16 @@
 import { describe, expectTypeOf, it } from 'vitest';
 
 import type { Falsy } from '../../general.js';
+import type { URange } from '../../number/definitions/number.ts';
 import type {
   Append,
   Chunk,
   Dedupe,
   Element,
   ElementAt,
+  Entries,
   First,
+  From,
   Includes,
   Insert,
   Last,
@@ -16,7 +19,9 @@ import type {
   Of,
   Pair,
   Prepend,
-  Range,
+  RemoveAll,
+  RemoveFirst,
+  RemoveLast,
   Reverse,
   Shorter,
   SplitAt,
@@ -43,7 +48,7 @@ describe('Tuple Types', () => {
   type Empty = Tuple<[]>;
   type Of3String = Of<3, string>;
   type Of5X = Of<5, 'x'>;
-  type Range1To5 = Range<5>;
+  type Range1To5 = URange<5>;
 
   describe('Tuple', () => {
     it('wraps tuple in readonly', () => {
@@ -356,19 +361,6 @@ describe('Tuple Types', () => {
     });
   });
 
-  describe('Range', () => {
-    it('creates range tuple up to N', () => {
-      type Range3 = Range<3>;
-      expectTypeOf<Range3>().toEqualTypeOf<Tuple<[0, 1, 2]>>();
-
-      type Range0 = Range<0>;
-      expectTypeOf<Range0>().toEqualTypeOf<Tuple<[]>>();
-
-      type Range1 = Range<1>;
-      expectTypeOf<Range1>().toEqualTypeOf<Tuple<[0]>>();
-    });
-  });
-
   describe('Longer', () => {
     it('returns longer tuple', () => {
       type Longer1 = Longer<OneToThree, readonly [4, 5]>;
@@ -378,9 +370,7 @@ describe('Tuple Types', () => {
       expectTypeOf<Longer2>().toEqualTypeOf<Tuple<[2, 3, 4]>>();
 
       type LongerEqual = Longer<readonly [1, 2], readonly [3, 4]>;
-      expectTypeOf<LongerEqual>().toEqualTypeOf<
-        Tuple<[1, 2]> | Tuple<[3, 4]>
-      >();
+      expectTypeOf<LongerEqual>().toEqualTypeOf<Tuple<[1, 2]>>();
     });
   });
 
@@ -393,9 +383,7 @@ describe('Tuple Types', () => {
       expectTypeOf<Shorter2>().toEqualTypeOf<Tuple<[1]>>();
 
       type ShorterEqual = Shorter<readonly [1, 2], readonly [3, 4]>;
-      expectTypeOf<ShorterEqual>().toEqualTypeOf<
-        Tuple<[1, 2]> | Tuple<[3, 4]>
-      >();
+      expectTypeOf<ShorterEqual>().toEqualTypeOf<Tuple<[1, 2]>>();
     });
   });
 
@@ -507,5 +495,40 @@ describe('Tuple Types', () => {
       type ReversedEmpty = Reverse<Empty>;
       expectTypeOf<ReversedEmpty>().toEqualTypeOf<Tuple<[]>>();
     });
+  });
+
+  describe('Remove', () => {
+    it('removes all elements', () => {
+      expectTypeOf<RemoveAll<readonly [1, 2, 3], 1>>().toEqualTypeOf<
+        Tuple<[2, 3]>
+      >();
+      expectTypeOf<
+        RemoveAll<readonly [1, 2, 3, 2, 5, 6, 7, 8, 2, 2, 2], 2>
+      >().toEqualTypeOf<Tuple<[1, 3, 5, 6, 7, 8]>>();
+    });
+    it('removes first element', () => {
+      type HeadRemoved = RemoveFirst<readonly [1, 2, 3]>;
+      expectTypeOf<HeadRemoved>().toEqualTypeOf<Tuple<[2, 3]>>();
+    });
+    it('removes last element', () => {
+      type TailRemoved = RemoveLast<readonly [1, 2, 3]>;
+      expectTypeOf<TailRemoved>().toEqualTypeOf<Tuple<[1, 2]>>();
+    });
+  });
+  it('From always returns a Tuple', () => {
+    type FromArray = From<[1, 2, 3]>;
+    expectTypeOf<FromArray>().toEqualTypeOf<Tuple<[1, 2, 3]>>();
+
+    type FromNumber = From<3>;
+    expectTypeOf<FromNumber>().toEqualTypeOf<readonly [3]>();
+
+    type FromOther = From<'string'>;
+    expectTypeOf<FromOther>().toEqualTypeOf<readonly ['string']>();
+  });
+  it('Entries', () => {
+    type TestEntries = Entries<Tuple<[1, 'two', 3]>>;
+    expectTypeOf<TestEntries>().toEqualTypeOf<
+      readonly [[0, 1], [1, 'two'], [2, 3]]
+    >();
   });
 });

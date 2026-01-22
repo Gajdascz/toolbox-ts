@@ -34,6 +34,9 @@
     ".": {
       "types": "./dist/index.d.ts"
     },
+    "./defs/*": {
+      "types": "./dist/*/definitions/index.d.ts"
+    },
     "./array": {
       "types": "./dist/array/index.d.ts"
     },
@@ -42,6 +45,9 @@
     },
     "./css": {
       "types": "./dist/css/index.d.ts"
+    },
+    "./function": {
+      "types": "./dist/function/index.d.ts"
     },
     "./number": {
       "types": "./dist/number/index.d.ts"

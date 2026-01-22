@@ -17,7 +17,7 @@ export const create = <N extends string>({
   cfg = {}
 }: CreateInput<N>): ProcessedCfg<N> => {
   const {
-    basePath = undefined,
+    basePath,
     extends: _extends,
     files = [],
     ignores = [],

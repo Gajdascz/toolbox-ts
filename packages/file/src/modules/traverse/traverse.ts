@@ -145,7 +145,7 @@ export const traverseUp = async <R>(
 export async function traverseDown<R>(
   onDir: TraverseOnDirAsync<R>,
   {
-    queue = undefined,
+    queue,
     startDir = process.cwd(),
     endAtDir,
     resultHandler = defaultResultHandler
@@ -199,7 +199,7 @@ export const syncTraverseDown = <R>(
     startDir = process.cwd(),
     endAtDir,
     resultHandler = defaultResultHandler,
-    queue = undefined
+    queue
   }: TraverseDownOpts<R> = {}
 ) => {
   const results: R[] = [];

@@ -1,5 +1,5 @@
 /* c8 ignore start */
-import type { ConfigWithExtends } from '@eslint/config-helpers';
+import type { ConfigWithExtends, Plugin } from '@eslint/config-helpers';
 
 import js from '@eslint/js';
 import vitestPlugin from '@vitest/eslint-plugin';
@@ -42,8 +42,8 @@ export const ROOT: ConfigWithExtends = Object.freeze<ConfigWithExtends>({
     '@typescript-eslint': plugin,
     import: importPlugin,
     jsdoc: jsdocPlugin,
-    tsdoc: tsdocPlugin,
-    vitest: vitestPlugin
+    tsdoc: tsdocPlugin as Plugin,
+    vitest: vitestPlugin as Plugin
   },
   rules: {
     ...vitestPlugin.configs.recommended.rules,

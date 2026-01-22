@@ -1,5 +1,3 @@
-import type { CommaSeparator } from './general.js';
-
 /**
  * A CSV (comma separated values) pair string that provides type safety for two values.
  *
@@ -19,7 +17,7 @@ import type { CommaSeparator } from './general.js';
 export type CsvPair<
   A extends TemplateValue = TemplateValue,
   B extends TemplateValue = A,
-  C extends CommaSeparator = ','
+  C extends ', ' | ',' = ','
 > = SeparatedPair<A, B, C>;
 
 /**

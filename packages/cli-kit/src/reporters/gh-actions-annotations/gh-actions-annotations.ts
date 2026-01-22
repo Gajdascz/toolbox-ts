@@ -1,4 +1,4 @@
-import type { StrRecord } from '@toolbox-ts/utils';
+import type { Obj } from '@toolbox-ts/utils';
 
 import path from 'node:path';
 
@@ -88,7 +88,7 @@ export class Reporter<T = Message> implements IReporter<T[]> {
         throw new Error(`Unknown annotation type: ${type}`);
       const fields = fieldsStr
         .split(',')
-        .reduce<StrRecord<string>>((acc, field) => {
+        .reduce<Obj.StringRecord<string>>((acc, field) => {
           const [key, value] = field.split('=');
           if (key && value) {
             acc[key] = decodeURIComponent(value);

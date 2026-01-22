@@ -1,54 +1,48 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expectTypeOf } from 'vitest';
 
 import {
   type GuardSuiteConfig,
-  IS,
   runGuardSuite,
   runGuardSuites
 } from './guards-suite.ts';
+const IS = {
+  num: (v: unknown): v is number => typeof v === 'number',
+  str: (v: unknown): v is string => typeof v === 'string'
+};
 
+const specificIs = (v: unknown): v is 'specific' => v === 'specific';
+function assertIsNotSpecific<V>(
+  v: unknown
+): asserts v is Exclude<V, 'specific'> {
+  if (specificIs(v)) throw new TypeError('Value is "specific"');
+}
+function assertNum(v: unknown): asserts v is number {
+  if (!IS.num(v)) throw new TypeError('Value is not a number');
+}
+function assertSpecific(v: unknown): asserts v is 'specific' {
+  if (!specificIs(v)) throw new TypeError('Value is not "specific"');
+}
+const isString = (v: unknown): v is string => typeof v === 'string';
+Object.assign(isString, { typeName: 'String' });
+function assertIsNotString<V>(v: unknown): asserts v is Exclude<V, string> {
+  if (typeof v === 'string') throw new TypeError('Value is a string');
+}
+function assertIsString(v: unknown): asserts v is string {
+  if (typeof v !== 'string') throw new TypeError('Not a string');
+}
+const checkIsString = (v: unknown): boolean => typeof v === 'string';
+
+const assertCustom = (v: unknown): asserts v is string => {
+  if (typeof v !== 'string') throw new RangeError('Not a string');
+};
 describe('guards-suite', () => {
-  describe('IS', () => {
-    describe('num', () => {
-      it('should return true for numbers', () => {
-        expect(IS.num(42)).toBe(true);
-        expect(IS.num(0)).toBe(true);
-        expect(IS.num(-1)).toBe(true);
-      });
-
-      it('should return false for non-numbers', () => {
-        expect(IS.num('42')).toBe(false);
-        expect(IS.num(null)).toBe(false);
-        expect(IS.num(undefined)).toBe(false);
-      });
-      describe('str', () => {
-        it('should return true for strings', () => {
-          expect(IS.str('hello')).toBe(true);
-          expect(IS.str('')).toBe(true);
-        });
-
-        it('should return false for non-strings', () => {
-          expect(IS.str(42)).toBe(false);
-          expect(IS.str(null)).toBe(false);
-        });
-      });
-    });
-  });
-  const isString = (v: unknown): v is string => typeof v === 'string';
-  Object.assign(isString, { typeName: 'String' });
-  const assertIsString = (v: unknown): asserts v is string => {
-    if (typeof v !== 'string') throw new TypeError('Not a string');
-  };
-  const checkIsString = (v: unknown): boolean => typeof v === 'string';
-
-  const assertCustom = (v: unknown): asserts v is string => {
-    if (typeof v !== 'string') throw new RangeError('Not a string');
-  };
   describe('runGuardSuite', () => {
     const config: GuardSuiteConfig<string> = {
       is: isString,
       assert: assertIsString,
       check: checkIsString,
+      assertType: expectTypeOf(assertIsString).asserts.toEqualTypeOf<string>(),
+      expectType: expectTypeOf(isString).guards.toEqualTypeOf<string>(),
       validValues: ['hello', 'world'],
       invalidValues: [42, null]
     } as const;
@@ -79,14 +73,29 @@ describe('guards-suite', () => {
       error: RangeError, //<- assigning a different error would fail
       assert: assertCustom
     });
+    function testFunc(v: unknown): v is string {
+      return typeof v === 'string';
+    }
+
+    runGuardSuite({
+      is: testFunc,
+      check: testFunc,
+      assert: assertIsString,
+      assertType: expectTypeOf(assertIsString).asserts.toEqualTypeOf<string>(),
+      expectType: expectTypeOf(testFunc).guards.toEqualTypeOf<string>(),
+      invalidValues: [42, null],
+      validValues: ['hello', 'world']
+    });
   });
   describe('runs multiple guard suites', () => {
-    const specificIs = (v: unknown): v is 'specific' => v === 'specific';
-    runGuardSuites([
+    runGuardSuites(
       {
         is: isString,
         assert: assertIsString,
         check: checkIsString,
+        assertType:
+          expectTypeOf(assertIsString).asserts.toEqualTypeOf<string>(),
+        expectType: expectTypeOf(isString).guards.toEqualTypeOf<string>(),
         validValues: ['hello', 'world'],
         invalidValues: [42, null],
         typeName: 'String Suite'
@@ -94,9 +103,10 @@ describe('guards-suite', () => {
       {
         typeName: 'Specific String Suite',
         is: specificIs,
-        assert: (v: unknown): asserts v is 'specific' => {
-          if (!specificIs(v)) throw new TypeError('Value is not "specific"');
-        },
+        assertType:
+          expectTypeOf(assertSpecific).asserts.toEqualTypeOf<'specific'>(),
+        assert: assertSpecific,
+        expectType: expectTypeOf(specificIs).guards.toEqualTypeOf<'specific'>(),
         check: (v: unknown): boolean => v === 'specific',
         validValues: ['specific'],
         invalidValues: ['one', null]
@@ -104,13 +114,13 @@ describe('guards-suite', () => {
       {
         typeName: 'Number Suite',
         is: IS.num,
-        assert: (v: unknown): asserts v is number => {
-          if (!IS.num(v)) throw new TypeError('Value is not a number');
-        },
+        assert: assertNum,
+        assertType: expectTypeOf(assertNum).asserts.toEqualTypeOf<number>(),
         check: IS.num,
+        expectType: expectTypeOf(IS.num).guards.toBeNumber(),
         validValues: [1, 2, 3],
         invalidValues: ['one', null]
       }
-    ]);
+    );
   });
 });

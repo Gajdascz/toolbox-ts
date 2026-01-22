@@ -13,6 +13,7 @@
     "dist",
     "coverage",
     "**/*.test.*",
+    "**/*.test-d.*",
     "**/*.spec.*",
     "**/*.bench.*"
   ]

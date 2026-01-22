@@ -88,6 +88,7 @@ A monorepo for Typescript utility packages and libraries.
 ## 📝 To Do
 
 - **Documentation**
+  - [ ] Update README files for all packages
   - [ ] Contributing guide
   - [ ] CI/CD diagrams
   - [ ] Consider documentation tooling like docusaurus

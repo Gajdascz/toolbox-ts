@@ -55,5 +55,8 @@
     "@oclif/core": "^4.8.0",
     "@toolbox-ts/utils": "workspace:^",
     "execa": "^9.6.1"
+  },
+  "devDependencies": {
+    "@toolbox-ts/types": "workspace:^"
   }
 }

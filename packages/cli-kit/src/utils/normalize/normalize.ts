@@ -1,4 +1,7 @@
-import { Obj, Str, type StrKey, type StrRecord } from '@toolbox-ts/utils';
+import type { NonNullish } from '@toolbox-ts/types';
+
+import { Obj, Str } from '@toolbox-ts/utils';
+import { isNullish } from '@toolbox-ts/utils/core';
 import { parseCommandString } from 'execa';
 
 import type { CommandInput, CommandTuple } from '../../types.js';
@@ -65,84 +68,21 @@ export const getCommandInputWrapper = (cmd: string) => {
 };
 
 /**
- * Checks if the input is a number or a numeric string
- * and returns it as a number; otherwise, returns the original input.
- *
- * If the input is an empty string, it returns the empty string.
- *
- * @example
- * ```ts
- * strOrNum('42') // 42 (number)
- * strOrNum(3.14) // 3.14 (number)
- * strOrNum('not-a-number') // 'not-a-number' (string)
- * strOrNum(undefined) // undefined
- * strOrNum('') // '' (empty string)
- * ```
- */
-export const strOrNum = (input?: number | string) => {
-  if (input === '') return input;
-  const asNum = Number(input);
-  return Number.isNaN(asNum) ? input : asNum;
-};
-/**
- * Conditionally returns a value based on the provided condition.
- *
- * @example
- * ```ts
- * const flags = {
- *   verbose: when(isVerbose, true),
- *   timeout: when(timeoutValue, (v) => strOrNum(v))
- * };
- * ```
- */
-export const when = <T, C = unknown>(
-  condition: C,
-  value: ((v: NonNullable<C>) => T) | T
-): T | undefined => {
-  if (!condition) return undefined;
-  if (typeof value === 'function')
-    return (value as (v: NonNullable<C>) => T)(condition);
-  return value;
-};
-/**
- * Conditionally nests a value under a specified key in an object.
- * - Useful for conditionally adding properties to objects and omitting
- *   undefined values (spreading in objects).
- *
- * @example
- * ```ts
- * const config = {
- *   host: 'localhost',
- *   ...nestWhen('port', portValue, (v) => strOrNum(v)),
- *   ...nestWhen('useSSL', isSecure, true)
- * };
- * ```
- */
-export const nestWhen = <T, C = unknown>(
-  key: string,
-  condition: C,
-  value: ((v: NonNullable<C>) => T) | T
-): { [k: string]: T } | undefined => {
-  const v = when(condition, value);
-  if (v === undefined) return undefined;
-  return { [key]: v };
-};
-
-/**
  * Maps object keys to @see {@link ObjToFlagSpec} options for use with `objToFlags`.
  */
-export type FlagSpecToObjArgMap<T> = Partial<Record<StrKey<T>, ObjToFlagSpec>>;
-
+export type FlagSpecToObjArgMap<T> = Partial<
+  Obj.MapIndexable<T, ObjToFlagSpec>
+>;
 /**
  * Infers the argument type for `objToFlags` based on the provided flag specifications.
  * - Converts array types to string arrays if `arrayFormat` is specified in the spec.
  */
 export type InferObjToFlagArg<T> = {
-  [K in StrKey<T>]?: NonNullable<
+  [K in keyof T as keyof Obj.ToIndexable<T>]?: NonNullish<
     FlagSpecToObjArgMap<T>[K]
   >['arrayFormat'] extends string ?
     string[]
-  : T[K];
+  : T[keyof T];
 };
 /**
  * Type definition to define how to handle specific object keys when converting
@@ -204,26 +144,24 @@ export const flagArgs = <T>(
   flags: T,
   specs: FlagSpecToObjArgMap<T>
 ): InferObjToFlagArg<T> =>
-  Obj.keys(flags).reduce<InferObjToFlagArg<T>>((acc, key) => {
-    const value = flags[key];
-    const spec = specs[key];
-    if (
-      !spec
-      || value === undefined
-      || value === null
-      || typeof value === 'boolean'
-    ) {
-      (acc as StrRecord)[key] = value;
+  Obj.reduce<T>(
+    flags,
+    (acc, value, key) => {
+      const spec = specs[key];
+      if (!spec || isNullish(value) || typeof value === 'boolean') {
+        acc[key] = value;
+        return acc;
+      }
+      if (spec.arrayFormat) {
+        if (Array.isArray(value)) acc[key] = value;
+        else if (typeof value === 'string')
+          acc[key] = Str.Normalize.array(value.split(','));
+        else acc[key] = [String(value)];
+      } else acc[key] = value;
       return acc;
-    }
-    if (spec.arrayFormat) {
-      if (Array.isArray(value)) acc[key] = value;
-      else if (typeof value === 'string')
-        (acc as StrRecord)[key] = Str.normalize.array(value.split(','));
-      else (acc as StrRecord)[key] = [String(value)];
-    } else (acc as StrRecord)[key] = value;
-    return acc;
-  }, {});
+    },
+    {}
+  ) as InferObjToFlagArg<T>;
 
 const pushWithSep = (
   v: unknown,
@@ -280,28 +218,31 @@ const pushWithSep = (
 export const objToFlags = <T>(
   o: T,
   opts: ObjToFlagSpec = {},
-  localSpec: Partial<Record<keyof T, ObjToFlagSpec>> = {}
+  localSpec: Partial<Record<Obj.Key.Enumerable<T>, ObjToFlagSpec>> = {}
 ): string[] => {
   const defaults: Required<ObjToFlagSpec> = {
     arrayFormat: opts.arrayFormat ?? 'comma',
     sep: opts.sep ?? 'space'
   };
-  return Obj.keys(o).reduce<string[]>((acc, key) => {
-    const value = o[key];
-    if (value !== undefined && value !== null && value !== false) {
-      const { arrayFormat, sep } = { ...defaults, ...localSpec[key] };
-      const flag = toFlag(key);
-      if (value === true) acc.push(flag);
-      else if (Array.isArray(value)) {
-        if (arrayFormat === 'repeat') {
-          for (const item of value) acc = pushWithSep(item, sep, flag, acc);
-        } else {
-          const joined =
-            arrayFormat === 'json' ? JSON.stringify(value) : value.join(',');
-          acc = pushWithSep(joined, sep, flag, acc);
-        }
-      } else acc = pushWithSep(value, sep, flag, acc);
-    }
-    return acc;
-  }, []);
+  return Obj.reduce<T, string[]>(
+    o,
+    (acc, value, key) => {
+      if (value !== undefined && value !== null && value !== false) {
+        const { arrayFormat, sep } = { ...defaults, ...localSpec[key] };
+        const flag = toFlag(key);
+        if (value === true) acc.push(flag);
+        else if (Array.isArray(value)) {
+          if (arrayFormat === 'repeat') {
+            for (const item of value) acc = pushWithSep(item, sep, flag, acc);
+          } else {
+            const joined =
+              arrayFormat === 'json' ? JSON.stringify(value) : value.join(',');
+            acc = pushWithSep(joined, sep, flag, acc);
+          }
+        } else acc = pushWithSep(value, sep, flag, acc);
+      }
+      return acc;
+    },
+    []
+  );
 };

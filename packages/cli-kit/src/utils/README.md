@@ -23,10 +23,6 @@
   * `commandInput` and `getCommandInputWrapper` handle multiple input formats.
   * Prepend/wrap executables (`git`, `npx`, `docker exec`, etc.).
 
-* **General helpers**
-
-  * `strOrNum`, `when`, `nestWhen` for safer type coercion and conditional object building.
-
 ---
 
 ## 🧩 API Overview
@@ -34,7 +30,7 @@
 ### Process
 
 | Method                     | Description                                                        |
-| -------------------------- | ------------------------------------------------------------------ |
+|----------------------------|--------------------------------------------------------------------|
 | `resolveError(err)`        | Normalize `ExecaError`, `ExecaSyncError`, or unknown into `Error`. |
 | `spawn(cmd, opts?)`        | Run a command asynchronously via `execa`.                          |
 | `spawnSync(cmd, opts?)`    | Run a command synchronously via `execaSync`.                       |
@@ -45,7 +41,7 @@
 ### Flags
 
 | Method / Type                       | Description                                                            |
-| ----------------------------------- | ---------------------------------------------------------------------- |
+|-------------------------------------|------------------------------------------------------------------------|
 | `kebabToFlagEntry(key)`             | Returns `[camelCase, '--kebab-case']`.                                 |
 | `toFlag(key)`                       | Converts camelCase → `--kebab-case`.                                   |
 | `flagMeta(name, desc, opts?)`       | Generates metadata (`description`, `aliases`, `helpLabel`).            |
@@ -58,19 +54,9 @@
 ### Command Input
 
 | Method                        | Description                                                         |
-| ----------------------------- | ------------------------------------------------------------------- |
+|-------------------------------|---------------------------------------------------------------------|
 | `commandInput(cmd)`           | Normalize string/tuple/array input into `[executable, args[]]`.     |
 | `getCommandInputWrapper(cmd)` | Returns a function that prepends a command (e.g., wrap with `git`). |
-
----
-
-### General
-
-| Method                       | Description                                              |
-| ---------------------------- | -------------------------------------------------------- |
-| `strOrNum(input)`            | Converts numeric strings → number, leaves others intact. |
-| `when(cond, value)`          | Returns value (or function result) if condition truthy.  |
-| `nestWhen(key, cond, value)` | Like `when`, but nests under an object key.              |
 
 ---
 
@@ -135,20 +121,6 @@ const git = getCommandInputWrapper('git');
 
 const commitCmd = git('commit -m "Initial commit"');
 // ['git', ['commit', '-m', 'Initial commit']]
-```
-
----
-
-### Conditional helpers
-
-```ts
-import { strOrNum, when, nestWhen } from '@toolbox-ts/cli-kit/utils';
-
-const value = strOrNum('42'); // 42
-const flags = {
-  verbose: when(true, true),           // { verbose: true }
-  ...nestWhen('port', '3000', strOrNum) // { port: 3000 }
-};
 ```
 
 ---

@@ -20,6 +20,8 @@ export type Truthy<T> = T extends Falsy ? never : T;
 export type PrimitiveType = PrimitiveTypeMap[PrimitiveTypeName];
 /**
  * A mapping of traditional primitive type names to their corresponding types
+ *
+ * function and object are omitted.
  */
 export interface PrimitiveTypeMap {
   bigint: bigint;
@@ -31,24 +33,6 @@ export interface PrimitiveTypeMap {
   undefined: undefined;
 }
 export type PrimitiveTypeName = keyof PrimitiveTypeMap;
-
-/**
- * A union of all true primitive types, including functions and objects
- * - Matches the results of JavaScript's `typeof` operator
- */
-export type TruePrimitiveType =
-  | ((...args: any[]) => unknown)
-  | object
-  | PrimitiveType;
-/**
- * A mapping of all true primitive type names to their corresponding types
- * - Matches the results of JavaScript's `typeof` operator
- */
-export type TruePrimitiveTypeMap = {
-  function: (...args: any[]) => unknown;
-  object: object;
-} & PrimitiveTypeMap;
-export type TruePrimitiveTypeName = keyof TruePrimitiveTypeMap;
 //#endregion
 
 //#region> Type Modifier
@@ -113,3 +97,19 @@ export type Widen<T> =
 export type MaybePromise<T, B extends boolean = boolean> =
   B extends true ? Promise<T> : T;
 //#endregion
+
+export type IsArray<T> = T extends unknown[] ? true : false;
+export type IsBigInt<T> = T extends bigint ? true : false;
+export type IsBoolean<T> = T extends boolean ? true : false;
+export type IsFalsy<T> = T extends Falsy ? true : false;
+export type IsFunction<T> =
+  T extends (...args: any[]) => unknown ? true : false;
+export type IsNever<T> = [T] extends [never] ? true : false;
+export type IsNullish<T> = T extends Nullish ? true : false;
+export type IsNumber<T> = T extends number ? true : false;
+export type IsObject<T> = T extends object ? true : false;
+export type IsPrimitive<T> = T extends PrimitiveType ? true : false;
+export type IsString<T> = T extends string ? true : false;
+export type IsSymbol<T> = T extends symbol ? true : false;
+export type IsTuple<T> = T extends [] | [unknown, ...unknown[]] ? true : false;
+export type IsUndefined<T> = T extends undefined ? true : false;

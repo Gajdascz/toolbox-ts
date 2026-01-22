@@ -8,15 +8,15 @@ import {
 } from 'vitest/config';
 
 export interface TestConfig extends Omit<
-  NestedPartial<typeof configDefaults> & ViteUserConfig['test'],
+  DeepPartial<typeof configDefaults> & ViteUserConfig['test'],
   'cache'
 > {
   cacheDir?: string;
   tsconfigFilename?: string;
 }
 
-type NestedPartial<T> = {
-  [K in keyof T]?: T[K] extends object ? NestedPartial<T[K]> : T[K];
+type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
 };
 
 export const DEFAULTS: { cacheDir: string; test: ViteUserConfig['test'] } = {

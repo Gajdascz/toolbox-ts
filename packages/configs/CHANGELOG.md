@@ -1,5 +1,14 @@
 # @toolbox-ts/configs
 
+## 0.1.6
+
+### Patch Changes
+
+- 9c5d838: - completely rework utils package from the ground up
+  - updated types package
+  - updated cli-kit package to use updated utils and types packages
+  - updated dependencies
+
 ## 0.1.5
 
 ### Patch Changes

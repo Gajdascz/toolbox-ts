@@ -29,56 +29,45 @@
     "email": "dev.gajdascz@gmail.com",
     "url": "https://github.com/gajdascz"
   },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "devDependencies": {
+    "@toolbox-ts/test-utils": "workspace:^",
+    "@toolbox-ts/types": "workspace:^",
+    "@types/node": "^22.19.7"
+  },
+  "main": "./dist/modules/index.js",
+  "types": "./dist/modules/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/modules/index.js",
+      "types": "./dist/modules/index.d.ts"
     },
-    "./obj": {
-      "import": "./dist/object/index.js",
-      "types": "./dist/object/index.d.ts"
+    "./core": {
+      "import": "./dist/core/index.js",
+      "types": "./dist/core/index.d.ts"
     },
-    "./prim": {
-      "import": "./dist/primitive/index.js",
-      "types": "./dist/primitive/index.d.ts"
+    "./Obj": {
+      "import": "./dist/modules/Obj/index.js",
+      "types": "./dist/modules/Obj/index.d.ts"
     },
-    "./str": {
-      "import": "./dist/string/index.js",
-      "types": "./dist/string/index.d.ts"
+    "./Arr": {
+      "import": "./dist/modules/Arr/index.js",
+      "types": "./dist/modules/Arr/index.d.ts"
     },
-    "./arr": {
-      "import": "./dist/array/index.js",
-      "types": "./dist/array/index.d.ts"
+    "./Tuple": {
+      "import": "./dist/modules/Tuple/index.js",
+      "types": "./dist/modules/Tuple/index.d.ts"
     },
-    "./num": {
-      "import": "./dist/number/index.js",
-      "types": "./dist/number/index.d.ts"
+    "./Str": {
+      "import": "./dist/modules/Str/index.js",
+      "types": "./dist/modules/Str/index.d.ts"
     },
-    "./helpers": {
-      "import": "./dist/helpers/index.js",
-      "types": "./dist/helpers/index.d.ts"
+    "./Num": {
+      "import": "./dist/modules/Num/index.js",
+      "types": "./dist/modules/Num/index.d.ts"
     },
-    "./types": {
-      "import": "./dist/types/index.js",
-      "types": "./dist/types/index.d.ts"
-    },
-    "./types/obj": {
-      "import": "./dist/types/obj.js",
-      "types": "./dist/types/obj.d.ts"
-    },
-    "./types/spatial": {
-      "import": "./dist/types/spatial.js",
-      "types": "./dist/types/spatial.d.ts"
-    },
-    "./types/str": {
-      "import": "./dist/types/str.js",
-      "types": "./dist/types/str.d.ts"
-    },
-    "./types/general": {
-      "import": "./dist/types/general.js",
-      "types": "./dist/types/general.d.ts"
+    "./libs/*": {
+      "import": "./dist/modules/*/lib/index.js",
+      "types": "./dist/modules/*/lib/index.d.ts"
     }
   }
 }

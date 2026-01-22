@@ -12,6 +12,7 @@
     "node_modules",
     "dist",
     "**/*.test.*",
+    "**/*.test-d.*",
     "**/*.spec.*",
     "**/*.bench.*"
   ]

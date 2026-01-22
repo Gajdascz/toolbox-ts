@@ -5,11 +5,8 @@ import {
   commandInput,
   flagArgs,
   getCommandInputWrapper,
-  nestWhen,
   objToFlags,
-  type ObjToFlagSpec,
-  strOrNum,
-  when
+  type ObjToFlagSpec
 } from './normalize.ts';
 vi.mock('execa', async (act) => ({
   ...(await act()),
@@ -53,68 +50,6 @@ describe('cli-kit: Normalize Utils', () => {
     });
     it('throws on invalid wrapper command', () => {
       expect(() => getCommandInputWrapper('')).toThrow();
-    });
-  });
-  describe('strOrNum', () => {
-    it('returns number when input is a number string', () => {
-      expect(strOrNum('123')).toBe(123);
-    });
-    it('returns number when input is a number', () => {
-      expect(strOrNum(123)).toBe(123);
-    });
-    it('returns string when input is non-number string', () => {
-      expect(strOrNum('abc')).toBe('abc');
-    });
-    it('returns undefined when input is undefined', () => {
-      expect(strOrNum(undefined)).toBe(undefined);
-    });
-    it('returns empty string when input is empty string', () => {
-      expect(strOrNum('')).toBe('');
-    });
-  });
-  describe('when', () => {
-    it('returns value when condition is true', () => {
-      expect(when(true, 'value')).toBe('value');
-    });
-    it('returns undefined when condition is false', () => {
-      expect(when(false, 'value')).toBeUndefined();
-    });
-    it('returns undefined when condition is null', () => {
-      expect(when(null, 'value')).toBeUndefined();
-    });
-    it('returns undefined when condition is undefined', () => {
-      expect(when(undefined, 'value')).toBeUndefined();
-    });
-    it('calls function and returns its value when condition is true', () => {
-      expect(
-        when(true, () => {
-          return 'computed';
-        })
-      ).toBe('computed');
-    });
-  });
-  describe('nestWhen', () => {
-    it('nests value under key when condition is true', () => {
-      expect(nestWhen('key', true, 'value')).toEqual({ key: 'value' });
-    });
-    it('returns undefined when condition is false', () => {
-      expect(nestWhen('key', false, 'value')).toBeUndefined();
-    });
-    it('returns undefined when condition is null', () => {
-      expect(nestWhen('key', null, 'value')).toBeUndefined();
-    });
-    it('returns undefined when condition is undefined', () => {
-      expect(nestWhen('key', undefined, 'value')).toBeUndefined();
-    });
-    it('calls function and nests its value under key when condition is true', () => {
-      expect(
-        nestWhen('key', true, () => {
-          return 'computed';
-        })
-      ).toEqual({ key: 'computed' });
-    });
-    it('returns undefined when condition is a falsy value', () => {
-      expect(nestWhen('key', '', 'value')).toBeUndefined();
     });
   });
   describe('objToFlags', () => {

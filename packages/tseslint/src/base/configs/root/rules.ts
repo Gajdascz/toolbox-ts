@@ -96,7 +96,9 @@ export const unicorn: ConfigWithExtends['rules'] = mkRules('unicorn', [
   ['no-array-callback-reference', 'off'],
 
   /** Disabling to allow ESLint-disable comments when necessary */
-  ['no-abusive-eslint-disable', 'off']
+  ['no-abusive-eslint-disable', 'off'],
+  /** Unnecessary */
+  ['prefer-spread', 'off']
 ]);
 
 export const typescriptEslint: ConfigWithExtends['rules'] = mkRules(

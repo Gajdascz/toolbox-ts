@@ -1,35 +1,68 @@
 import { describe, expect, it } from 'vitest';
 
-import { DATA, EXPECT } from '../../helpers/index.js';
+import { EXPECT } from '../../helpers/index.js';
+/**
+ * Asserts that the value is of type T and validates its type using `expectTypeOf`.
+ *
+ * @example
+ * ```ts
+ * import { expectTypeOf } from 'vitest';
+ * ...
+ * {
+ *   assertType: expectTypeOf(assertIsString).asserts.toEqualTypeof<string>()
+ * },
+ * {
+ *   assertType: expectTypeOf(assertNotString<number|string>).asserts.toEqualTypeof<number>()
+ * }
+ * ```
+ */
+export type GuardSuiteAssertTypeOf = boolean | void;
+export interface GuardSuiteConfig<T> extends GuardSuiteGuards<T> {
+  customCases?: {
+    cases: {
+      expectType?: GuardSuiteExpectTypeOf;
+      itShould: string;
+      run: GuardSuiteCustomCaseRun;
+    }[];
+    describe?: string;
+  }[];
+  error?: ErrorConstructor;
 
-export const IS = {
-  num: (v: unknown): v is number => typeof v === 'number',
-  str: (v: unknown): v is string => typeof v === 'string'
-} as const;
+  invalidValues: unknown[];
 
-export const MIXED_GUARDS = {
-  tuple: DATA.TUPLES.mixed.map(([_, v]) =>
-    typeof v === 'number' ? IS.num : IS.str
-  ),
-  record: (Object.keys(DATA.RECORDS.mixed) as DATA.ValidKey[]).reduce<{
-    [K in DATA.ValidKey]: (v: unknown) => boolean;
-  }>(
-    (acc, key) => {
-      const v = DATA.RECORDS.mixed[key];
-      acc[key] = typeof v === 'number' ? IS.num : IS.str;
-      return acc;
-    },
-    {} as { [K in DATA.ValidKey]: (v: unknown) => boolean }
-  )
-} as const;
+  /**
+   * Optional name for the guard suite if `is` function does not include `typeName` property
+   * @default `is.name`
+   */
+  typeName?: string;
+  validValues: unknown[];
+}
 
-export const UTILS = {
-  is: IS,
-  mixedGuards: MIXED_GUARDS,
-  getData: DATA.VALUES
-} as const;
+/**
+ * A function or array of functions that should return `false` if the test fails.
+ */
+export type GuardSuiteCustomCaseRun = () => boolean | void;
+/**
+ * Use to validate that the a guard properly narrows a type
+ *
+ * Recommended Pattern:
+ * ```ts
+ * import { expectTypeOf } from 'vitest';
+ *
+ * ...
+ * {
+ *   expectTypeOf: expectTypeOf(isNum).guards.toBeNumber()
+ * },
+ * {
+ *   expectTypeOf: expectTypeOf(isNotString<number|string>).guards.toEqualTypeOf<number>(),
+ * },
+ *
+ * ```
+ */
 
-export interface GuardSuiteConfig<T> {
+export type GuardSuiteExpectTypeOf = boolean | void;
+
+export interface GuardSuiteGuards<T> {
   /**
    * Asserts that the value is of type T.
    *
@@ -43,6 +76,7 @@ export interface GuardSuiteConfig<T> {
    * ```
    */
   assert: (v: unknown) => asserts v is T;
+  assertType: GuardSuiteAssertTypeOf;
   /**
    * Checks if the value is of type T.
    *
@@ -54,18 +88,7 @@ export interface GuardSuiteConfig<T> {
    * ```
    */
   check: (v: unknown) => boolean;
-  customCases?: {
-    cases: {
-      itShould: string;
-      /**
-       * A function or array of functions that should return `false` if the test fails.
-       */
-      run: (() => boolean | void)[] | (() => boolean | void);
-    }[];
-    describe?: string;
-  }[];
-  error?: ErrorConstructor;
-  invalidValues: unknown[];
+  expectType: GuardSuiteExpectTypeOf;
   /**
    * Determines if the value is of type T.
    *
@@ -78,14 +101,7 @@ export interface GuardSuiteConfig<T> {
    * ```
    */
   is: ((v: unknown) => v is T) & { readonly typeName?: string };
-  /**
-   * Optional name for the guard suite if `is` function does not include `typeName` property
-   * @default `is.name`
-   */
-  typeName?: string;
-  validValues: unknown[];
 }
-
 export function runGuardSuite<T>({
   assert,
   invalidValues,
@@ -94,32 +110,38 @@ export function runGuardSuite<T>({
   error = TypeError,
   check,
   customCases,
-  typeName = is.name
+  typeName
 }: GuardSuiteConfig<T>) {
-  describe(is.typeName ?? typeName, () => {
+  const name = typeName ?? is.typeName ?? is.name;
+  describe(name, () => {
     const valid = ['Valid', validValues, true] as const;
     const invalid = ['Invalid', invalidValues, false] as const;
     describe.each([valid, invalid])('%s', (_, values, expected) => {
-      it.each([values])('value: %s', (v) => {
-        expect(is(v)).toBe(expected);
-        expect(check(v)).toBe(expected);
-        if (expected) EXPECT.notToThrow(() => assert(v));
-        else EXPECT.toThrow(() => assert(v), error);
+      describe.each([values])('value: %s', (v) => {
+        const should = expected ? 'pass' : 'fail';
+        it(`${is.name} ${should} for value: ${String(v)}`, () => {
+          expect(is(v)).toBe(expected);
+        });
+        it(`${check.name} should ${should} for value: ${String(v)}`, () => {
+          expect(check(v)).toBe(expected);
+        });
+        it(`${assert.name} should ${should} for value: ${String(v)}`, () => {
+          if (expected) EXPECT.notToThrow(() => assert(v));
+          else EXPECT.toThrow(() => assert(v), error);
+        });
       });
     });
   });
   if (customCases) {
     for (const { cases, describe: dsc } of customCases) {
       for (const { itShould, run } of cases)
-        if (dsc)
-          describe(dsc, () => {
-            it(itShould, () => EXPECT.every(run, (f) => f() !== false));
-          });
-        else it(itShould, () => EXPECT.every(run, (f) => f() !== false));
+        describe(dsc ?? name, () => {
+          it(itShould, () => expect(run()).not.toBe(false));
+        });
     }
   }
 }
-export function runGuardSuites(cfgs: GuardSuiteConfig<unknown>[]) {
+export function runGuardSuites(...cfgs: GuardSuiteConfig<unknown>[]) {
   for (const cfg of cfgs) runGuardSuite(cfg);
 }
 

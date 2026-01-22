@@ -8,7 +8,7 @@
     "noEmit": true,
     "allowJs": true,
     "strict": false,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "allowUnusedLabels": true,
     "allowUnreachableCode": true,
     "noImplicitAny": false,
@@ -23,6 +23,12 @@
     "noImplicitOverride": false,
     "exactOptionalPropertyTypes": false
   },
-  "include": ["**/*.test.*", "**/*.spec.*", "**/*.bench.*", "**/*.test-d.*"],
+  "include": [
+    "**/*.test.*",
+    "**/*.spec.*",
+    "**/*.bench.*",
+    "**/*.test-d.*",
+    "packages/types/src/object/definitions/modifier/modifier.test-d.ts"
+  ],
   "exclude": ["dist", "node_modules"]
 }

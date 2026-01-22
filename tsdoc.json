@@ -5,7 +5,12 @@
     { "tagName": "@module", "syntaxKind": "block", "allowMultiple": false },
     { "tagName": "@default", "syntaxKind": "modifier", "allowMultiple": false },
     { "tagName": "@template", "syntaxKind": "modifier", "allowMultiple": true },
-    { "tagName": "@shallow", "syntaxKind": "modifier", "allowMultiple": true },
-    { "tagName": "@deep", "syntaxKind": "modifier", "allowMultiple": true }
+    { "tagName": "@shallow", "syntaxKind": "modifier", "allowMultiple": false },
+    { "tagName": "@deep", "syntaxKind": "modifier", "allowMultiple": false },
+    { "tagName": "@pure", "syntaxKind": "modifier", "allowMultiple": false },
+    { "tagName": "@tip", "syntaxKind": "block", "allowMultiple": true },
+    { "tagName": "@narrows", "syntaxKind": "modifier", "allowMultiple": false },
+    { "tagName": "@asserts", "syntaxKind": "modifier", "allowMultiple": false },
+    { "tagName": "@checks", "syntaxKind": "modifier", "allowMultiple": false }
   ]
 }

@@ -1,19 +1,5 @@
-/** @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json#devengines} */
-export interface DevEngineEntry {
-  name: string;
-  onFail?: 'error' | 'ignore' | 'warn';
-  version?: string;
-}
-
-/** @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json#funding} */
-export interface Funding {
-  /** The type of funding source (e.g., "individual", "organization", "patreon"). */
-  type?: string;
-  /** The URL of the funding page. */
-  url: string;
-}
 /** @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json} */
-export interface JSON {
+export interface Config {
   /**
    * A link to the JSON schema for validating the package.json file.
    */
@@ -423,6 +409,20 @@ export interface JSON {
    * @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json#version}
    */
   version?: string;
+}
+
+/** @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json#devengines} */
+export interface DevEngineEntry {
+  name: string;
+  onFail?: 'error' | 'ignore' | 'warn';
+  version?: string;
+}
+/** @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json#funding} */
+export interface Funding {
+  /** The type of funding source (e.g., "individual", "organization", "patreon"). */
+  type?: string;
+  /** The URL of the funding page. */
+  url: string;
 }
 export interface Person {
   /** The person's email address. */

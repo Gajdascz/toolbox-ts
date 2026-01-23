@@ -80,11 +80,11 @@ export const insert = <
 export const append = <const T extends Tuple, const E extends Tuple>(
   t: T,
   e: E
-) => Arr.insert(t, e, 'append') as unknown as Append<T, E>;
+) => Arr.insert(t, e, Infinity) as unknown as Append<T, E>;
 export const prepend = <const T extends Tuple, const E extends Tuple>(
   t: T,
   e: E
-) => Arr.insert(t, e, 'prepend') as unknown as Prepend<T, E>;
+) => Arr.insert(t, e, 0) as unknown as Prepend<T, E>;
 
 //#endregion
 //#region> Chunk
@@ -110,67 +110,36 @@ export const dedupe = <const T extends Tuple>(t: T) =>
   Arr.dedupe(t) as Dedupe<T>;
 //#endregion
 //#region> Compact
-export function compact<const T extends Tuple>(
-  a: T,
-  mode?: 'nullish'
-): WithoutNullish<T>;
-export function compact<const T extends Tuple>(
-  a: T,
-  mode: 'null'
-): WithoutNull<T>;
-export function compact<const T extends Tuple>(
-  a: T,
-  mode: 'falsy'
-): WithoutFalsy<T>;
-export function compact<const T extends Tuple>(
-  a: T,
-  mode: 'undefined'
-): WithoutUndefined<T>;
-export function compact<const T extends Tuple = Tuple>(
-  a: T,
-  mode: Arr.CompactStrategy = 'nullish'
-) {
-  return Arr.compact(a, mode);
-}
+export const compact = <const T extends Tuple>(t: T): WithoutNullish<T> =>
+  Arr.compact(t) as unknown as WithoutNullish<T>;
+export const compactFalsy = <const T extends Tuple>(t: T): WithoutFalsy<T> =>
+  Arr.compactFalsy(t) as unknown as WithoutFalsy<T>;
+export const compactNull = <const T extends Tuple>(t: T): WithoutNull<T> =>
+  Arr.compactNull(t) as unknown as WithoutNull<T>;
+export const compactUndefined = <const T extends Tuple>(
+  t: T
+): WithoutUndefined<T> =>
+  Arr.compactUndefined(t) as unknown as WithoutUndefined<T>;
 //#endregion
 //#region> Zip
 export function zip<
   const A extends Tuple = Tuple,
   const B extends Tuple = Tuple
->(a: A, b: B, mode?: 'default'): Zip<A, B>;
-export function zip<
+>(a: A, b: B): Zip<A, B> {
+  return Arr.zip(a, b) as Zip<A, B>;
+}
+export function zipFill<
   const A extends Tuple = Tuple,
   const B extends Tuple = Tuple,
   const F = null
->(a: A, b: B, mode?: 'fill', fill?: F): ZipFill<A, B, F>;
-export function zip<
+>(a: A, b: B, fill?: F): ZipFill<A, B, F> {
+  return Arr.zipFill(a, b, fill) as unknown as ZipFill<A, B, F>;
+}
+export function zipRemainder<
   const A extends Tuple = Tuple,
   const B extends Tuple = Tuple
->(a: A, b: B, mode?: 'remainder'): ZipRemainderObj<A, B>;
-export function zip<
-  const A extends Tuple = Tuple,
-  const B extends Tuple = Tuple,
-  const F = null
->(
-  a: A,
-  b: B,
-  mode?: Arr.ZipMode,
-  fill?: F
-): Zip<A, B> | ZipFill<A, B, F> | ZipRemainderObj<A, B>;
-export function zip<
-  const A extends Tuple = Tuple,
-  const B extends Tuple = Tuple,
-  const F = null
->(
-  a: A,
-  b: B,
-  mode: Arr.ZipMode = 'default',
-  fill: F = null as F
-): Zip<A, B> | ZipFill<A, B, F> | ZipRemainderObj<A, B> {
-  return Arr.zip(a, b, mode, fill) as
-    | Zip<A, B>
-    | ZipFill<A, B, F>
-    | ZipRemainderObj<A, B>;
+>(a: A, b: B): ZipRemainderObj<A, B> {
+  return Arr.zipRemainder(a, b) as unknown as ZipRemainderObj<A, B>;
 }
 //#endregion
 //#region> Reverse

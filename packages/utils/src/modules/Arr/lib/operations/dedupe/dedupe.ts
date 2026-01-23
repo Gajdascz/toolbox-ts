@@ -1,9 +1,4 @@
 import type { Arr } from '@toolbox-ts/types/defs/array';
-
-export type DedupeComparator<A extends Arr> = (
-  a: A[number],
-  b: A[number]
-) => boolean;
 /**
  * Returns a new array with duplicate values removed, preserving the original order.
  *
@@ -21,13 +16,5 @@ export type DedupeComparator<A extends Arr> = (
  * // uniqueArr2 is [{a:1}, {b:2}, {a:1}] because the two {a:1} are different references
  * ```
  */
-export const dedupe = <A extends Arr = Arr>(
-  arr: A,
-  comparator?: DedupeComparator<A>
-): A =>
-  (!comparator ?
-    [...new Set(arr)]
-  : arr.filter(
-      (item, index) =>
-        arr.findIndex((other) => comparator(item, other)) === index
-    )) as A;
+export const dedupe = <A extends Arr = Arr>(...arrays: A[]): A =>
+  [...new Set(arrays.flat())] as A;

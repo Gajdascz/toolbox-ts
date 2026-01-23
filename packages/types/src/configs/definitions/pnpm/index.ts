@@ -1,1 +1,2 @@
-export type * as Pnpm from './definitions/index.js';
+export type * from './sections/index.js';
+export type * from './workspace-yaml.js';

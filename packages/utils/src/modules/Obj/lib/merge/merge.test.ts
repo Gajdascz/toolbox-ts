@@ -241,22 +241,6 @@ describe('merge', () => {
       expect(result.arr).not.toBe(next.arr); // Cloned
     });
 
-    it('should use custom onArray handler with append behavior', () => {
-      const current = { arr: [1, 2] };
-      const next = { arr: [3, 4] };
-      const result = merge(current, next, { onArray: { behavior: 'append' } });
-
-      expect(result).toEqual({ arr: [1, 2, 3, 4] });
-    });
-
-    it('should use custom onArray handler with prepend behavior', () => {
-      const current = { arr: [1, 2] };
-      const next = { arr: [3, 4] };
-      const result = merge(current, next, { onArray: { behavior: 'prepend' } });
-
-      expect(result).toEqual({ arr: [3, 4, 1, 2] });
-    });
-
     it('should clone array if current is not an array', () => {
       const current = { arr: 'not an array' };
       const next = { arr: [1, 2, 3] };
@@ -264,14 +248,6 @@ describe('merge', () => {
 
       expect(result).toEqual({ arr: [1, 2, 3] });
       expect((result as { arr: number[] }).arr).not.toBe(next.arr);
-    });
-
-    it('should handle nested arrays in objects', () => {
-      const current = { a: { arr: [1, 2] } };
-      const next = { a: { arr: [3, 4] } };
-      const result = merge(current, next, { onArray: { behavior: 'append' } });
-
-      expect(result).toEqual({ a: { arr: [1, 2, 3, 4] } });
     });
   });
 
@@ -547,14 +523,6 @@ describe('mergeAll', () => {
     expect(result).toEqual({ a: 1, b: 2 });
   });
 
-  it('should pass options to each merge call', () => {
-    const base = { arr: [1] };
-    const others = [{ arr: [2] }, { arr: [3] }];
-    const result = mergeAll(base, others, { onArray: { behavior: 'append' } });
-
-    expect(result).toEqual({ arr: [1, 2, 3] });
-  });
-
   it('should handle nested objects across multiple merges', () => {
     const base = { a: { x: 1 } };
     const others = [{ a: { y: 2 } }, { a: { z: 3 } }];
@@ -579,6 +547,15 @@ describe('mergeAll', () => {
 
     expect(result).not.toBe(base);
     expect(base).toEqual({ a: 1 });
+  });
+  it('should use custom array merge handler', () => {
+    const base = { arr: [1, 2] };
+    const others = [{ arr: [3, 4] }];
+    const result = mergeAll(base, others, {
+      onArray: (current, next) => [...current, ...next]
+    });
+
+    expect(result.arr).toEqual([1, 2, 3, 4]);
   });
 });
 
@@ -608,7 +585,7 @@ describe('type safety', () => {
       allowOverwrite: { null: true, emptyObject: false },
       cloneStrategy: 'deep',
       maxDepth: 5,
-      onArray: { behavior: 'append' },
+      onArray: 'replace',
       onPrimitive: (_, b) => b
     };
 

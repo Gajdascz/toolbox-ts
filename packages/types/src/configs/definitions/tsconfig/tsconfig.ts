@@ -659,9 +659,10 @@ export interface TypeAcquisition {
 /**
  * Metadata fields for tsconfig files to provide additional details.
  */
-export interface ConfigMeta<N extends string> {
+export interface Meta<N extends string> {
   $schema: string;
   description: string;
+  filename: string;
   name: N;
 }
 //#endregion
@@ -704,11 +705,12 @@ export interface Config<C extends CompilerOptions = CompilerOptions> {
 export type ConfigWithMeta<
   N extends string,
   C extends CompilerOptions = CompilerOptions
-> = Config<C> & ConfigMeta<N>;
+> = Config<C> & Meta<N>;
 
 export type ConfigWithMetaInput<
   N extends string,
-  StaticFields extends Omit<Partial<ConfigWithMeta<N>>, 'compilerOptions'>,
+  StaticFields extends Omit<Partial<ConfigWithMeta<N>>, 'compilerOptions'> =
+    object,
   StaticCompilerOptions extends CompilerOptions | object = object
 > = {
   compilerOptions?: Omit<CompilerOptions, keyof StaticCompilerOptions>;
@@ -729,7 +731,7 @@ export type ConfigWithMetaInput<
  * ```
  */
 export type Input<
-  StaticFields extends Omit<Partial<Config>, 'compilerOptions'>,
+  StaticFields extends Omit<Partial<Config>, 'compilerOptions'> = object,
   StaticCompilerOptions extends CompilerOptions | object = object
 > = {
   compilerOptions?: Omit<CompilerOptions, keyof StaticCompilerOptions>;

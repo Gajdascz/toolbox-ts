@@ -4,7 +4,7 @@ import type {
   CompilerOptions,
   ConfigWithMetaInput,
   Input
-} from './tsconfig.js';
+} from './tsconfig.ts';
 
 describe('TsConfig Types', () => {
   describe('Input', () => {

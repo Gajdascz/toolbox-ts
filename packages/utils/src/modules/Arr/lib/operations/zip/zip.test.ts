@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { zip } from './zip.ts';
+import { zip, zipFill, zipRemainder, zipWith } from './zip.ts';
 
 describe('zip', () => {
-  describe('default mode', () => {
+  describe('default', () => {
     it('should zip two arrays of equal length', () => {
       const result = zip([1, 2, 3], ['a', 'b', 'c']);
       expect(result).toEqual([
@@ -12,16 +12,14 @@ describe('zip', () => {
         [3, 'c']
       ]);
     });
-
     it('should zip with explicit default mode', () => {
-      const result = zip([1, 2, 3], ['a', 'b', 'c'], 'default');
+      const result = zip([1, 2, 3], ['a', 'b', 'c']);
       expect(result).toEqual([
         [1, 'a'],
         [2, 'b'],
         [3, 'c']
       ]);
     });
-
     it('should stop at shorter array length', () => {
       const result = zip([1, 2], ['a', 'b', 'c']);
       expect(result).toEqual([
@@ -29,7 +27,6 @@ describe('zip', () => {
         [2, 'b']
       ]);
     });
-
     it('should stop at shorter array when first is longer', () => {
       const result = zip([1, 2, 3, 4], ['a', 'b']);
       expect(result).toEqual([
@@ -37,31 +34,26 @@ describe('zip', () => {
         [2, 'b']
       ]);
     });
-
     it('should handle empty first array', () => {
       const result = zip([], ['a', 'b', 'c']);
       expect(result).toEqual([]);
     });
-
     it('should handle empty second array', () => {
       const result = zip([1, 2, 3], []);
       expect(result).toEqual([]);
     });
-
     it('should handle both arrays empty', () => {
       const result = zip([], []);
       expect(result).toEqual([]);
     });
-
     it('should handle single element arrays', () => {
       const result = zip([1], ['a']);
       expect(result).toEqual([[1, 'a']]);
     });
   });
-
-  describe('fill mode', () => {
+  describe('fill', () => {
     it('should fill with custom fill value', () => {
-      const result = zip([1, 2], ['a', 'b', 'c'], 'fill', 0);
+      const result = zipFill([1, 2], ['a', 'b', 'c'], 0);
       expect(result).toEqual([
         [1, 'a'],
         [2, 'b'],
@@ -70,7 +62,7 @@ describe('zip', () => {
     });
 
     it('should fill first array when second is longer', () => {
-      const result = zip([1, 2], ['a', 'b', 'c', 'd'], 'fill', -1);
+      const result = zipFill([1, 2], ['a', 'b', 'c', 'd'], -1);
       expect(result).toEqual([
         [1, 'a'],
         [2, 'b'],
@@ -80,7 +72,7 @@ describe('zip', () => {
     });
 
     it('should fill second array when first is longer', () => {
-      const result = zip([1, 2, 3, 4], ['a', 'b'], 'fill', 'x');
+      const result = zipFill([1, 2, 3, 4], ['a', 'b'], 'x');
       expect(result).toEqual([
         [1, 'a'],
         [2, 'b'],
@@ -90,7 +82,7 @@ describe('zip', () => {
     });
 
     it('should handle empty first array with fill', () => {
-      const result = zip([], ['a', 'b', 'c'], 'fill', 0);
+      const result = zipFill([], ['a', 'b', 'c'], 0);
       expect(result).toEqual([
         [0, 'a'],
         [0, 'b'],
@@ -99,7 +91,7 @@ describe('zip', () => {
     });
 
     it('should handle empty second array with fill', () => {
-      const result = zip([1, 2, 3], [], 'fill', 'x');
+      const result = zipFill([1, 2, 3], [], 'x');
       expect(result).toEqual([
         [1, 'x'],
         [2, 'x'],
@@ -108,22 +100,13 @@ describe('zip', () => {
     });
 
     it('should handle both empty arrays with fill', () => {
-      const result = zip([], [], 'fill', null);
+      const result = zipFill([], [], null);
       expect(result).toEqual([]);
-    });
-
-    it('should fill with undefined', () => {
-      const result = zip([1, 2], ['a', 'b', 'c'], 'fill', undefined);
-      expect(result).toEqual([
-        [1, 'a'],
-        [2, 'b'],
-        [undefined, 'c']
-      ]);
     });
 
     it('should fill with object', () => {
       const fillObj = { empty: true };
-      const result = zip([1, 2], ['a', 'b', 'c'], 'fill', fillObj);
+      const result = zipFill([1, 2], ['a', 'b', 'c'], fillObj);
       expect(result).toEqual([
         [1, 'a'],
         [2, 'b'],
@@ -131,10 +114,9 @@ describe('zip', () => {
       ]);
     });
   });
-
-  describe('remainder mode', () => {
+  describe('remainder', () => {
     it('should return zipped and remainder when second is longer', () => {
-      const result = zip([1, 2], ['a', 'b', 'c'], 'remainder');
+      const result = zipRemainder([1, 2], ['a', 'b', 'c']);
       expect(result).toEqual({
         zipped: [
           [1, 'a'],
@@ -145,7 +127,7 @@ describe('zip', () => {
     });
 
     it('should return zipped and remainder when first is longer', () => {
-      const result = zip([1, 2, 3, 4], ['a', 'b'], 'remainder');
+      const result = zipRemainder([1, 2, 3, 4], ['a', 'b']);
       expect(result).toEqual({
         zipped: [
           [1, 'a'],
@@ -156,7 +138,7 @@ describe('zip', () => {
     });
 
     it('should return empty remainder for equal length arrays', () => {
-      const result = zip([1, 2, 3], ['a', 'b', 'c'], 'remainder');
+      const result = zipRemainder([1, 2, 3], ['a', 'b', 'c']);
       expect(result).toEqual({
         zipped: [
           [1, 'a'],
@@ -168,26 +150,48 @@ describe('zip', () => {
     });
 
     it('should handle empty first array', () => {
-      const result = zip([], ['a', 'b', 'c'], 'remainder');
+      const result = zipRemainder([], ['a', 'b', 'c']);
       expect(result).toEqual({ zipped: [], remainder: ['a', 'b', 'c'] });
     });
 
     it('should handle empty second array', () => {
-      const result = zip([1, 2, 3], [], 'remainder');
+      const result = zipRemainder([1, 2, 3], []);
       expect(result).toEqual({ zipped: [], remainder: [1, 2, 3] });
     });
 
     it('should handle both empty arrays', () => {
-      const result = zip([], [], 'remainder');
+      const result = zipRemainder([], []);
       expect(result).toEqual({ zipped: [], remainder: [] });
     });
 
     it('should handle large remainder', () => {
-      const result = zip([1], ['a', 'b', 'c', 'd', 'e'], 'remainder');
+      const result = zipRemainder([1], ['a', 'b', 'c', 'd', 'e']);
       expect(result).toEqual({
         zipped: [[1, 'a']],
         remainder: ['b', 'c', 'd', 'e']
       });
+    });
+  });
+  describe('with', () => {
+    it('should apply function to each pair of elements', () => {
+      const result = zipWith(
+        [1, 2, 3],
+        ['a', 'b', 'c'],
+        (num, str) => `${num}${str}`
+      );
+      expect(result).toEqual(['1a', '2b', '3c']);
+    });
+    it('should handle arrays of different lengths', () => {
+      const result = zipWith(
+        [1, 2],
+        ['a', 'b', 'c'],
+        (num, str) => `${num}${str}`
+      );
+      expect(result).toEqual(['1a', '2b']);
+    });
+    it('should handle empty arrays', () => {
+      const result = zipWith<string[], string[]>([], [], (a, b) => a + b);
+      expect(result).toEqual([]);
     });
   });
 
@@ -244,7 +248,7 @@ describe('zip', () => {
     it('should handle large arrays in fill mode', () => {
       const arr1 = Array.from({ length: 100 }, (_, i) => i);
       const arr2 = Array.from({ length: 150 }, (_, i) => String(i));
-      const result = zip(arr1, arr2, 'fill', -1);
+      const result = zipFill(arr1, arr2, -1);
       expect(result.length).toBe(150);
       expect(result[99]).toEqual([99, '99']);
       expect(result[100]).toEqual([-1, '100']);
@@ -253,14 +257,14 @@ describe('zip', () => {
     it('should handle large arrays in remainder mode', () => {
       const arr1 = Array.from({ length: 100 }, (_, i) => i);
       const arr2 = Array.from({ length: 150 }, (_, i) => String(i));
-      const result = zip(arr1, arr2, 'remainder');
+      const result = zipRemainder(arr1, arr2);
       expect(result.zipped.length).toBe(100);
       expect(result.remainder.length).toBe(50);
       expect(result.remainder[0]).toBe('100');
     });
 
     it('should handle arrays with single element difference', () => {
-      const result = zip([1, 2, 3], ['a', 'b', 'c', 'd'], 'remainder');
+      const result = zipRemainder([1, 2, 3], ['a', 'b', 'c', 'd']);
       expect(result).toEqual({
         zipped: [
           [1, 'a'],
@@ -288,7 +292,7 @@ describe('zip', () => {
       const arr2 = ['a', 'b', 'c'];
       const copy1 = [...arr1];
       const copy2 = [...arr2];
-      zip(arr1, arr2, 'fill', null);
+      zipFill(arr1, arr2, null);
       expect(arr1).toEqual(copy1);
       expect(arr2).toEqual(copy2);
     });
@@ -298,7 +302,7 @@ describe('zip', () => {
       const arr2 = ['a', 'b'];
       const copy1 = [...arr1];
       const copy2 = [...arr2];
-      zip(arr1, arr2, 'remainder');
+      zipRemainder(arr1, arr2);
       expect(arr1).toEqual(copy1);
       expect(arr2).toEqual(copy2);
     });

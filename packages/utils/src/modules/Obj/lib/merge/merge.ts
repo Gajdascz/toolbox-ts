@@ -42,7 +42,7 @@ export interface MergeOptions {
   maxDepth?: number;
 
   /** Custom handler for merging arrays. Default: replace. */
-  onArray?: Arr.MergeOptions<unknown[]>;
+  onArray?: 'replace' | MergeArrayHandler;
 
   /** Custom handler for merging primitives. Default: replace. */
   onPrimitive?: MergePrimitiveHandler;
@@ -174,7 +174,7 @@ export function merge<B, N, R = B & N>(
     allowOverwrite = false,
     cloneStrategy = 'deep',
     maxDepth = Infinity,
-    onArray = { behavior: 'overwrite' },
+    onArray = 'replace',
     onPrimitive = (_, b) => b
   }: MergeOptions = {}
 ): R {
@@ -200,7 +200,11 @@ export function merge<B, N, R = B & N>(
     cloneStrategy,
     currentDepth: 0,
     maxDepth,
-    onArray: (c: unknown[], n: unknown[]) => Arr.merge(onArray, c, n),
+    onArray:
+      onArray === 'replace' ?
+        (_: unknown[], n: unknown[]) =>
+          cloneValue(n, { cloneStrategy } as MergeContext)
+      : onArray,
     onPrimitive
   });
 }

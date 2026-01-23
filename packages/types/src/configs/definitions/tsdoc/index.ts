@@ -1,1 +1,1 @@
-export type * as TsDoc from './tsdoc.js';
+export type * from './tsdoc.js';

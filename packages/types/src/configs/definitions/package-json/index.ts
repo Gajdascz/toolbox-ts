@@ -1,1 +1,1 @@
-export type * as Package from './package-json.js';
+export type * from './package-json.js';

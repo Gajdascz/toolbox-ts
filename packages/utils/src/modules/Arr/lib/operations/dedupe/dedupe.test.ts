@@ -33,16 +33,4 @@ describe('dedupe', () => {
   it('preserves first occurrence order', () => {
     expect(dedupe([3, 1, 2, 1, 3])).toEqual([3, 1, 2]);
   });
-
-  it('dedupes by key function', () => {
-    const result = dedupe(objArr, (obj1, obj2) => obj1.id === obj2.id);
-    expect(result).toHaveLength(2);
-    expect(result[0]).toEqual({ id: 1 });
-    expect(result[1]).toEqual({ id: 2 });
-  });
-
-  it('works with complex key functions', () => {
-    const arr = ['abc', 'def', 'ghi'];
-    expect(dedupe(arr, (s1, s2) => s1.length === s2.length)).toEqual(['abc']);
-  });
 });

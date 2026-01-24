@@ -2,28 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  findAllDown,
-  findAllUp,
-  findFirstDown,
-  findFirstUp,
-  findFirstWhen,
-  findFirstWhenRead,
-  findLastDown,
-  findLastUp,
-  findLastWhen,
-  findLastWhenRead,
-  syncFindAllDown,
-  syncFindAllUp,
-  syncFindFirstDown,
-  syncFindFirstUp,
-  syncFindFirstWhen,
-  syncFindFirstWhenRead,
-  syncFindLastDown,
-  syncFindLastUp,
-  syncFindLastWhen,
-  syncFindLastWhenRead
-} from './find.js';
+import * as Find from './find.js';
 
 const ROOT = '/root';
 
@@ -62,14 +41,14 @@ describe('find', () => {
   describe('utils', () => {
     it('startDir resolves to process.cwd() if not provided', () => {
       expect(
-        syncFindLastWhen((dir) => (dir.endsWith('l1') ? dir : undefined), {
+        Find.lastWhenSync((dir) => (dir.endsWith('l1') ? dir : undefined), {
           direction: 'down'
         })
       ).toBe(L1);
     });
     it('endAtDir resolves to cwd root if not provided and up direction', () => {
       expect(
-        syncFindLastWhen((dir) => (dir.endsWith('l3') ? dir : undefined), {
+        Find.lastWhenSync((dir) => (dir.endsWith('l3') ? dir : undefined), {
           startDir: L4,
           direction: 'up'
         })
@@ -77,42 +56,41 @@ describe('find', () => {
     });
     it('result resolves to undefined if find returns false', () => {
       expect(
-        syncFindFirstWhen(() => false, { startDir: ROOT, direction: 'down' })
+        Find.firstWhenSync(() => false, { startDir: ROOT, direction: 'down' })
       ).toBeNull();
     });
   });
-  describe('findFirstWhen()', () => {
+  describe('Find.firstWhen()', () => {
     describe('(async)', () => {
       it('down: finds the first matching result', async () => {
         expect(
-          await findFirstWhen((dir) => (dir.endsWith('l3') ? dir : undefined), {
-            startDir: ROOT,
-            direction: 'down'
-          })
+          await Find.firstWhen(
+            (dir) => (dir.endsWith('l3') ? dir : undefined),
+            { startDir: ROOT, direction: 'down' }
+          )
         ).toBe(L3);
       });
       it('up: finds the first matching result', async () => {
         expect(
-          await findFirstWhen((dir) => (dir.endsWith('l1') ? dir : undefined), {
-            startDir: L4,
-            endDir: ROOT,
-            direction: 'up'
-          })
+          await Find.firstWhen(
+            (dir) => (dir.endsWith('l1') ? dir : undefined),
+            { startDir: L4, endDir: ROOT, direction: 'up' }
+          )
         ).toBe(L1);
       });
       it('respects endDir boundary', async () => {
         expect(
-          await findFirstWhen((dir) => (dir.endsWith('l2') ? dir : undefined), {
-            startDir: L3,
-            endDir: L1
-          })
+          await Find.firstWhen(
+            (dir) => (dir.endsWith('l2') ? dir : undefined),
+            { startDir: L3, endDir: L1 }
+          )
         ).toBe(L2);
       });
     });
     describe('(sync)', () => {
       it('down: finds the first matching result', () => {
         expect(
-          syncFindFirstWhen((dir) => (dir.endsWith('l3') ? dir : undefined), {
+          Find.firstWhenSync((dir) => (dir.endsWith('l3') ? dir : undefined), {
             startDir: ROOT,
             direction: 'down'
           })
@@ -120,7 +98,7 @@ describe('find', () => {
       });
       it('up: finds the first matching result', () => {
         expect(
-          syncFindFirstWhen((dir) => (dir.endsWith('l1') ? dir : undefined), {
+          Find.firstWhenSync((dir) => (dir.endsWith('l1') ? dir : undefined), {
             startDir: L4,
             endDir: ROOT,
             direction: 'up'
@@ -129,11 +107,11 @@ describe('find', () => {
       });
     });
   });
-  describe('findFirstWhenRead()', () => {
+  describe('Find.firstWhenRead()', () => {
     describe('(async)', () => {
       it('down: finds the first matching result based on directory content', async () => {
         expect(
-          await findFirstWhenRead(
+          await Find.firstWhenRead(
             (_, content) => content.find((f) => f === FN3),
             { startDir: ROOT, direction: 'down' }
           )
@@ -141,7 +119,7 @@ describe('find', () => {
       });
       it('up: finds the first matching result based on directory content', async () => {
         expect(
-          await findFirstWhenRead(
+          await Find.firstWhenRead(
             (_, content) => content.find((f) => f === FN1),
             { startDir: L4, endDir: ROOT, direction: 'up' }
           )
@@ -151,7 +129,7 @@ describe('find', () => {
     describe('(sync)', () => {
       it('down: finds the first matching result based on directory content', () => {
         expect(
-          syncFindFirstWhenRead(
+          Find.firstWhenReadSync(
             (_, content) => content.find((f) => f === FN3),
             { startDir: ROOT, direction: 'down' }
           )
@@ -159,7 +137,7 @@ describe('find', () => {
       });
       it('up: finds the first matching result based on directory content', () => {
         expect(
-          syncFindFirstWhenRead(
+          Find.firstWhenReadSync(
             (_, content) => content.find((f) => f === FN1),
             { startDir: L4, endDir: ROOT, direction: 'up' }
           )
@@ -167,11 +145,11 @@ describe('find', () => {
       });
     });
   });
-  describe('findLastWhen()', () => {
+  describe('Find.lastWhen()', () => {
     describe('(async)', () => {
       it('down: finds the last matching result', async () => {
         expect(
-          await findLastWhen((dir) => (dir.endsWith('l1') ? dir : undefined), {
+          await Find.lastWhen((dir) => (dir.endsWith('l1') ? dir : undefined), {
             startDir: ROOT,
             direction: 'down'
           })
@@ -179,7 +157,7 @@ describe('find', () => {
       });
       it('up: finds the last matching result', async () => {
         expect(
-          await findLastWhen((dir) => (dir.endsWith('l3') ? dir : undefined), {
+          await Find.lastWhen((dir) => (dir.endsWith('l3') ? dir : undefined), {
             startDir: L4,
             endDir: ROOT,
             direction: 'up'
@@ -190,7 +168,7 @@ describe('find', () => {
     describe('(sync)', () => {
       it('down: finds the last matching result', () => {
         expect(
-          syncFindLastWhen((dir) => (dir.endsWith('l1') ? dir : undefined), {
+          Find.lastWhenSync((dir) => (dir.endsWith('l1') ? dir : undefined), {
             startDir: ROOT,
             direction: 'down'
           })
@@ -198,7 +176,7 @@ describe('find', () => {
       });
       it('up: finds the last matching result', () => {
         expect(
-          syncFindLastWhen((dir) => (dir.endsWith('l3') ? dir : undefined), {
+          Find.lastWhenSync((dir) => (dir.endsWith('l3') ? dir : undefined), {
             startDir: L4,
             endDir: ROOT,
             direction: 'up'
@@ -207,11 +185,11 @@ describe('find', () => {
       });
     });
   });
-  describe('findLastWhenRead()', () => {
+  describe('Find.lastWhenRead()', () => {
     describe('(async)', () => {
       it('down: finds the last matching result based on directory content', async () => {
         expect(
-          await findLastWhenRead(
+          await Find.lastWhenRead(
             (_, content) => content.find((f) => f === FN1),
             { direction: 'down' }
           )
@@ -219,7 +197,7 @@ describe('find', () => {
       });
       it('up: finds the last matching result based on directory content', async () => {
         expect(
-          await findLastWhenRead(
+          await Find.lastWhenRead(
             (_, content) => content.find((f) => f === FN3),
             { startDir: L4, direction: 'up' }
           )
@@ -229,27 +207,26 @@ describe('find', () => {
     describe('(sync)', () => {
       it('down: finds the last matching result based on directory content', () => {
         expect(
-          syncFindLastWhenRead((_, content) => content.find((f) => f === FN1), {
-            startDir: ROOT,
-            direction: 'down'
-          })
+          Find.lastWhenReadSync(
+            (_, content) => content.find((f) => f === FN1),
+            { startDir: ROOT, direction: 'down' }
+          )
         ).toBe(FN1);
       });
       it('up: finds the last matching result based on directory content', () => {
         expect(
-          syncFindLastWhenRead((_, content) => content.find((f) => f === FN3), {
-            startDir: L4,
-            endDir: ROOT,
-            direction: 'up'
-          })
+          Find.lastWhenReadSync(
+            (_, content) => content.find((f) => f === FN3),
+            { startDir: L4, endDir: ROOT, direction: 'up' }
+          )
         ).toBe(FN3);
       });
     });
   });
-  describe('findAllDown()', () => {
+  describe('Find.allDown()', () => {
     describe('(async)', () => {
       it('finds all matching files', async () => {
-        const results = await findAllDown('**/*.txt', { startDir: ROOT });
+        const results = await Find.allDown('**/*.txt', { startDir: ROOT });
         expect(results).toEqual(
           expect.arrayContaining([
             expect.stringContaining(path.basename(F1)),
@@ -260,7 +237,7 @@ describe('find', () => {
         expect(results.some((r) => r.endsWith('.log'))).toBe(false);
       });
       it('respects endDir boundary', async () => {
-        const results = await findAllDown('**/*.txt', {
+        const results = await Find.allDown('**/*.txt', {
           startDir: ROOT,
           endDir: L3
         });
@@ -276,7 +253,7 @@ describe('find', () => {
     });
     describe('(sync)', () => {
       it('finds all matching files', () => {
-        const results = syncFindAllDown('**/*.txt', { startDir: ROOT });
+        const results = Find.allDownSync('**/*.txt', { startDir: ROOT });
         expect(results).toEqual(
           expect.arrayContaining([
             expect.stringContaining(path.basename(F1)),
@@ -287,7 +264,7 @@ describe('find', () => {
         expect(results.some((r) => r.endsWith('.log'))).toBe(false);
       });
       it('respects endDir boundary', () => {
-        const results = syncFindAllDown('**/*.txt', {
+        const results = Find.allDownSync('**/*.txt', {
           startDir: ROOT,
           endDir: L3
         });
@@ -302,9 +279,9 @@ describe('find', () => {
       });
     });
   });
-  describe('findAllUp() finds all matching files', () => {
+  describe('Find.allUp() finds all matching files', () => {
     it('(async)', async () => {
-      const results = await findAllUp('**/*.txt', { startDir: L4 });
+      const results = await Find.allUp('**/*.txt', { startDir: L4 });
       expect(results).toEqual(
         expect.arrayContaining([
           expect.stringContaining(path.basename(F1)),
@@ -315,7 +292,7 @@ describe('find', () => {
       expect(results.some((r) => r.endsWith('.log'))).toBe(false);
     });
     it('(sync)', () => {
-      const results = syncFindAllUp('**/*.txt', { startDir: L4 });
+      const results = Find.allUpSync('**/*.txt', { startDir: L4 });
       expect(results).toEqual(
         expect.arrayContaining([
           expect.stringContaining(path.basename(F1)),
@@ -326,43 +303,43 @@ describe('find', () => {
       expect(results.some((r) => r.endsWith('.log'))).toBe(false);
     });
   });
-  describe('findFirstUp() finds the first matching file', () => {
+  describe('Find.firstUp() finds the first matching file', () => {
     it('(async)', async () => {
-      const result = await findFirstUp('**/*.txt', { startDir: L4 });
+      const result = await Find.firstUp('**/*.txt', { startDir: L4 });
       expect(result).toBe(path.resolve(F4));
     });
     it('(sync) finds the first matching file', () => {
-      const result = syncFindFirstUp('**/*.txt', { startDir: L4 });
+      const result = Find.firstUpSync('**/*.txt', { startDir: L4 });
       expect(result).toBe(path.resolve(F4));
     });
   });
-  describe('findLastUp() finds the last matching file', () => {
+  describe('Find.lastUp() finds the last matching file', () => {
     it('(async)', async () => {
-      const result = await findLastUp('**/*.txt', { startDir: L4 });
+      const result = await Find.lastUp('**/*.txt', { startDir: L4 });
       expect(result).toBe(path.resolve(F1));
     });
     it('(sync)', () => {
-      const result = syncFindLastUp('**/*.txt', { startDir: L4 });
+      const result = Find.lastUpSync('**/*.txt', { startDir: L4 });
       expect(result).toBe(path.resolve(F1));
     });
   });
-  describe('findFirstDown() finds first matching file', () => {
+  describe('Find.firstDown() finds first matching file', () => {
     it('(async)', async () => {
-      const result = await findFirstDown('**/*.txt', { startDir: ROOT });
+      const result = await Find.firstDown('**/*.txt', { startDir: ROOT });
       expect(result).toBe(path.resolve(F1));
     });
     it('(sync)', () => {
-      const result = syncFindFirstDown('**/*.txt', { startDir: ROOT });
+      const result = Find.firstDownSync('**/*.txt', { startDir: ROOT });
       expect(result).toBe(path.resolve(F1));
     });
   });
-  describe('findLastDown() finds last matching file', () => {
+  describe('Find.lastDown() finds last matching file', () => {
     it('(async)', async () => {
-      const result = await findLastDown('**/*.txt', { startDir: ROOT });
+      const result = await Find.lastDown('**/*.txt', { startDir: ROOT });
       expect(result).toBe(path.resolve(F4));
     });
     it('(sync)', () => {
-      const result = syncFindLastDown('**/*.txt', { startDir: ROOT });
+      const result = Find.lastDownSync('**/*.txt', { startDir: ROOT });
       expect(result).toBe(path.resolve(F4));
     });
   });

@@ -2,15 +2,15 @@ import fg from 'fast-glob';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { initQueueLike, type QueueLike } from '../helpers/index.js';
+import { initQueueLike, type QueueLike } from '../../helpers/index.js';
 import {
+  toParent as _toParent,
   defaultResultHandler,
-  normalizeStartEnd,
-  toParent
+  normalizeStartEnd
 } from './utils/index.js';
 
 //#region> Types
-export interface TraverseDownOpts<R> extends TraverseOpts<R> {
+export interface DownOpts<R> extends Opts<R> {
   queue?: QueueLike;
 }
 
@@ -20,24 +20,24 @@ export interface TraverseDownOpts<R> extends TraverseOpts<R> {
  * - Returning `{ break: true }` will stop the traversal.
  * - The `result` can be a single value or an array of values, which will be collected and returned.
  */
-export type TraverseOnDirAsync<R> = (
+export type OnDirAsync<R> = (
   dir: string
-) => Promise<TraverseOnDirResult<R>> | TraverseOnDirResult<R>;
+) => OnDirResult<R> | Promise<OnDirResult<R>>;
 
 /**
  * The result of the `onDir` callback.
  * - If `break` is `true`, the traversal will stop.
  * - The `result` can be a single value or an array of values, which will be collected and returned.
  */
-export type TraverseOnDirResult<R> =
+export type OnDirResult<R> =
   | { break: true; result: R | R[] }
   | { break?: false | null | undefined; result?: R | R[] };
 
 /**
- * Synchronous version of @see TraverseOnDirAsync.
+ * Synchronous version of @see OnDirAsync.
  */
-export type TraverseOnDirSync<R> = (dir: string) => TraverseOnDirResult<R>;
-export interface TraverseOpts<R> {
+export type OnDirSync<R> = (dir: string) => OnDirResult<R>;
+export interface Opts<R> {
   /**
    * An optional directory to stop at (exclusive).
    */
@@ -71,24 +71,24 @@ const getSubDirOpts: fg.Options = {
 };
 
 /**
- * Traverse traverseUp to a parent directory.
+ * Traverse up to a parent directory.
  * - Returns `null` if the current directory is the same as or a parent of the end directory.
  *
  * @example
  * ```ts
- * console.log(traverseToParent('/a/b/c', '/a')); // '/a/b'
- * console.log(traverseToParent('/a/b/c', '/a/b')); // '/a/b'
- * console.log(traverseToParent('/a/b/c', '/a/b/c')); // null
- * console.log(traverseToParent('/a/b/c')); // '/a/b'
- * console.log(traverseToParent('/')); // null
+ * console.log(toParent('/a/b/c', '/a')); // '/a/b'
+ * console.log(toParent('/a/b/c', '/a/b')); // '/a/b'
+ * console.log(toParent('/a/b/c', '/a/b/c')); // null
+ * console.log(toParent('/a/b/c')); // '/a/b'
+ * console.log(toParent('/')); // null
  * ```
  */
-export const traverseToParent = (dir: string, end?: null | string) => {
+export const toParent = (dir: string, end?: null | string) => {
   const { start: curr, end: e } = normalizeStartEnd(
     dir,
     end ?? path.parse(dir).root
   );
-  return toParent(curr, e);
+  return _toParent(curr, e);
 };
 
 /**
@@ -98,21 +98,21 @@ export const traverseToParent = (dir: string, end?: null | string) => {
  *
  * @example
  * ```ts
- * // Example: Collect names of all directories traverseUp to the root
- * const results = await traverseUp(
+ * // Example: Collect names of all directories up to the root
+ * const results = await up(
  *   async (dir) => ({ result: path.basename(dir) }),
  *   { startDir: '/a/b/c', endAtDir: '/a' }
  * );
  * console.log(results); // ['c', 'b']
  * ```
  */
-export const traverseUp = async <R>(
-  onDir: TraverseOnDirAsync<R>,
+export const up = async <R>(
+  onDir: OnDirAsync<R>,
   {
     startDir = process.cwd(),
     endAtDir = path.parse(startDir).root,
     resultHandler = defaultResultHandler
-  }: TraverseOpts<R> = {}
+  }: Opts<R> = {}
 ) => {
   const { start, end } = normalizeStartEnd(startDir, endAtDir);
 
@@ -122,7 +122,7 @@ export const traverseUp = async <R>(
     const { break: shouldBreak, result } = await onDir(curr);
     if (result) resultHandler(result, results, curr);
     if (shouldBreak) return results;
-    curr = toParent(curr, end);
+    curr = _toParent(curr, end);
   }
   return results;
 };
@@ -142,14 +142,14 @@ export const traverseUp = async <R>(
  * console.log(results); // ['a', 'b']
  * ```
  */
-export async function traverseDown<R>(
-  onDir: TraverseOnDirAsync<R>,
+export async function down<R>(
+  onDir: OnDirAsync<R>,
   {
     queue,
     startDir = process.cwd(),
     endAtDir,
     resultHandler = defaultResultHandler
-  }: TraverseDownOpts<R> = {}
+  }: DownOpts<R> = {}
 ): Promise<R[]> {
   const results: R[] = [];
   const q = initQueueLike(queue);
@@ -172,14 +172,14 @@ export async function traverseDown<R>(
   return results;
 }
 
-/** Synchronous version of {@link traverseUp} */
-export const syncTraverseUp = <R>(
-  onDir: TraverseOnDirSync<R>,
+/** Synchronous version of {@link up} */
+export const upSync = <R>(
+  onDir: OnDirSync<R>,
   {
     startDir = process.cwd(),
     endAtDir = path.parse(startDir).root,
     resultHandler = defaultResultHandler
-  }: TraverseOpts<R> = {}
+  }: Opts<R> = {}
 ) => {
   const results: R[] = [];
   const { start, end } = normalizeStartEnd(startDir, endAtDir);
@@ -188,19 +188,19 @@ export const syncTraverseUp = <R>(
     const { break: shouldBreak, result } = onDir(curr);
     if (result) resultHandler(result, results, curr);
     if (shouldBreak) return results;
-    curr = toParent(curr, end);
+    curr = _toParent(curr, end);
   }
   return results;
 };
 /** Synchronous version of {@link traverseDown} */
-export const syncTraverseDown = <R>(
-  onDir: TraverseOnDirSync<R>,
+export const downSync = <R>(
+  onDir: OnDirSync<R>,
   {
     startDir = process.cwd(),
     endAtDir,
     resultHandler = defaultResultHandler,
     queue
-  }: TraverseDownOpts<R> = {}
+  }: DownOpts<R> = {}
 ) => {
   const results: R[] = [];
   const { start, end } = normalizeStartEnd(startDir, endAtDir);

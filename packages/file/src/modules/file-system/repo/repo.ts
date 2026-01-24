@@ -2,21 +2,15 @@ import { exec, execSync } from 'node:child_process';
 import path from 'node:path';
 import { promisify } from 'node:util';
 
-import {
-  findFirstDown,
-  findFirstWhen,
-  findLastUp,
-  syncFindFirstDown,
-  syncFindFirstWhen,
-  syncFindLastUp
-} from '../find/index.js';
+import { Json } from '../../file-types/index.js';
 import {
   hasFiles,
+  hasFilesSync,
   isFile,
-  syncHasFiles,
-  syncIsFile
-} from '../helpers/helpers.js';
-import { parseJson, syncParseJson } from '../parse-json/parse-json.js';
+  isFileSync
+} from '../../helpers/helpers.js';
+import { Find } from '../find/index.js';
+
 const execAsync = promisify(exec);
 const defaultMonorepoIdentifierFiles = [
   'lerna.json',
@@ -34,8 +28,8 @@ export const findRootByDirName = async (
   direction: 'down' | 'up' = 'up'
 ) =>
   direction === 'up' ?
-    await findLastUp(dirName, { startDir: cwd })
-  : await findFirstDown(dirName, { startDir: cwd });
+    await Find.lastUp(dirName, { startDir: cwd })
+  : await Find.firstDown(dirName, { startDir: cwd });
 /**
  * Find the repo root by looking for files that typically indicate a repo root (like .git or package.json).
  * - You can customize the files to look for by providing an array of file names.
@@ -50,7 +44,7 @@ export const findRootByFiles = async (
   identifierFiles = defaultRootDirIdentifierFiles,
   cwd = process.cwd()
 ) =>
-  findFirstWhen(
+  Find.firstWhen(
     async (dir) => ((await hasFiles(dir, identifierFiles)) ? dir : null),
     { startDir: cwd }
   );
@@ -134,10 +128,10 @@ export const isMonorepo = async (
   if (!root) throw new Error('cannot determine repo root');
   const pkgPath = path.join(root, 'package.json');
   if (await isFile(path.join(root, 'package.json'))) {
-    const { result } = await parseJson<{ [packageJsonMonorepoProp]?: unknown }>(
-      pkgPath
-    );
-    if (result && packageJsonMonorepoProp in result)
+    const result = await Json.parseFile<{
+      [packageJsonMonorepoProp]?: unknown;
+    }>(pkgPath);
+    if (packageJsonMonorepoProp in result)
       return result[packageJsonMonorepoProp] === true;
   }
   let requiredCount = Math.min(
@@ -160,26 +154,26 @@ export const isMonorepo = async (
 };
 
 /** Synchronous version of {@link findRootByDirName} */
-export const syncFindRootByDirName = (
+export const findRootByDirNameSync = (
   dirName: string,
   cwd = process.cwd(),
   direction: 'down' | 'up' = 'up'
 ) =>
   direction === 'up' ?
-    syncFindLastUp(dirName, { startDir: cwd })
-  : syncFindFirstDown(dirName, { startDir: cwd });
+    Find.lastUpSync(dirName, { startDir: cwd })
+  : Find.firstDownSync(dirName, { startDir: cwd });
 
 /** Synchronous version of {@link findRootByFiles} */
-export const syncFindRootByFiles = (
+export const findRootByFilesSync = (
   identifierFiles = defaultRootDirIdentifierFiles,
   cwd = process.cwd()
 ) =>
-  syncFindFirstWhen(
-    (dir) => (syncHasFiles(dir, identifierFiles) ? dir : undefined),
+  Find.firstWhenSync(
+    (dir) => (hasFilesSync(dir, identifierFiles) ? dir : undefined),
     { startDir: cwd }
   );
 /** Synchronous version of {@link findRootByGit} */
-export const syncFindRootByGit = () => {
+export const findRootByGitSync = () => {
   try {
     return execSync('git rev-parse --show-toplevel').toString().trim() || null;
   } catch {
@@ -188,7 +182,7 @@ export const syncFindRootByGit = () => {
 };
 
 /** Synchronous version of {@link isMonorepo} */
-export const syncIsMonorepo = (
+export const isMonorepoSync = (
   rootDirName: string,
   {
     cwd = process.cwd(),
@@ -198,14 +192,14 @@ export const syncIsMonorepo = (
     findRootDirection = 'up'
   }: IsMonoRepoOpts = {}
 ): boolean => {
-  const root = syncFindRootByDirName(rootDirName, cwd, findRootDirection);
+  const root = findRootByDirNameSync(rootDirName, cwd, findRootDirection);
   if (!root) throw new Error('cannot determine repo root');
-  if (syncIsFile(path.join(root, 'package.json'))) {
+  if (isFileSync(path.join(root, 'package.json'))) {
     const pkgPath = path.join(root, 'package.json');
-    const { result } = syncParseJson<{ [packageJsonMonorepoProp]?: unknown }>(
+    const result = Json.parseFileSync<{ [packageJsonMonorepoProp]?: unknown }>(
       pkgPath
     );
-    if (result && packageJsonMonorepoProp in result)
+    if (packageJsonMonorepoProp in result)
       return result[packageJsonMonorepoProp] === true;
   }
   let requiredCount = Math.min(
@@ -219,7 +213,7 @@ export const syncIsMonorepo = (
     );
 
   for (const file of identifierFiles) {
-    if (syncIsFile(path.join(root, file))) {
+    if (isFileSync(path.join(root, file))) {
       requiredCount--;
       if (requiredCount === 0) return true;
     }

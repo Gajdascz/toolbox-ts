@@ -47,7 +47,6 @@ export const resolveError = (err: unknown): ResolvedError => {
     };
   return { message: String(err), type: typeof err };
 };
-
 /**
  * Tries to execute an async function, handling any thrown errors based on the provided `onErr` strategy.
  *
@@ -100,8 +99,7 @@ export async function doTry<T>(
   throwAs?: new (message?: string, options?: unknown) => Error
 ): Promise<Result<T> | T | undefined> {
   try {
-    const value = await fn();
-    return { ok: true, value } as const;
+    return await fn();
   } catch (error) {
     return handleCatch<T, Promise<T | undefined>>(error, onErr, throwAs);
   }
@@ -122,8 +120,7 @@ export function doTrySync<T>(
   throwAs?: new (message?: string, options?: unknown) => Error
 ): Result<T> | T | undefined {
   try {
-    const value = fn();
-    return { ok: true, value } as const;
+    return fn();
   } catch (error) {
     return handleCatch<T, T | undefined>(error, onErr, throwAs);
   }

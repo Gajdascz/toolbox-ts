@@ -2,13 +2,7 @@ import fg from 'fast-glob';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import {
-  syncTraverseDown,
-  syncTraverseUp,
-  traverseDown,
-  type TraverseOnDirResult,
-  traverseUp
-} from '../traverse/index.js';
+import { Traverse } from '../traverse/index.js';
 
 /**
  * The directory to terminate the search at (not included in the search).
@@ -64,10 +58,10 @@ const sFgSingle = (
 ) => fg.sync(pattern, { ...FG_DEFAULT_OPTS.single, ...options, cwd });
 
 /** Options for `fast-glob` patterns passed to search functions. */
-export type FindFgInputOpts = Omit<FindFgOverrideOpts, 'deep' | 'unique'>;
+export type fgInputOpts = Omit<fgOverrideOpts, 'deep' | 'unique'>;
 
 /** Options for `fast-glob` search with directory overrides. */
-export type FindFgOverrideOpts = {
+export type fgOverrideOpts = {
   endDir?: FindEndDir;
   startDir?: FindStartDir;
 } & Omit<fg.Options, 'cwd'>;
@@ -84,11 +78,11 @@ const resolveWhenOpts = (opts: Partial<WhenOpts> = {}): WhenOpts => {
 
 const resolveFirstResult = <R = string>(
   result: FindResult<R>
-): TraverseOnDirResult<R> =>
-  ({ break: !!result, ...resolveResult(result) }) as TraverseOnDirResult<R>;
+): Traverse.OnDirResult<R> =>
+  ({ break: !!result, ...resolveResult(result) }) as Traverse.OnDirResult<R>;
 const resolveResult = <R = string>(
   result: FindResult<R>
-): TraverseOnDirResult<R> => ({
+): Traverse.OnDirResult<R> => ({
   result: result === false ? undefined : result
 });
 const nullIfUndefined = <T>(arr: T[], i = 0) => arr.at(i) ?? null;
@@ -103,12 +97,12 @@ export interface WhenOpts {
 //#region> Generic Find functions
 const baseWhen = async <R = string>(
   find: (dir: string) => FindResult<R> | Promise<FindResult<R>>,
-  resolver: (res: FindResult<R>) => TraverseOnDirResult<R>,
+  resolver: (res: FindResult<R>) => Traverse.OnDirResult<R>,
   finding: 'first' | 'last' = 'first',
   opts: Partial<WhenOpts> = {}
 ) => {
   const { direction, endDir: endAtDir, startDir } = resolveWhenOpts(opts);
-  const traverse = direction === 'up' ? traverseUp : traverseDown;
+  const traverse = direction === 'up' ? Traverse.up : Traverse.down;
   return nullIfUndefined(
     await traverse(async (dir) => resolver(await find(dir)), {
       startDir,
@@ -133,14 +127,14 @@ const baseWhen = async <R = string>(
  * │          ├─ file3.txt
  * │          └─ l4
  * │              └─ file4.txt
- * const downResult = await findFirstWhen((dir) => dir.endsWith('l1') ? dir : undefined, { startDir: '/root', direction: 'down' }); // returns '/root/l1'
+ * const downResult = await firstWhen((dir) => dir.endsWith('l1') ? dir : undefined, { startDir: '/root', direction: 'down' }); // returns '/root/l1'
  *
- * const upResult = await findFirstWhen((dir) => dir.endsWith('.l3')), { startDir: '/root/l1/l2/l3/l4', direction: 'up' }); // returns '/root/l1/l2/l3'
+ * const upResult = await firstWhen((dir) => dir.endsWith('.l3')), { startDir: '/root/l1/l2/l3/l4', direction: 'up' }); // returns '/root/l1/l2/l3'
  *
- * const resultWithEndDir = await findFirstWhen((dir) => dir.endsWith('l1') ? dir : undefined, { startDir: '/root/l1/l2/l3/l4', endDir: '/root/l1', direction: 'up' }); // returns null (because l1 is the endDir and is not included in the search)
+ * const resultWithEndDir = await firstWhen((dir) => dir.endsWith('l1') ? dir : undefined, { startDir: '/root/l1/l2/l3/l4', endDir: '/root/l1', direction: 'up' }); // returns null (because l1 is the endDir and is not included in the search)
  * ```
  */
-export const findFirstWhen = async <R = string>(
+export const firstWhen = async <R = string>(
   find: (dir: string) => FindResult<R> | Promise<FindResult<R>>,
   opts: Partial<WhenOpts> = {}
 ) => await baseWhen(find, resolveFirstResult, 'first', opts);
@@ -160,19 +154,19 @@ export const findFirstWhen = async <R = string>(
  * │          └─ l4
  * │              └─ file4.txt
  * ```ts
- * const resultUp = await findLastWhen((dir) => dir.endsWith('l3')), { startDir: '/root/l1/l2/l3/l4', direction: 'up' }); // returns '/root/l1/l2/l3'
+ * const resultUp = await lastWhen((dir) => dir.endsWith('l3')), { startDir: '/root/l1/l2/l3/l4', direction: 'up' }); // returns '/root/l1/l2/l3'
  *
- * const resultDown = await findLastWhen((dir) => dir.endsWith('l4')), { startDir: '/root', direction: 'down' }); // returns '/root/l1/l2/l3/l4'
+ * const resultDown = await lastWhen((dir) => dir.endsWith('l4')), { startDir: '/root', direction: 'down' }); // returns '/root/l1/l2/l3/l4'
  *
- * const resultWithEndDir = await findLastWhen((dir) => dir.endsWith('l3')), { startDir: '/root/l1/l2/l3/l4', endDir: '/root/l1', direction: 'up' }); // returns null (because l1 is the endDir and is not included in the search)
+ * const resultWithEndDir = await lastWhen((dir) => dir.endsWith('l3')), { startDir: '/root/l1/l2/l3/l4', endDir: '/root/l1', direction: 'up' }); // returns null (because l1 is the endDir and is not included in the search)
  * ```
  */
-export const findLastWhen = async <R = string>(
+export const lastWhen = async <R = string>(
   find: (dir: string) => FindResult<R> | Promise<FindResult<R>>,
   opts: Partial<WhenOpts> = {}
 ) => await baseWhen(find, resolveResult, 'last', opts);
 /**
- * Like @see {@link findFirstWhen} but reads the directory contents and passes them to the finder function.
+ * Like @see {@link firstWhen} but reads the directory contents and passes them to the finder function.
  *
  * @example
  * ```ts
@@ -186,22 +180,22 @@ export const findLastWhen = async <R = string>(
  * │          └─ l4
  * │              └─ file4.txt
  *
- * const result = await findFirstWhenRead((dir, content) => content.find(f => f === 'file2.log'), { startDir: '/root', direction: 'down' }); // returns 'file2.log'
+ * const result = await whenRead((dir, content) => content.find(f => f === 'file2.log'), { startDir: '/root', direction: 'down' }); // returns 'file2.log'
  *
  * ```
  */
-export const findFirstWhenRead = async <R = string>(
+export const firstWhenRead = async <R = string>(
   find: (dir: string, content: string[]) => FindResult<R> | Promise<FindResult>,
   opts: Partial<WhenOpts> = {}
 ) => {
   const { direction, endDir, startDir } = resolveWhenOpts(opts);
-  return await findFirstWhen(
+  return await firstWhen(
     async (dir) => find(dir, await fgAllStep('*', dir, { absolute: false })),
     { startDir, endDir, direction }
   );
 };
 /**
- * Like @see {@link findLastWhen} but provides the directory contents to the finder callback.
+ * Like @see {@link lastWhen} but provides the directory contents to the finder callback.
  *
  * @example
  * ```ts
@@ -215,16 +209,16 @@ export const findFirstWhenRead = async <R = string>(
  * │          └─ l4
  * │              └─ file4.txt
  *
- * const result = await findLastWhenRead((dir, content) => content.find(f => f === 'file2.log'), { startDir: '/root', direction: 'down' }); // returns 'file2.log'
+ * const result = await lastWhenRead((dir, content) => content.find(f => f === 'file2.log'), { startDir: '/root', direction: 'down' }); // returns 'file2.log'
  *
  * ```
  */
-export const findLastWhenRead = async <R = string>(
+export const lastWhenRead = async <R = string>(
   find: (dir: string, content: string[]) => FindResult<R> | Promise<FindResult>,
   opts: Partial<WhenOpts> = {}
 ) => {
   const { direction, endDir, startDir } = resolveWhenOpts(opts);
-  return await findLastWhen(
+  return await lastWhen(
     async (dir) => find(dir, await fgAllStep('*', dir, { absolute: false })),
     { startDir, endDir, direction }
   );
@@ -237,15 +231,15 @@ export const findLastWhenRead = async <R = string>(
  *
  * @example
  * ```ts
- * const files = await findAllDown('*.ts', { startDir: '/project/src' });
+ * const files = await allDown('*.ts', { startDir: '/project/src' });
  * ```
  */
-export const findAllDown = async (
+export const allDown = async (
   pattern: fg.Pattern,
-  { startDir: cwd = process.cwd(), endDir, ...rest }: FindFgOverrideOpts = {}
+  { startDir: cwd = process.cwd(), endDir, ...rest }: fgOverrideOpts = {}
 ): Promise<string[]> =>
   endDir ?
-    traverseDown(
+    Traverse.down(
       async (dir) => ({ result: await fgAllStep(pattern, dir, rest) }),
       { endAtDir: endDir, startDir: cwd }
     )
@@ -256,21 +250,21 @@ export const findAllDown = async (
  *
  * @example
  * ```ts
- * const files = await findAllUp('*.ts', { startDir: '/project/src' });
+ * const files = await allUp('*.ts', { startDir: '/project/src' });
  * ```
  */
-export const findAllUp = async (
+export const allUp = async (
   pattern: fg.Pattern,
   {
     startDir = process.cwd(),
     endDir = path.parse(startDir).root,
     ...rest
-  }: FindFgOverrideOpts = {}
+  }: fgOverrideOpts = {}
 ): Promise<string[]> =>
-  traverseUp(async (dir) => ({ result: await fgAllStep(pattern, dir, rest) }), {
-    startDir,
-    endAtDir: endDir
-  });
+  Traverse.up(
+    async (dir) => ({ result: await fgAllStep(pattern, dir, rest) }),
+    { startDir, endAtDir: endDir }
+  );
 /**
  * Find the first file matching a pattern starting from a directory and traversing up
  * to an end directory.
@@ -295,22 +289,22 @@ export const findAllUp = async (
  * // │               └── file4.txt
  * //
  * // Example 1: Find the first .txt file starting from /root/l1/l2/l3/l4 up to /root
- * const result1 = await findFirstUp('*.txt', { startDir: '/root/l1/l2/l3/l4', endDir: '/root' }); // returns '/root/l1/l2/l3/l4/file4.txt'
+ * const result1 = await firstUp('*.txt', { startDir: '/root/l1/l2/l3/l4', endDir: '/root' }); // returns '/root/l1/l2/l3/l4/file4.txt'
  *
  * // Example 2: Find the first .log file starting from /root/l1/l2/l3/l4 up to /root/l1
- * const result2 = await findFirstUp('*.log', { startDir: '/root/l1/l2/l3/l4', endDir: '/root/l1' }); // returns '/root/l1/l2/file2.log'
+ * const result2 = await firstUp('*.log', { startDir: '/root/l1/l2/l3/l4', endDir: '/root/l1' }); // returns '/root/l1/l2/file2.log'
  *
  * ```
  */
-export const findFirstUp = async (
+export const firstUp = async (
   pattern: fg.Pattern,
   {
     startDir = process.cwd(),
     endDir = path.parse(startDir).root,
     ...rest
-  }: FindFgInputOpts = {}
+  }: fgInputOpts = {}
 ): Promise<null | string> =>
-  findFirstWhen(async (dir) => (await fgSingle(pattern, dir, rest)).at(0), {
+  firstWhen(async (dir) => (await fgSingle(pattern, dir, rest)).at(0), {
     startDir,
     endDir,
     direction: 'up'
@@ -320,18 +314,18 @@ export const findFirstUp = async (
  *
  * @example
  * ```ts
- * const file = await findLastUp('*.js', { startDir: '/project/src' });
+ * const file = await lastUp('*.js', { startDir: '/project/src' });
  * ```
  */
-export const findLastUp = async (
+export const lastUp = async (
   pattern: fg.Pattern,
   {
     startDir = process.cwd(),
     endDir = path.parse(startDir).root,
     ...rest
-  }: FindFgInputOpts = {}
+  }: fgInputOpts = {}
 ): Promise<null | string> =>
-  findLastWhen(async (dir) => (await fgSingle(pattern, dir, rest)).at(-1), {
+  lastWhen(async (dir) => (await fgSingle(pattern, dir, rest)).at(-1), {
     startDir,
     endDir,
     direction: 'up'
@@ -341,14 +335,14 @@ export const findLastUp = async (
  *
  * @example
  * ```ts
- * const file = await findFirstDown('*.js', { startDir: '/project/src' });
+ * const file = await down('*.js', { startDir: '/project/src' });
  * ```
  */
-export const findFirstDown = async (
+export const firstDown = async (
   pattern: fg.Pattern,
-  { startDir = process.cwd(), ...rest }: FindFgInputOpts = {}
+  { startDir = process.cwd(), ...rest }: fgInputOpts = {}
 ) =>
-  findFirstWhen(async (dir) => (await fgSingle(pattern, dir, rest)).at(0), {
+  firstWhen(async (dir) => (await fgSingle(pattern, dir, rest)).at(0), {
     startDir,
     direction: 'down'
   });
@@ -357,14 +351,14 @@ export const findFirstDown = async (
  *
  * @example
  * ```ts
- * const file = await findLastDown('*.js', { startDir: '/project/src' });
+ * const file = await lastDown('*.js', { startDir: '/project/src' });
  * ```
  */
-export const findLastDown = async (
+export const lastDown = async (
   pattern: fg.Pattern,
-  { startDir = process.cwd(), endDir, ...rest }: FindFgInputOpts = {}
+  { startDir = process.cwd(), endDir, ...rest }: fgInputOpts = {}
 ) =>
-  findLastWhen(async (dir) => (await fgSingle(pattern, dir, rest)).at(-1), {
+  lastWhen(async (dir) => (await fgSingle(pattern, dir, rest)).at(-1), {
     startDir,
     endDir,
     direction: 'down'
@@ -374,113 +368,113 @@ export const findLastDown = async (
 //#region> Sync
 const baseWhenSync = <R = string>(
   find: (dir: string) => FindResult<R>,
-  resolver: (res: FindResult<R>) => TraverseOnDirResult<R>,
+  resolver: (res: FindResult<R>) => Traverse.OnDirResult<R>,
   finding: 'first' | 'last' = 'first',
   opts: Partial<WhenOpts> = {}
 ) => {
   const { direction, endDir: endAtDir, startDir } = resolveWhenOpts(opts);
-  const traverse = direction === 'up' ? syncTraverseUp : syncTraverseDown;
+  const traverse = direction === 'up' ? Traverse.upSync : Traverse.downSync;
   return nullIfUndefined(
     traverse((dir) => resolver(find(dir)), { startDir, endAtDir }),
     finding === 'first' ? 0 : -1
   );
 };
 
-/** synchronous version of {@link findFirstWhen} */
-export const syncFindFirstWhen = <R = string>(
+/** synchronous version of {@link firstWhen} */
+export const firstWhenSync = <R = string>(
   find: (dir: string) => FindResult<R>,
   opts: Partial<WhenOpts> = {}
 ) => baseWhenSync<R>(find, resolveFirstResult, 'first', opts);
-/** synchronous version of {@link findLastWhen} */
-export const syncFindLastWhen = (
+/** synchronous version of {@link lastWhen} */
+export const lastWhenSync = (
   find: (dir: string) => false | null | string | string[] | undefined,
   opts: Partial<WhenOpts> = {}
 ) => baseWhenSync(find, resolveResult, 'last', opts);
-/** synchronous version of {@link findFirstWhenRead} */
-export const syncFindFirstWhenRead = (
+/** synchronous version of {@link whenRead} */
+export const firstWhenReadSync = (
   find: (dir: string, content: string[]) => FindResult,
   opts: Partial<WhenOpts> = {}
 ) =>
-  syncFindFirstWhen(
+  firstWhenSync(
     (dir) => find(dir, sFgAllStep('*', dir, { absolute: false })),
     opts
   );
-/** synchronous version of {@link findLastWhenRead} */
-export const syncFindLastWhenRead = (
+/** synchronous version of {@link lastWhenRead} */
+export const lastWhenReadSync = (
   find: (dir: string, content: string[]) => FindResult,
   opts: Partial<WhenOpts> = {}
 ) =>
-  syncFindLastWhen(
+  lastWhenSync(
     (dir) => find(dir, sFgAllStep('*', dir, { absolute: false })),
     opts
   );
-/** synchronous version of {@link findAllDown} */
-export const syncFindAllDown = (
+/** synchronous version of {@link allDown} */
+export const allDownSync = (
   pattern: fg.Pattern,
-  { startDir: cwd = process.cwd(), endDir, ...rest }: FindFgOverrideOpts = {}
+  { startDir: cwd = process.cwd(), endDir, ...rest }: fgOverrideOpts = {}
 ) =>
   endDir ?
-    syncTraverseDown(
+    Traverse.downSync(
       (dir) => ({ break: false, result: sFgAllStep(pattern, dir, rest) }),
       { startDir: cwd, endAtDir: endDir }
     )
   : fg.sync(pattern, { ...FG_DEFAULT_OPTS.all, ...rest, cwd });
-/** synchronous version of {@link findAllUp} */
-export const syncFindAllUp = (
+/** synchronous version of {@link allUp} */
+export const allUpSync = (
   pattern: fg.Pattern,
   {
     startDir = process.cwd(),
     endDir = path.parse(startDir).root,
     ...rest
-  }: { endDir?: string } & FindFgOverrideOpts = {}
+  }: { endDir?: string } & fgOverrideOpts = {}
 ) =>
-  syncTraverseUp(
+  Traverse.upSync(
     (dir) => ({ break: false, result: sFgAllStep(pattern, dir, rest) }),
     { startDir, endAtDir: endDir }
   );
-/** synchronous version of {@link findFirstUp} */
-export const syncFindFirstUp = (
+/** synchronous version of {@link firstUp} */
+export const firstUpSync = (
   pattern: fg.Pattern,
   {
     startDir = process.cwd(),
     endDir = path.parse(startDir).root,
     ...rest
-  }: FindFgInputOpts = {}
+  }: fgInputOpts = {}
 ): null | string =>
-  syncFindFirstWhen((dir) => sFgSingle(pattern, dir, rest).at(0), {
+  firstWhenSync((dir) => sFgSingle(pattern, dir, rest).at(0), {
     startDir,
     endDir,
     direction: 'up'
   });
-/** synchronous version of {@link findLastUp} */
-export const syncFindLastUp = (
+/** synchronous version of {@link lastUp} */
+export const lastUpSync = (
   pattern: fg.Pattern,
   {
     startDir = process.cwd(),
     endDir = path.parse(startDir).root,
     ...rest
-  }: FindFgInputOpts = {}
+  }: fgInputOpts = {}
 ) =>
-  syncFindLastWhen((dir) => sFgSingle(pattern, dir, rest).at(-1), {
+  lastWhenSync((dir) => sFgSingle(pattern, dir, rest).at(-1), {
     startDir,
     endDir,
     direction: 'up'
   });
-/** synchronous version of {@link findFirstDown} */
-export const syncFindFirstDown = (
+/** synchronous version of {@link firstDown} */
+export const firstDownSync = (
   pattern: fg.Pattern,
-  { startDir = process.cwd(), ...rest }: FindFgInputOpts = {}
+  { startDir = process.cwd(), ...rest }: fgInputOpts = {}
 ): null | string =>
-  syncFindFirstWhen((dir) => sFgSingle(pattern, dir, rest).at(0), {
+  firstWhenSync((dir) => sFgSingle(pattern, dir, rest).at(0), {
     startDir,
     direction: 'down'
   });
-/** synchronous version of {@link findLastDown} */
-export const syncFindLastDown = (
+/** synchronous version of {@link lastDown} */
+export const lastDownSync = (
   pattern: fg.Pattern,
-  { startDir = process.cwd(), ...rest }: FindFgInputOpts = {}
+  { startDir = process.cwd(), ...rest }: fgInputOpts = {}
 ) =>
-  syncFindLastWhen((dir) => sFgSingle(pattern, dir, rest).at(-1), {
+  lastWhenSync((dir) => sFgSingle(pattern, dir, rest).at(-1), {
     startDir,
     direction: 'down'
   });

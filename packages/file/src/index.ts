@@ -1,3 +1,3 @@
-import * as file from './modules/index.js';
-export default file;
+import * as File from './modules/index.js';
+export default File;
 export * from './modules/index.js';

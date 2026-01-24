@@ -78,7 +78,7 @@ describe('Error Utils', () => {
   describe('doTry', () => {
     it('returns the result on success', async () => {
       const result = await doTry(() => Promise.resolve('success'), 'throw');
-      expect(result).toMatchObject({ ok: true, value: 'success' });
+      expect(result).toBe('success');
     });
 
     it('throws on error when onErr is "throw"', async () => {
@@ -150,7 +150,7 @@ describe('Error Utils', () => {
   describe('doTrySync', () => {
     it('returns the result on success', () => {
       const result = doTrySync(() => 'success', 'throw');
-      expect(result).toMatchObject({ ok: true, value: 'success' });
+      expect(result).toBe('success');
     });
 
     it('throws on error when onErr is "throw"', () => {

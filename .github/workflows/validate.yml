@@ -3,11 +3,6 @@ name: Validate
 on:
   workflow_call:
     inputs:
-      changeset:
-        type: boolean
-        description: 'Whether to check for changesets'
-        required: false
-        default: false
       commitlint_mode:
         type: string
         description: 'Mode for commitlint (last|none|pr)'
@@ -45,11 +40,6 @@ jobs:
 
       - name: 🧪 Tests
         run: pnpm test
-        shell: bash
-
-      - name: 🦋 Check for changeset
-        if: ${{ inputs.changeset }}
-        run: pnpm changeset status
         shell: bash
 
       - name: 📝 Validate Commit Messages

@@ -20,11 +20,6 @@ type Trigonometric = 'acos' | 'asin' | 'atan' | 'atan2' | 'cos' | 'sin' | 'tan';
 
 type Type =
   /** https://www.w3.org/TR/css-values-4/#calc-func */
-  | 'calc'
-  | Comparison
-  | Exponential
-  | SignRelated
-  | SteppedValue
-  | Trigonometric;
+  'calc' | Comparison | Exponential | SignRelated | SteppedValue | Trigonometric;
 
 export type { Function, Keyword, Type };

@@ -9,17 +9,8 @@ export const KEYS = { valid: VALID_KEYS, invalid: INVALID_KEYS };
 //#region> Values
 const NUM_VALUES = [1, 2, 3, 4] as const;
 const STR_VALUES = ['one', 'two', 'three', 'four'] as const;
-const MIXED_VALUES = [
-  NUM_VALUES[0],
-  STR_VALUES[1],
-  NUM_VALUES[2],
-  STR_VALUES[3]
-] as const;
-export const VALUES = {
-  nums: NUM_VALUES,
-  strs: STR_VALUES,
-  mixed: MIXED_VALUES
-} as const;
+const MIXED_VALUES = [NUM_VALUES[0], STR_VALUES[1], NUM_VALUES[2], STR_VALUES[3]] as const;
+export const VALUES = { nums: NUM_VALUES, strs: STR_VALUES, mixed: MIXED_VALUES } as const;
 //#endregion
 
 //#region> Collections
@@ -69,4 +60,4 @@ export const GET = {
   keyStrValue: (key: ValidKey) => RECORDS.strs[key],
   keyMixedValue: (key: ValidKey) => RECORDS.mixed[key]
 } as const;
-/* c8 ignore end */
+/* c8 ignore stop */

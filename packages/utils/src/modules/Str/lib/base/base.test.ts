@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { capitalize, prefix, suffix, uncapitalize } from './base.ts';
 
-describe('base', () => {
+describe('Str Base', () => {
   describe('capitalize / uncapitalize', () => {
     it('capitalizes first letter', () => {
       expect(capitalize('hello')).toBe('Hello');

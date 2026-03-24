@@ -32,10 +32,7 @@ describe('PropertyModifiers types', () => {
       }
       type Result = Modifiers.Mutable<User>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        address: { readonly street: string };
-        id: number;
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ address: { readonly street: string }; id: number }>();
     });
 
     it('should preserve optional properties', () => {
@@ -66,11 +63,7 @@ describe('PropertyModifiers types', () => {
       }
       type Result = Modifiers.RequiredProps<User, 'name'>;
 
-      expectTypeOf<Result>().branded.toEqualTypeOf<{
-        email?: string;
-        id: number;
-        name: string;
-      }>();
+      expectTypeOf<Result>().branded.toEqualTypeOf<{ email?: string; id: number; name: string }>();
     });
 
     it('should handle multiple keys', () => {
@@ -81,11 +74,7 @@ describe('PropertyModifiers types', () => {
       }
       type Result = Modifiers.RequiredProps<User, 'email' | 'name'>;
 
-      expectTypeOf<Result>().branded.toEqualTypeOf<{
-        email: string;
-        id: number;
-        name: string;
-      }>();
+      expectTypeOf<Result>().branded.toEqualTypeOf<{ email: string; id: number; name: string }>();
     });
 
     it('should not affect already required properties', () => {
@@ -95,10 +84,7 @@ describe('PropertyModifiers types', () => {
       }
       type Result = Modifiers.RequiredProps<User, 'id'>;
 
-      expectTypeOf<Result>().branded.toEqualTypeOf<{
-        id: number;
-        name: string;
-      }>();
+      expectTypeOf<Result>().branded.toEqualTypeOf<{ id: number; name: string }>();
     });
 
     it('should be shallow', () => {
@@ -108,10 +94,7 @@ describe('PropertyModifiers types', () => {
       }
       type Result = Modifiers.RequiredProps<User, 'address'>;
 
-      expectTypeOf<Result>().branded.toEqualTypeOf<{
-        address: { street?: string };
-        id: number;
-      }>();
+      expectTypeOf<Result>().branded.toEqualTypeOf<{ address: { street?: string }; id: number }>();
     });
   });
   //#endregion
@@ -125,10 +108,7 @@ describe('PropertyModifiers types', () => {
       }
       type Result = Modifiers.DeepMutable<User>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        address: { street: string };
-        name: string;
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ address: { street: string }; name: string }>();
     });
 
     it('should handle deeply nested structures', () => {
@@ -166,10 +146,7 @@ describe('PropertyModifiers types', () => {
       }
       type Result = Modifiers.DeepPartial<User>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        address?: { street?: string };
-        name?: string;
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ address?: { street?: string }; name?: string }>();
     });
 
     it('should handle deeply nested structures', () => {
@@ -236,10 +213,7 @@ describe('PropertyModifiers types', () => {
         profile: { name: string };
         settings: { theme: string };
       }
-      type Result = Modifiers.DeepPartiallyOptional<
-        User,
-        'profile' | 'settings'
-      >;
+      type Result = Modifiers.DeepPartiallyOptional<User, 'profile' | 'settings'>;
 
       expectTypeOf<Result>().branded.toEqualTypeOf<{
         id: number;
@@ -303,9 +277,7 @@ describe('PropertyModifiers types', () => {
       }
       type Result = Modifiers.DeepReadonly<Data>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        readonly items: readonly number[];
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ readonly items: readonly number[] }>();
     });
   });
   //#endregion
@@ -319,10 +291,7 @@ describe('PropertyModifiers types', () => {
       }
       type Result = Modifiers.DeepRequired<User>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        address: { street: string };
-        name: string;
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ address: { street: string }; name: string }>();
     });
 
     it('should handle deeply nested structures', () => {
@@ -424,10 +393,7 @@ describe('PropertyModifiers types', () => {
 
       expectTypeOf<Result>().toEqualTypeOf<{
         readonly id: number;
-        readonly nested: {
-          readonly deeper: { value: number };
-          readonly prop: string;
-        };
+        readonly nested: { readonly deeper: { value: number }; readonly prop: string };
       }>();
     });
 
@@ -440,10 +406,7 @@ describe('PropertyModifiers types', () => {
 
       expectTypeOf<Result>().toEqualTypeOf<{
         readonly id: number;
-        readonly nested: {
-          readonly deeper: { readonly value: number };
-          readonly prop: string;
-        };
+        readonly nested: { readonly deeper: { readonly value: number }; readonly prop: string };
       }>();
     });
 
@@ -454,10 +417,7 @@ describe('PropertyModifiers types', () => {
       }
       type Result = Modifiers.DepthReadonly<Flat, 5>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        readonly a: number;
-        readonly b: string;
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ readonly a: number; readonly b: string }>();
     });
 
     it('should stop at specified depth', () => {
@@ -618,10 +578,7 @@ describe('PropertyModifiers types', () => {
 
     it('should handle deeply nested objects', () => {
       interface Data {
-        details: {
-          address: { city: string; street: null | string } | null;
-          age: null | number;
-        };
+        details: { address: { city: string; street: null | string } | null; age: null | number };
         id: null | number;
         name: string | undefined;
       }
@@ -711,11 +668,7 @@ describe('PropertyModifiers types', () => {
 
         user:
           | {
-              profile: {
-                age: number;
-                bio: string | undefined;
-                name: null | string;
-              } | null;
+              profile: { age: number; bio: string | undefined; name: null | string } | null;
               settings: { theme: string };
             }
           | undefined;
@@ -725,10 +678,7 @@ describe('PropertyModifiers types', () => {
       expectTypeOf<Result>().toEqualTypeOf<{
         legacy: never;
         metadata: { count: number; tags: string[] };
-        user: {
-          profile: { age: number; bio: string; name: string };
-          settings: { theme: string };
-        };
+        user: { profile: { age: number; bio: string; name: string }; settings: { theme: string } };
       }>();
     });
   });

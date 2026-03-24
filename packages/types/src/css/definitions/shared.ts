@@ -1,5 +1,3 @@
-import type { Angle, Percent } from './units.js';
-
 export type CustomProperty<P extends string = string> = `--${P}`;
 
 export type SharedKeyword = 'inherit' | 'initial' | 'revert' | 'unset';
@@ -7,9 +5,7 @@ export type SharedKeyword = 'inherit' | 'initial' | 'revert' | 'unset';
 export type Var = `var(--${string})`;
 
 //#region> WithVar
-export type AngleWithVar = WithVar<Angle>;
 export type NumberWithVar = WithVar<number>;
-export type PercentWithVar = WithVar<Percent>;
 export type WithVar<T> = T | Var;
 //#endregion
 

@@ -2,97 +2,80 @@
   "name": "toolbox-ts",
   "private": true,
   "description": "A monorepo for TypeScript utilities and libraries.",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/toolbox-ts/toolbox-ts.git"
-  },
   "keywords": [
     "typescript"
   ],
+  "license": "MIT",
   "author": {
     "name": "Nolan Gajdascz",
     "email": "dev.gajdascz@gmail.com",
     "url": "https://github.com/gajdascz"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/toolbox-ts/toolbox-ts.git"
+  },
   "type": "module",
-  "devDependencies": {
-    "@changesets/cli": "^2.29.8",
-    "@commitlint/cli": "^19.8.1",
-    "@commitlint/config-conventional": "^19.8.1",
-    "@commitlint/cz-commitlint": "^19.8.1",
-    "@commitlint/types": "^19.8.1",
-    "@eslint/config-inspector": "^1.4.2",
-    "@eslint/js": "^9.39.2",
-    "@inquirer/prompts": "^7.10.1",
-    "@microsoft/tsdoc-config": "^0.17.1",
-    "@oclif/core": "^4.8.0",
-    "@oclif/plugin-help": "^6.2.36",
-    "@oclif/plugin-plugins": "^5.4.54",
-    "@toolbox-ts/configs": "workspace:^",
-    "@toolbox-ts/file": "workspace:^",
-    "@toolbox-ts/test-utils": "workspace:^",
-    "@toolbox-ts/tseslint": "workspace:^",
-    "@toolbox-ts/utils": "workspace:^",
-    "@types/node": "^22.19.7",
-    "@typescript-eslint/utils": "^8.53.1",
-    "@vitest/coverage-v8": "3.0.9",
-    "@vitest/eslint-plugin": "^1.6.6",
-    "@vitest/ui": "3.1.2",
-    "commitizen": "^4.3.1",
-    "dependency-cruiser": "^16.10.4",
-    "eslint": "^9.39.2",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-import-resolver-typescript": "^4.4.4",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-jsdoc": "^52.0.4",
-    "eslint-plugin-perfectionist": "^4.15.1",
-    "eslint-plugin-tsdoc": "^0.4.0",
-    "eslint-plugin-unicorn": "^60.0.0",
-    "execa": "^9.6.1",
-    "husky": "^9.1.7",
-    "jiti": "^2.6.1",
-    "lint-staged": "^15.5.2",
-    "markdownlint": "^0.38.0",
-    "memfs": "^4.56.9",
-    "prettier": "^3.8.1",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.53.1",
-    "vitest": "^3.2.4",
-    "zod": "^4.3.5"
-  },
-  "packageManager": "pnpm@10.28.1",
-  "config": {
-    "commitizen": {
-      "path": "@commitlint/cz-commitlint"
-    }
-  },
-  "lint-staged": {
-    "*.{js,jsx,cjs,ts,tsx}": [
-      "pnpm eslint --fix",
-      "pnpm prettier --write"
-    ],
-    "*.{json,md,yml,yaml}": [
-      "pnpm prettier --write"
-    ]
-  },
   "scripts": {
-    "clean:cache": "rm -rf node_modules/.cache",
-    "clean:dist": "rm -rf packages/**/dist",
+    "cruise": "depcruise ./packages/*/src",
+    "clean:cache": "rm -rf ./node_modules/.cache",
+    "clean:dist": "rm -rf ./packages/**/dist",
     "clean": "pnpm clean:cache && pnpm clean:dist",
     "build": "tsc -b tsconfig.build.json",
     "build:clean": "pnpm clean && pnpm build && pnpm install",
     "check:dependencies": "pnpm depcruise ./packages/*/src",
     "check:types": "tsc -b tsconfig.build.json --noEmit",
-    "check:format": "prettier . --check",
-    "check:lint": "eslint . --max-warnings=0",
+    "check:format": "oxfmt . --check",
+    "check:lint": "oxlint . --max-warnings=0",
+    "fix:format": "oxfmt . --write",
+    "fix:lint": "oxlint . --fix --max-warnings=0",
     "check": "pnpm check:format && pnpm check:lint && pnpm check:types && pnpm check:dependencies && pnpm test",
+    "fix": "pnpm fix:format && pnpm fix:lint",
     "lint-staged": "lint-staged",
     "prepare": "husky",
-    "test": "pnpm vitest --config vitest.config.ts",
+    "test": "vitest --config vitest.config.ts",
     "test:ui": "pnpm test --ui",
-    "generate:dependency-report": "pnpm depcruise ./packages/*/src --output-type dot | dot -T svg > ./docs/reports/dependency-report.svg",
-    "up": "pnpm -r up"
-  }
+    "generate:dependency-report": "depcruise ./packages/*/src --output-type dot | dot -T svg > ./docs/reports/dependency-report.svg",
+    "up": "pnpm up -r --latest"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.30.0",
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
+    "@commitlint/cz-commitlint": "^20.5.0",
+    "@commitlint/types": "^20.5.0",
+    "@inquirer/prompts": "^8.3.2",
+    "@oclif/core": "^4.10.2",
+    "@oclif/plugin-help": "^6.2.40",
+    "@oclif/plugin-plugins": "^5.4.59",
+    "@toolbox-ts/configs": "workspace:^",
+    "@toolbox-ts/file": "workspace:^",
+    "@toolbox-ts/test-utils": "workspace:^",
+    "@toolbox-ts/utils": "workspace:^",
+    "@types/node": "^25.5.0",
+    "@vitest/coverage-v8": "4.1.1",
+    "@vitest/ui": "4.1.1",
+    "commitizen": "^4.3.1",
+    "dependency-cruiser": "^17.3.9",
+    "execa": "^9.6.1",
+    "husky": "^9.1.7",
+    "inquirer": "^13.3.2",
+    "jiti": "^2.6.1",
+    "lint-staged": "^16.4.0",
+    "markdownlint": "^0.40.0",
+    "markdownlint-cli2": "^0.22.0",
+    "memfs": "^4.57.1",
+    "oxfmt": "^0.41.0",
+    "oxlint": "^1.56.0",
+    "oxlint-tsgolint": "^0.17.2",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.1"
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/cz-commitlint"
+    }
+  },
+  "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be"
 }

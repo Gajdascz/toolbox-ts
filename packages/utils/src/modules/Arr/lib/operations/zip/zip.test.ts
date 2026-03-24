@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { zip, zipFill, zipRemainder, zipWith } from './zip.ts';
 
-describe('zip', () => {
+describe('Array Zip', () => {
   describe('default', () => {
     it('should zip two arrays of equal length', () => {
       const result = zip([1, 2, 3], ['a', 'b', 'c']);
@@ -166,27 +166,16 @@ describe('zip', () => {
 
     it('should handle large remainder', () => {
       const result = zipRemainder([1], ['a', 'b', 'c', 'd', 'e']);
-      expect(result).toEqual({
-        zipped: [[1, 'a']],
-        remainder: ['b', 'c', 'd', 'e']
-      });
+      expect(result).toEqual({ zipped: [[1, 'a']], remainder: ['b', 'c', 'd', 'e'] });
     });
   });
   describe('with', () => {
     it('should apply function to each pair of elements', () => {
-      const result = zipWith(
-        [1, 2, 3],
-        ['a', 'b', 'c'],
-        (num, str) => `${num}${str}`
-      );
+      const result = zipWith([1, 2, 3], ['a', 'b', 'c'], (num, str) => `${num}${str}`);
       expect(result).toEqual(['1a', '2b', '3c']);
     });
     it('should handle arrays of different lengths', () => {
-      const result = zipWith(
-        [1, 2],
-        ['a', 'b', 'c'],
-        (num, str) => `${num}${str}`
-      );
+      const result = zipWith([1, 2], ['a', 'b', 'c'], (num, str) => `${num}${str}`);
       expect(result).toEqual(['1a', '2b']);
     });
     it('should handle empty arrays', () => {

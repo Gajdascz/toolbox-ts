@@ -1,0 +1,48 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`configs/runtime/oxlint > toFileEntry should produce correct file entry 1`] = `
+{
+  "oxlint.config.ts": "import { oxlint } from '@toolbox-ts/configs/runtime';
+
+export default oxlint.define({
+  "categories": {
+    "correctness": "warn"
+  },
+  "globals": {
+    "MY_GLOBAL": "readonly"
+  },
+  "env": {},
+  "extends": [
+    "some/config"
+  ],
+  "jsPlugins": [
+    {
+      "name": "custom-js-plugin",
+      "specifier": "custom-js-plugin",
+      "rules": {
+        "custom-js-plugin/rule": "error"
+      }
+    }
+  ],
+  "plugins": {
+    "eslint": {
+      "rules": {
+        "eslint/no-eval": "error",
+        "eslint/no-implied-eval": "error"
+      }
+    },
+    "typescript": true,
+    "react": false
+  },
+  "ignorePatterns": [
+    "**/generated/**"
+  ],
+  "options": {
+    "denyWarnings": true,
+    "maxWarnings": 100,
+    "typeAware": true,
+    "typeCheck": true
+  }
+});",
+}
+`;

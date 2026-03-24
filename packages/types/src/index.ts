@@ -8,3 +8,4 @@ export type * from './object/index.js';
 export type * from './spatial/index.js';
 export type * from './string/index.js';
 export type * from './tuple/index.js';
+export type * from './html/index.js';

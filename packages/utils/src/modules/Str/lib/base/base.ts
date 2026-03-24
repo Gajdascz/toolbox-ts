@@ -20,9 +20,7 @@ export const capitalize = <S extends string = string>(str: S): Capitalize<S> =>
  * uncapitalize('H')     // 'h'
  * ```
  */
-export const uncapitalize = <S extends string = string>(
-  str: S
-): Uncapitalize<S> =>
+export const uncapitalize = <S extends string = string>(str: S): Uncapitalize<S> =>
   (str.charAt(0).toLowerCase() + str.slice(1)) as Uncapitalize<S>;
 //#endregion
 

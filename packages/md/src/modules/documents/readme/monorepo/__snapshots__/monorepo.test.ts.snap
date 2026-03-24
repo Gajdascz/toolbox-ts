@@ -1,0 +1,29 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`(documents) monorepoRootReadme > snapshots > renders tooling with record-style sections 1`] = `
+"# my-monorepo
+
+## 📦 Packages
+
+| Package                          | Status           | Description |
+|----------------------------------|------------------|-------------|
+| [@scope/pkg-a](./packages/pkg-a) | 1.0.0 2026-01 1k | Package A   |
+
+## 🛠️ Tooling
+
+<details><summary><h3>Testing</h3></summary>
+
+- [vitest](https://vitest.dev)
+
+</details>
+
+<details><summary><h3>Linting</h3></summary>
+
+- [oxlint](https://oxc.rs)
+
+</details>
+
+## ⚖️ License
+
+MIT - Copyright &copy; 2026 "
+`;

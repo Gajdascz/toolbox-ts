@@ -24,9 +24,7 @@ describe('Coerce Number', () => {
 
   describe('string coercion methods', () => {
     it('uses parseFloat when specified', () => {
-      expect(coerceNumber('123.45abc', { stringCoercion: 'parseFloat' })).toBe(
-        123.45
-      );
+      expect(coerceNumber('123.45abc', { stringCoercion: 'parseFloat' })).toBe(123.45);
     });
 
     it('uses parseInt when specified', () => {
@@ -34,9 +32,7 @@ describe('Coerce Number', () => {
     });
 
     it('uses custom radix with parseInt', () => {
-      expect(
-        coerceNumber('FF', { stringCoercion: 'parseInt', radix: 16 })
-      ).toBe(255);
+      expect(coerceNumber('FF', { stringCoercion: 'parseInt', radix: 16 })).toBe(255);
     });
   });
 
@@ -64,30 +60,18 @@ describe('Coerce Number', () => {
 
   describe('boolean fallback handling', () => {
     it('returns fallback for all booleans when true', () => {
-      expect(
-        coerceNumber(true, { fallbackOnBoolean: true, fallback: 10 })
-      ).toBe(10);
-      expect(
-        coerceNumber(false, { fallbackOnBoolean: true, fallback: 10 })
-      ).toBe(10);
+      expect(coerceNumber(true, { fallbackOnBoolean: true, fallback: 10 })).toBe(10);
+      expect(coerceNumber(false, { fallbackOnBoolean: true, fallback: 10 })).toBe(10);
     });
 
     it('returns fallback only for true when specified', () => {
-      expect(
-        coerceNumber(true, { fallbackOnBoolean: 'true', fallback: 10 })
-      ).toBe(10);
-      expect(
-        coerceNumber(false, { fallbackOnBoolean: 'true', fallback: 10 })
-      ).toBe(0);
+      expect(coerceNumber(true, { fallbackOnBoolean: 'true', fallback: 10 })).toBe(10);
+      expect(coerceNumber(false, { fallbackOnBoolean: 'true', fallback: 10 })).toBe(0);
     });
 
     it('returns fallback only for false when specified', () => {
-      expect(
-        coerceNumber(true, { fallbackOnBoolean: 'false', fallback: 10 })
-      ).toBe(1);
-      expect(
-        coerceNumber(false, { fallbackOnBoolean: 'false', fallback: 10 })
-      ).toBe(10);
+      expect(coerceNumber(true, { fallbackOnBoolean: 'false', fallback: 10 })).toBe(1);
+      expect(coerceNumber(false, { fallbackOnBoolean: 'false', fallback: 10 })).toBe(10);
     });
   });
 
@@ -118,21 +102,13 @@ describe('Coerce Number', () => {
     });
 
     it('allows only positive infinity when specified', () => {
-      expect(coerceNumber(Infinity, { allowInfinity: 'positive' })).toBe(
-        Infinity
-      );
-      expect(
-        coerceNumber(-Infinity, { allowInfinity: 'positive', fallback: 10 })
-      ).toBe(10);
+      expect(coerceNumber(Infinity, { allowInfinity: 'positive' })).toBe(Infinity);
+      expect(coerceNumber(-Infinity, { allowInfinity: 'positive', fallback: 10 })).toBe(10);
     });
 
     it('allows only negative infinity when specified', () => {
-      expect(coerceNumber(-Infinity, { allowInfinity: 'negative' })).toBe(
-        -Infinity
-      );
-      expect(
-        coerceNumber(Infinity, { allowInfinity: 'negative', fallback: 10 })
-      ).toBe(10);
+      expect(coerceNumber(-Infinity, { allowInfinity: 'negative' })).toBe(-Infinity);
+      expect(coerceNumber(Infinity, { allowInfinity: 'negative', fallback: 10 })).toBe(10);
     });
   });
 });

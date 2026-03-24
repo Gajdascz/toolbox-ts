@@ -1,9 +1,4 @@
-import type {
-  Arr,
-  Zip,
-  ZipFill,
-  ZipRemainderObj
-} from '@toolbox-ts/types/defs/array';
+import type { Arr, Zip, ZipFill, ZipRemainderObj } from '@toolbox-ts/types/defs/array';
 
 /**
  * Zips two arrays together and returns the zipped array.
@@ -19,10 +14,7 @@ import type {
  * // [[1, 'a'], [2, 'b']]
  * ```
  */
-export function zip<A extends Arr = Arr, B extends Arr = Arr>(
-  a: A,
-  b: B
-): Zip<A, B> {
+export function zip<A extends Arr = Arr, B extends Arr = Arr>(a: A, b: B): Zip<A, B> {
   const len = Math.min(a.length, b.length);
   const result: unknown[] = [];
   for (let i = 0; i < len; i++) result[i] = [a[i], b[i]];
@@ -52,8 +44,7 @@ export function zipFill<A extends Arr = Arr, B extends Arr = Arr, F = null>(
   const len = Math.max(a.length, b.length);
   const result: unknown[] = [];
   const f = fill ?? null;
-  for (let i = 0; i < len; i++)
-    result[i] = [i < a.length ? a[i] : f, i < b.length ? b[i] : f];
+  for (let i = 0; i < len; i++) result[i] = [i < a.length ? a[i] : f, i < b.length ? b[i] : f];
   return result as ZipFill<A, B, F>;
 }
 
@@ -75,10 +66,8 @@ export function zipRemainder<A extends Arr = Arr, B extends Arr = Arr>(
   a: A,
   b: B
 ): ZipRemainderObj<A, B> {
-  if (a.length === 0)
-    return { zipped: [], remainder: b } as ZipRemainderObj<A, B>;
-  if (b.length === 0)
-    return { zipped: [], remainder: a } as ZipRemainderObj<A, B>;
+  if (a.length === 0) return { zipped: [], remainder: b } as ZipRemainderObj<A, B>;
+  if (b.length === 0) return { zipped: [], remainder: a } as ZipRemainderObj<A, B>;
   const len = Math.min(a.length, b.length);
   const result: unknown[] = [];
   for (let i = 0; i < len; i++) result[i] = [a[i], b[i]];

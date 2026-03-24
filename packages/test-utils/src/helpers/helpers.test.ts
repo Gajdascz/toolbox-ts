@@ -27,9 +27,7 @@ describe('mockFirstArgsMatch', () => {
     const m = vi.fn();
     m({ x: 1, y: { z: [1, 2] } });
     m([1, 2, { a: 'x' }]);
-    expect(
-      mockFirstArgsMatch(m, [{ x: 1, y: { z: [1, 2] } }, [1, 2, { a: 'x' }]])
-    ).toBe(true);
+    expect(mockFirstArgsMatch(m, [{ x: 1, y: { z: [1, 2] } }, [1, 2, { a: 'x' }]])).toBe(true);
   });
 
   it('returns true for empty expected args array (vacuously true)', () => {
@@ -68,11 +66,27 @@ describe('EXPECT', () => {
       const funcs = [() => true, () => 1 === 1, () => 'a'.length === 1];
       EXPECT.every(funcs, (f) => f() === true);
     });
+    it('should fail if any function returns false', () => {
+      const funcs = [() => true, () => 1 === (2 as any), () => 'a'.length === 1];
+      expect(() => EXPECT.every(funcs, (f) => f() === true)).toThrow();
+    });
+    it('should handle non-array input', () => {
+      const func = () => true;
+      EXPECT.every(func, (f) => f() === true);
+    });
   });
   describe('some', () => {
     it('should return true if at least one function returns true', () => {
       const funcs = [() => false, () => 1 === 1, () => 'a'.length === 2];
       EXPECT.some(funcs, (f) => f() === true);
+    });
+    it('should return false if no functions return true', () => {
+      const funcs = [() => false, () => 1 === (2 as any), () => 'a'.length === 2];
+      expect(() => EXPECT.some(funcs, (f) => f() === true)).toThrow();
+    });
+    it('should handle non-array input', () => {
+      const func = () => true;
+      EXPECT.some(func, (f) => f() === true);
     });
   });
 });

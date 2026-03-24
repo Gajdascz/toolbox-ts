@@ -20,33 +20,19 @@ export type WhenValue<T, C> = ((c: Truthy<C>) => T) | T;
  * { ...when(true, { a: 1 }) } // { a: 1 }
  * ```
  */
-export function when<T, C = unknown>(
-  condition: C,
-  value: WhenValue<T, C>
-): T | undefined;
-export function when<T, R, C = unknown>(
-  condition: C,
-  value: WhenValue<T, C>,
-  fallback: R
-): R | T;
+export function when<T, C = unknown>(condition: C, value: WhenValue<T, C>): T | undefined;
+export function when<T, R, C = unknown>(condition: C, value: WhenValue<T, C>, fallback: R): R | T;
 
-export function when(
-  condition: unknown,
-  value: unknown,
-  fallback?: unknown
-): unknown {
-  return (
-    !condition ? fallback
-    : typeof value === 'function' ?
-      (value as (c: typeof condition) => unknown)(condition)
-    : value
-  );
+export function when(condition: unknown, value: unknown, fallback?: unknown): unknown {
+  return !condition
+    ? fallback
+    : typeof value === 'function'
+      ? (value as (c: typeof condition) => unknown)(condition)
+      : value;
 }
 
 //#region> All
-export type WhenAllValue<T, C extends Arr = Arr> =
-  | ((c?: WithoutFalsy<C>) => T)
-  | T;
+export type WhenAllValue<T, C extends Arr = Arr> = ((c: WithoutFalsy<C>) => T) | T;
 export function whenAll<T, C extends Arr = Arr>(
   conditions: C,
   value: WhenAllValue<T, C>
@@ -56,17 +42,12 @@ export function whenAll<T, R, C extends Arr = Arr>(
   value: WhenAllValue<T, C>,
   fallback: R
 ): R | T;
-export function whenAll(
-  conditions: unknown[],
-  value: unknown,
-  fallback?: unknown
-): unknown {
-  return (
-    conditions.some((c) => !c) ? fallback
-    : typeof value === 'function' ?
-      (value as (c: typeof conditions) => unknown)(conditions)
-    : value
-  );
+export function whenAll(conditions: unknown[], value: unknown, fallback?: unknown): unknown {
+  return conditions.some((c) => !c)
+    ? fallback
+    : typeof value === 'function'
+      ? (value as (c: typeof conditions) => unknown)(conditions)
+      : value;
 }
 //#endregion
 
@@ -126,14 +107,9 @@ export const wrapWhen = <K extends string, V, TV = V>(
   v: WrapWhenValue<V>,
   { excludeFalsy = false, transform, failReturn }: WrapWhenOpts<K, V, TV> = {}
 ) =>
-  (
-    typeof key === 'string'
-    && v != null
-    && v !== false
-    && (!excludeFalsy || !!(v as unknown))
-  ) ?
-    { [key]: typeof transform !== 'function' ? v : transform(v, key) }
-  : failReturn;
+  typeof key === 'string' && v != null && v !== false && (!excludeFalsy || !!(v as unknown))
+    ? { [key]: typeof transform !== 'function' ? v : transform(v, key) }
+    : failReturn;
 
 /**
  * Wrap multiple values if they are not null and not false

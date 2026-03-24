@@ -36,9 +36,8 @@ export function createNumRangeError(
       )
     );
   else {
-    const inclusiveBounds =
-      inclusive ?
-        { workingMin: min, workingMax: max }
+    const inclusiveBounds = inclusive
+      ? { workingMin: min, workingMax: max }
       : { workingMin: min + 1, workingMax: max - 1 };
 
     const { workingMin, workingMax } = inclusiveBounds;
@@ -54,19 +53,12 @@ export function createNumRangeError(
     }
 
     // compute diff against working bounds
-    const diff =
-      isOver ? receivedValue - workingMax : workingMin - receivedValue;
+    const diff = isOver ? receivedValue - workingMax : workingMin - receivedValue;
 
     const is = isOver ? 'over' : 'under';
     const diffStr = `${is} by ${diff}`;
 
-    parts.push(
-      indent(
-        `expected ${receivedValue} to be ${rangeStr}, but is ${diffStr}`,
-        1,
-        true
-      )
-    );
+    parts.push(indent(`expected ${receivedValue} to be ${rangeStr}, but is ${diffStr}`, 1, true));
   }
 
   return new RangeError(parts.join(''));

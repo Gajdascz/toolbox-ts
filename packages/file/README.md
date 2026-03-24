@@ -1,37 +1,14 @@
 # @toolbox-ts/file
 
-Utility functions for common file operations: finding files, loading/parsing configs, and writing templates.
-Designed for **config-driven tools** where you need to locate files, load structured content, and persist artifacts safely.
+## Install
 
 ```sh
-pnpm add @toolbox-ts/utils
+pnpm add @toolbox-ts/file
 # or
-npm install @toolbox-ts/utils
+npm install @toolbox-ts/file
 # or
-yarn add @toolbox-ts/utils
+yarn add @toolbox-ts/file
 ```
-
-## TODO: generate full docs using TypeDoc
-
----
-
-## Features
-
-* **Find** files with `fast-glob` (search all, first up, or first down).
-* **Load modules** (`.ts`/`.js`) with [jiti](https://github.com/unjs/jiti), supporting default/named/function exports.
-* **Parse JSON** configs with optional custom resolvers.
-* **Write files** with overwrite policies (`force`, `prompt`, `skip`).
-* **Write templates** into directories with safe overwrite handling.
-
----
-
-## Notes
-
-* `find` uses [`fast-glob`](https://github.com/mrmlnc/fast-glob).
-* `load-module` uses [`jiti`](https://github.com/unjs/jiti) for seamless TS/JS imports.
-* Overwrite behavior is explicit to avoid accidental data loss.
-
----
 
 ## ⚖️ License
 

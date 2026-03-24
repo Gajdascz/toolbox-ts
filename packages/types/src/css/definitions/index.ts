@@ -1,6 +1,6 @@
 /** https://www.w3.org/TR/css/#css */
 
-export type * as Colors from './colors.js';
+export type * as Colors from './colors/index.js';
 export type * as General from './general.js';
 export type * as Math from './math.js';
 export type * as Selectors from './selectors/index.js';

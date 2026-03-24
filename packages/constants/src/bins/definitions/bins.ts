@@ -1,0 +1,15 @@
+export const RIMRAF = 'rimraf';
+export const OXLINT = 'oxlint';
+export const OXFMT = 'oxfmt';
+export const TSC = 'tsc';
+export const VITEST = 'vitest';
+export const DEPCRUISE = 'depcruise';
+export const PNPM = 'pnpm';
+export const COREPACK = 'corepack';
+export const HUSKY = 'husky';
+export const LINT_STAGED = 'lint-staged';
+export const MARKDOWNLINT = 'markdownlint';
+export const NPM = 'npm';
+export const NPX = 'npx';
+export const COMMITLINT = 'commitlint';
+export const GIT = 'git';

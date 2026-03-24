@@ -42,7 +42,7 @@ import {
   zipFill,
   zipRemainder
 } from './tuple.ts';
-describe('tuple', () => {
+describe('Tuple', () => {
   describe('accessors', () => {
     it('at should return element at index with literal type', () => {
       const t = [1, 'a', true] as const;
@@ -97,9 +97,7 @@ describe('tuple', () => {
     it('entries should return entries with literal types', () => {
       const t = [1, 'two', 3] as const;
       const result = entries(t);
-      expectTypeOf(result).toEqualTypeOf<
-        readonly [[0, 1], [1, 'two'], [2, 3]]
-      >();
+      expectTypeOf(result).toEqualTypeOf<readonly [[0, 1], [1, 'two'], [2, 3]]>();
     });
   });
 
@@ -161,9 +159,7 @@ describe('tuple', () => {
     it('init should create a tuple of given length with initial value', () => {
       const result = init(3, 0);
       expectTypeOf(result).toEqualTypeOf<Tuple<[0, 0, 0]>>();
-      expectTypeOf(init(4, (i) => i + 2)).toEqualTypeOf<
-        Tuple<[number, number, number, number]>
-      >();
+      expectTypeOf(init(4, (i) => i + 2)).toEqualTypeOf<Tuple<[number, number, number, number]>>();
     });
   });
   describe('operations', () => {
@@ -220,9 +216,7 @@ describe('tuple', () => {
       it('chunk should handle size 3', () => {
         const t = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
         const result = chunk(t, 3);
-        expectTypeOf(result).toEqualTypeOf<
-          Tuple<[[1, 2, 3], [4, 5, 6], [7, 8, 9]]>
-        >();
+        expectTypeOf(result).toEqualTypeOf<Tuple<[[1, 2, 3], [4, 5, 6], [7, 8, 9]]>>();
       });
 
       it('chunk should handle uneven chunks', () => {
@@ -244,9 +238,9 @@ describe('tuple', () => {
         expectTypeOf(result).toEqualTypeOf<Tuple<['a', 'b', 'c']>>();
       });
 
-      it('clone should handle deep strategy', () => {
+      it('clone should handle structured strategy', () => {
         const t = [{ a: 1 }, { b: 2 }] as const;
-        const result = clone(t, 'deep');
+        const result = clone(t, 'structured');
         expectTypeOf(result).toEqualTypeOf<Tuple<[{ a: 1 }, { b: 2 }]>>();
       });
     });
@@ -360,18 +354,14 @@ describe('tuple', () => {
         const a = [1, 2, 3] as const;
         const b = ['a', 'b'] as const;
         const result = zipRemainder(a, b);
-        expectTypeOf(result).toEqualTypeOf<
-          ZipRemainderObj<typeof a, typeof b>
-        >();
+        expectTypeOf(result).toEqualTypeOf<ZipRemainderObj<typeof a, typeof b>>();
       });
 
       it('zip with remainder mode and longer second tuple', () => {
         const a = [1, 2] as const;
         const b = ['a', 'b', 'c', 'd'] as const;
         const result = zipRemainder(a, b);
-        expectTypeOf(result).toEqualTypeOf<
-          ZipRemainderObj<typeof a, typeof b>
-        >();
+        expectTypeOf(result).toEqualTypeOf<ZipRemainderObj<typeof a, typeof b>>();
       });
     });
 
@@ -453,9 +443,7 @@ describe('tuple', () => {
       it('removeFirst should handle many elements', () => {
         const t = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
         const result = removeFirst(t);
-        expectTypeOf(result).toEqualTypeOf<
-          Tuple<[2, 3, 4, 5, 6, 7, 8, 9, 10]>
-        >();
+        expectTypeOf(result).toEqualTypeOf<Tuple<[2, 3, 4, 5, 6, 7, 8, 9, 10]>>();
       });
 
       it('removeLast should remove last element with literal type', () => {
@@ -473,9 +461,7 @@ describe('tuple', () => {
       it('removeLast should handle many elements', () => {
         const t = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
         const result = removeLast(t);
-        expectTypeOf(result).toEqualTypeOf<
-          Tuple<[1, 2, 3, 4, 5, 6, 7, 8, 9]>
-        >();
+        expectTypeOf(result).toEqualTypeOf<Tuple<[1, 2, 3, 4, 5, 6, 7, 8, 9]>>();
       });
     });
   });

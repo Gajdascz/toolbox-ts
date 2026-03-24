@@ -38,19 +38,19 @@ export type WorkspaceYAML = {
    * @see {@link https://pnpm.io/pnpm-workspace_yaml}
    */
   packages?: readonly string[] | string[];
-} & Audit
-  & Build
-  & Cli
-  & DependencyResolution
-  & File
-  & Hoisting
-  & Lockfile
-  & Node
-  & NodeModules
-  & Other
-  & Patching
-  & Peers
-  & Registry
-  & Requests
-  & Store
-  & Workspace;
+} & Audit &
+  Build &
+  Cli &
+  DependencyResolution &
+  File &
+  Hoisting &
+  Lockfile &
+  Node &
+  NodeModules &
+  Other &
+  Patching &
+  Peers &
+  Registry &
+  Requests &
+  Store &
+  Workspace;

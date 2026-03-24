@@ -1,14 +1,18 @@
 {
   "name": "@toolbox-ts/configs",
   "version": "0.1.6",
-  "description": "Configuration wrappers for @toolbox-ts monorepo.",
-  "license": "MIT",
-  "type": "module",
-  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/configs",
   "private": false,
-  "publishConfig": {
-    "access": "public"
-  },
+  "description": "Configuration wrappers.",
+  "keywords": [
+    "commitlint",
+    "configs",
+    "configuration",
+    "toolbox-ts",
+    "utilities",
+    "vitest"
+  ],
+  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/configs",
+  "license": "MIT",
   "author": {
     "name": "Nolan Gajdascz",
     "email": "dev.gajdascz@gmail.com",
@@ -18,36 +22,47 @@
     "type": "git",
     "url": "https://github.com/gajdascz/toolbox-ts.git"
   },
-  "keywords": [
-    "toolbox-ts",
-    "utilities",
-    "configuration",
-    "configs",
-    "commitlint",
-    "prettier",
-    "vitest"
-  ],
   "files": [
     "dist",
     "LICENSE",
     "README.md"
   ],
+  "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./runtime": {
+      "types": "./dist/runtime/index.d.ts",
+      "import": "./dist/runtime/index.js"
+    },
+    "./static": {
+      "types": "./dist/static/index.d.ts",
+      "import": "./dist/static/index.js"
     }
   },
-  "peerDependencies": {
-    "@commitlint/config-conventional": "^19.8.1",
-    "@commitlint/types": "^19.5.0",
-    "prettier": "^3.6.0",
-    "vitest": "^3.2.4"
+  "publishConfig": {
+    "access": "public"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@toolbox-ts/constants": "workspace:^",
+    "@toolbox-ts/types": "workspace:^",
+    "@toolbox-ts/utils": "workspace:^",
+    "yaml": "^2.8.3"
+  },
   "devDependencies": {
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
+  },
+  "peerDependencies": {
+    "@commitlint/types": "^19.5.0",
+    "dependency-cruiser": "^16.10.4",
+    "lint-staged": "^15.5.2",
+    "oxfmt": "^0.41.0",
+    "oxlint": "^1.56.0",
+    "vitest": "^3.2.4",
+    "watskeburt": "^5.0.2"
   }
 }

@@ -7,6 +7,15 @@
  * on the real file system or other modules.
  */
 
+vi.mock('fs', () => fs);
+vi.mock('node:fs', () => fs);
+
+vi.mock('node:fs/promises', () => fs.promises);
+vi.mock('fs/promises', () => fs.promises);
+
+vi.mock('node:child_process', () => child_process);
+vi.mock('child_process', () => child_process);
+
 import { afterAll, beforeAll, beforeEach, vi } from 'vitest';
 
 import { assertMockedEnv, type MockCheck } from '../core/core.js';
@@ -19,7 +28,6 @@ import {
   inquirerExists,
   MEM_FS
 } from './modules/index.js';
-
 const assertions: MockCheck[] = [
   {
     description: '"fs" module',
@@ -37,28 +45,14 @@ const assertions: MockCheck[] = [
     validate: (m) => m.exec !== undefined || 'child_process.exec is not defined'
   }
 ];
-
-vi.mock('fs', () => fs);
-vi.mock('node:fs', () => fs);
-
-vi.mock('node:fs/promises', () => fs.promises);
-vi.mock('fs/promises', () => fs.promises);
-
-vi.mock('node:child_process', () => child_process);
-vi.mock('child_process', () => child_process);
-
 if (execaExists) {
-  vi.mock('execa', () => execa);
+  vi.doMock('execa', () => execa);
   assertions.push({ description: '"execa" module', modulePath: 'execa' });
 }
 if (inquirerExists) {
-  vi.mock('@inquirer/prompts', () => inquirer);
-  assertions.push({
-    description: '"@inquirer/prompts" module',
-    modulePath: '@inquirer/prompts'
-  });
+  vi.doMock('@inquirer/prompts', () => inquirer);
+  assertions.push({ description: '"@inquirer/prompts" module', modulePath: '@inquirer/prompts' });
 }
-
 beforeEach(() => {
   fs.reset();
 });

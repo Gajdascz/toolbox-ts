@@ -14,10 +14,7 @@ describe('Extract types', () => {
       }
       type Result = Extract.NonPrimitives<User>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        address: { street: string };
-        siblings: string[];
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ address: { street: string }; siblings: string[] }>();
     });
 
     it('should return empty object when no non-primitives exist', () => {
@@ -39,10 +36,7 @@ describe('Extract types', () => {
       }
       type Result = Extract.NonPrimitives<WithArrays>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        ids: number[];
-        names: string[];
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ ids: number[]; names: string[] }>();
     });
 
     it('should include Date as non-primitive', () => {
@@ -115,10 +109,7 @@ describe('Extract types', () => {
       }
       type Result = Extract.NonPrimitives<Mixed>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        arr: number[];
-        obj: { nested: string };
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ arr: number[]; obj: { nested: string } }>();
     });
 
     it('should be shallow (not recursive)', () => {
@@ -129,9 +120,7 @@ describe('Extract types', () => {
       type Result = Extract.NonPrimitives<Nested>;
 
       // Only extracts top-level non-primitives
-      expectTypeOf<Result>().toEqualTypeOf<{
-        data: { details: { info: string }; name: string };
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ data: { details: { info: string }; name: string } }>();
     });
 
     it('should handle optional non-primitive properties', () => {
@@ -142,10 +131,7 @@ describe('Extract types', () => {
       }
       type Result = Extract.NonPrimitives<WithOptional>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        metadata?: { key: string };
-        tags?: string[];
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ metadata?: { key: string }; tags?: string[] }>();
     });
   });
   //#endregion
@@ -181,11 +167,7 @@ describe('Extract types', () => {
       }
       type Result = Extract.Optional<User>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        age?: number;
-        email?: string;
-        name?: string;
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ age?: number; email?: string; name?: string }>();
     });
 
     it('should handle all optional properties', () => {
@@ -196,11 +178,7 @@ describe('Extract types', () => {
       }
       type Result = Extract.Optional<AllOptional>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        age?: number;
-        email?: string;
-        name?: string;
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ age?: number; email?: string; name?: string }>();
     });
 
     it('should handle empty object', () => {
@@ -243,9 +221,7 @@ describe('Extract types', () => {
       type Result = Extract.Optional<Nested>;
 
       // Only extracts top-level optional properties
-      expectTypeOf<Result>().toEqualTypeOf<{
-        optional?: { nested?: number; required: string };
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ optional?: { nested?: number; required: string } }>();
     });
   });
   //#endregion
@@ -360,11 +336,7 @@ describe('Extract types', () => {
       }
       type Result = Extract.Primitives<Mixed>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        active: boolean;
-        id: number;
-        name: string;
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ active: boolean; id: number; name: string }>();
     });
 
     it('should be shallow (not recursive)', () => {
@@ -411,11 +383,7 @@ describe('Extract types', () => {
       }
       type Result = Extract.Required<AllRequired>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        email: string;
-        id: number;
-        name: string;
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ email: string; id: number; name: string }>();
     });
 
     it('should return empty object when all are optional', () => {
@@ -438,11 +406,7 @@ describe('Extract types', () => {
       }
       type Result = Extract.Required<Mixed>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        active: boolean;
-        id: number;
-        name: string;
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ active: boolean; id: number; name: string }>();
     });
 
     it('should handle empty object', () => {
@@ -475,10 +439,7 @@ describe('Extract types', () => {
       }
       type Result = Extract.Required<WithUndefined>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        id: number;
-        name: string | undefined;
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ id: number; name: string | undefined }>();
     });
 
     it('should be shallow (not recursive)', () => {
@@ -504,10 +465,7 @@ describe('Extract types', () => {
       }
       type Result = Extract.Required<WithNullable>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        id: number;
-        name: null | string;
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ id: number; name: null | string }>();
     });
   });
   //#endregion
@@ -537,10 +495,7 @@ describe('Extract types', () => {
       type RequiredProps = Extract.Required<Complex>;
       type Result = Extract.NonPrimitives<RequiredProps>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        data: { value: string };
-        tags: string[];
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ data: { value: string }; tags: string[] }>();
     });
   });
   //#endregion

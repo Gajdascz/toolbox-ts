@@ -1,0 +1,66 @@
+{
+  "name": "@toolbox-ts/md",
+  "version": "0.0.0",
+  "private": false,
+  "description": "Markdown utilities.",
+  "keywords": [
+    "markdown",
+    "md",
+    "toolbox-ts",
+    "typescript",
+    "utilities"
+  ],
+  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/md",
+  "license": "MIT",
+  "author": {
+    "name": "Nolan Gajdascz",
+    "email": "dev.gajdascz@gmail.com",
+    "url": "https://github.com/gajdascz"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gajdascz/toolbox-ts.git"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./blocks": {
+      "types": "./dist/modules/blocks/index.d.ts",
+      "import": "./dist/modules/blocks/index.js"
+    },
+    "./core": {
+      "types": "./dist/modules/core/index.d.ts",
+      "import": "./dist/modules/core/index.js"
+    },
+    "./sections": {
+      "types": "./dist/modules/sections/index.d.ts",
+      "import": "./dist/modules/sections/index.js"
+    },
+    "./documents": {
+      "types": "./dist/modules/documents/index.d.ts",
+      "import": "./dist/modules/documents/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "update:types": "tsx ./.dev/update-types.ts",
+    "update:snapshots": "pnpm vitest -u"
+  },
+  "dependencies": {
+    "@toolbox-ts/types": "workspace:^"
+  },
+  "devDependencies": {
+    "simple-icons": "^16.13.0"
+  }
+}

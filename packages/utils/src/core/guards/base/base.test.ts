@@ -1,4 +1,4 @@
-import type { Falsy, Nullish, PrimitiveType, Truthy } from '@toolbox-ts/types';
+import type { DefinedPrimitive, Falsy, Nullish, PrimitiveType, Truthy } from '@toolbox-ts/types';
 
 import { runGuardSuites } from '@toolbox-ts/test-utils';
 import { expectTypeOf } from 'vitest';
@@ -45,7 +45,10 @@ import {
   isString,
   isSymbol,
   isTruthy,
-  isUndefined
+  isUndefined,
+  assertIsDefinedPrimitive,
+  checkIsDefinedPrimitive,
+  isDefinedPrimitive
 } from './base.ts';
 
 const NON_PRIMITIVES: object[] = [[], {}, new Date(), () => {}];
@@ -65,15 +68,7 @@ const NUMS: number[] = [
 ];
 const SYMBOLS: symbol[] = [Symbol('test'), Symbol.iterator];
 const FALSY: Falsy[] = [0, '', false, null, undefined, '', 0n];
-const TRUTHY: Truthy<any> = [
-  1,
-  'test',
-  true,
-  42,
-  ...NON_PRIMITIVES,
-  ...SYMBOLS,
-  1n
-];
+const TRUTHY: Truthy<any> = [1, 'test', true, 42, ...NON_PRIMITIVES, ...SYMBOLS, 1n];
 const PRIMITIVES: PrimitiveType[] = [
   ...BIGINTS,
   ...BOOLS,
@@ -116,14 +111,7 @@ runGuardSuites(
     expectType: expectTypeOf(isNumber).guards.toBeNumber(),
     assertType: expectTypeOf(assertIsNumber).asserts.toBeNumber(),
     validValues: NUMS,
-    invalidValues: [
-      ...BIGINTS,
-      ...BOOLS,
-      ...STRINGS,
-      ...SYMBOLS,
-      ...NON_PRIMITIVES,
-      ...NULLISH
-    ]
+    invalidValues: [...BIGINTS, ...BOOLS, ...STRINGS, ...SYMBOLS, ...NON_PRIMITIVES, ...NULLISH]
   },
   //#endregion
   //#region> String
@@ -134,14 +122,7 @@ runGuardSuites(
     expectType: expectTypeOf(isString).guards.toBeString(),
     assertType: expectTypeOf(assertIsString).asserts.toBeString(),
     validValues: STRINGS,
-    invalidValues: [
-      ...BIGINTS,
-      ...BOOLS,
-      ...NUMS,
-      ...SYMBOLS,
-      ...NON_PRIMITIVES,
-      ...NULLISH
-    ]
+    invalidValues: [...BIGINTS, ...BOOLS, ...NUMS, ...SYMBOLS, ...NON_PRIMITIVES, ...NULLISH]
   },
   //#endregion
   //#region> Symbol
@@ -152,14 +133,7 @@ runGuardSuites(
     expectType: expectTypeOf(isSymbol).guards.toBeSymbol(),
     assertType: expectTypeOf(assertIsSymbol).asserts.toBeSymbol(),
     validValues: SYMBOLS,
-    invalidValues: [
-      ...BIGINTS,
-      ...BOOLS,
-      ...NUMS,
-      ...STRINGS,
-      ...NON_PRIMITIVES,
-      ...NULLISH
-    ]
+    invalidValues: [...BIGINTS, ...BOOLS, ...NUMS, ...STRINGS, ...NON_PRIMITIVES, ...NULLISH]
   },
   //#endregion
   //#region> Null
@@ -184,11 +158,8 @@ runGuardSuites(
     is: isNotNull,
     assert: assertIsNotNull,
     check: checkIsNotNull,
-    expectType:
-      expectTypeOf(isNotNull).guards.toEqualTypeOf<Exclude<unknown, null>>(),
-    assertType: expectTypeOf(
-      assertIsNotNull<null | Yes>
-    ).asserts.toEqualTypeOf<Yes>(),
+    expectType: expectTypeOf(isNotNull).guards.toEqualTypeOf<Exclude<unknown, null>>(),
+    assertType: expectTypeOf(assertIsNotNull<null | Yes>).asserts.toEqualTypeOf<Yes>(),
     validValues: [
       ...BIGINTS,
       ...BOOLS,
@@ -209,24 +180,13 @@ runGuardSuites(
     expectType: expectTypeOf(isUndefined).guards.toBeUndefined(),
     assertType: expectTypeOf(assertIsUndefined).asserts.toBeUndefined(),
     validValues: [undefined],
-    invalidValues: [
-      ...BIGINTS,
-      ...BOOLS,
-      ...NUMS,
-      ...STRINGS,
-      ...SYMBOLS,
-      ...NON_PRIMITIVES,
-      null
-    ]
+    invalidValues: [...BIGINTS, ...BOOLS, ...NUMS, ...STRINGS, ...SYMBOLS, ...NON_PRIMITIVES, null]
   },
   {
     is: isNotUndefined,
     assert: assertIsNotUndefined,
     check: checkIsNotUndefined,
-    expectType:
-      expectTypeOf(isNotUndefined).guards.toEqualTypeOf<
-        Exclude<unknown, undefined>
-      >(),
+    expectType: expectTypeOf(isNotUndefined).guards.toEqualTypeOf<Exclude<unknown, undefined>>(),
     assertType: expectTypeOf(
       assertIsNotUndefined<Thousand | undefined>
     ).asserts.toEqualTypeOf<Thousand>(),
@@ -242,34 +202,15 @@ runGuardSuites(
     expectType: expectTypeOf(isNullish).guards.toEqualTypeOf<Nullish>(),
     assertType: expectTypeOf(assertIsNullish).asserts.toEqualTypeOf<Nullish>(),
     validValues: NULLISH,
-    invalidValues: [
-      ...BIGINTS,
-      ...BOOLS,
-      ...NUMS,
-      ...STRINGS,
-      ...SYMBOLS,
-      ...NON_PRIMITIVES
-    ]
+    invalidValues: [...BIGINTS, ...BOOLS, ...NUMS, ...STRINGS, ...SYMBOLS, ...NON_PRIMITIVES]
   },
   {
     is: isNotNullish,
     assert: assertIsNotNullish,
     check: checkIsNotNullish,
-    expectType:
-      expectTypeOf(isNotNullish).guards.toEqualTypeOf<
-        Exclude<unknown, Nullish>
-      >(),
-    assertType: expectTypeOf(
-      assertIsNotNullish<Nullish | Yes>
-    ).asserts.toEqualTypeOf<Yes>(),
-    validValues: [
-      ...BIGINTS,
-      ...BOOLS,
-      ...NUMS,
-      ...STRINGS,
-      ...SYMBOLS,
-      ...NON_PRIMITIVES
-    ],
+    expectType: expectTypeOf(isNotNullish).guards.toEqualTypeOf<Exclude<unknown, Nullish>>(),
+    assertType: expectTypeOf(assertIsNotNullish<Nullish | Yes>).asserts.toEqualTypeOf<Yes>(),
+    validValues: [...BIGINTS, ...BOOLS, ...NUMS, ...STRINGS, ...SYMBOLS, ...NON_PRIMITIVES],
     invalidValues: NULLISH
   },
   //#endregion
@@ -279,11 +220,21 @@ runGuardSuites(
     assert: assertIsPrimitive,
     check: checkIsPrimitive,
     expectType: expectTypeOf(isPrimitive).guards.toEqualTypeOf<PrimitiveType>(),
-    assertType:
-      expectTypeOf(assertIsPrimitive).asserts.toEqualTypeOf<PrimitiveType>(),
+    assertType: expectTypeOf(assertIsPrimitive).asserts.toEqualTypeOf<PrimitiveType>(),
 
     validValues: PRIMITIVES,
     invalidValues: NON_PRIMITIVES
+  },
+  //#endregion
+  //#region> DefinedPrimitive
+  {
+    is: isDefinedPrimitive,
+    assert: assertIsDefinedPrimitive,
+    check: checkIsDefinedPrimitive,
+    expectType: expectTypeOf(isDefinedPrimitive).guards.toEqualTypeOf<DefinedPrimitive>(),
+    assertType: expectTypeOf(assertIsDefinedPrimitive).asserts.toEqualTypeOf<DefinedPrimitive>(),
+    validValues: PRIMITIVES.filter((v): v is DefinedPrimitive => v !== undefined),
+    invalidValues: [...NON_PRIMITIVES, undefined]
   },
   //#endregion
   //#region> Falsy
@@ -306,9 +257,7 @@ runGuardSuites(
     validValues: TRUTHY,
     invalidValues: FALSY,
     expectType: expectTypeOf(isTruthy).guards.toEqualTypeOf<Truthy<unknown>>(),
-    assertType: expectTypeOf(
-      assertIsTruthy<Thousand>
-    ).asserts.toEqualTypeOf<Thousand>()
+    assertType: expectTypeOf(assertIsTruthy<Thousand>).asserts.toEqualTypeOf<Thousand>()
   }
   //#endregion
 );

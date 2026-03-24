@@ -1,21 +1,24 @@
-import type {
-  Arr,
-  Element,
-  ElementNotUndefined
-} from '@toolbox-ts/types/defs/array';
+import type { Arr, Element, ElementNotUndefined } from '@toolbox-ts/types/defs/array';
 
 /**
- * Returns the element at the specified index of an array, or `undefined` if out of bounds.
+ * Returns the element at the specified index of an array, `undefined` if out of bounds, or `fallbackIfUndefined` if undefined.
  *
  * @example
  * ```ts
  * at([1, 2, 3], 1) // 2
  * at([1, 2, 3], -1) // 3
  * at([1, 2, 3], 5) // undefined
+ * at([1, 2, 3], 5, null) // null
  * ```
  */
-export const at = <T extends Arr = Arr>(arr: T, index: number): Element<T> =>
-  arr.at(index) as Element<T>;
+export const at = <T extends Arr = Arr, F = undefined>(
+  arr: T,
+  index: number,
+  fallbackIfUndefined?: F
+): Exclude<Element<T>, undefined> | F => {
+  const at = arr.at(index) as Element<T>;
+  return (at === undefined ? fallbackIfUndefined : at) as Exclude<Element<T>, undefined> | F;
+};
 /**
  * Returns the element at the specified index of an array.
  *
@@ -28,15 +31,10 @@ export const at = <T extends Arr = Arr>(arr: T, index: number): Element<T> =>
  * atOrThrow([1, 2, 3], 5) // throws Error
  * ```
  */
-export const atOrThrow = <T extends Arr>(
-  arr: T,
-  index: number
-): ElementNotUndefined<T> => {
+export const atOrThrow = <T extends Arr>(arr: T, index: number): ElementNotUndefined<T> => {
   const val = at(arr, index);
   if (val === undefined)
-    throw new Error(
-      `Array element at index ${index} is undefined: ${arr.join(', ')}`
-    );
+    throw new Error(`Array element at index ${index} is undefined: ${arr.join(', ')}`);
   return val as ElementNotUndefined<T>;
 };
 /**
@@ -70,8 +68,7 @@ export const last = <T extends Arr>(arr: T): Element<T> => at(arr, -1);
  */
 export const lastOrThrow = <T extends Arr>(arr: T): ElementNotUndefined<T> => {
   const val = last(arr);
-  if (val === undefined)
-    throw new Error(`Last element is undefined: ${arr.join(', ')}`);
+  if (val === undefined) throw new Error(`Last element is undefined: ${arr.join(', ')}`);
   return val as ElementNotUndefined<T>;
 };
 /**
@@ -95,11 +92,8 @@ export const first = <T extends Arr>(arr: T): Element<T> => at(arr, 0);
  * firstOrThrow([]) // throws Error
  * ```
  */
-export const firstOrThrow = <T extends Arr = Arr>(
-  arr: T
-): ElementNotUndefined<T> => {
+export const firstOrThrow = <T extends Arr = Arr>(arr: T): ElementNotUndefined<T> => {
   const val = first(arr);
-  if (val === undefined)
-    throw new Error(`First element is undefined: ${arr.join(', ')}`);
+  if (val === undefined) throw new Error(`First element is undefined: ${arr.join(', ')}`);
   return val as ElementNotUndefined<T>;
 };

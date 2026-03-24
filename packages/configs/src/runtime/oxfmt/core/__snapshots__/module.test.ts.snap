@@ -1,0 +1,13 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`configs/runtime/oxfmt > toFileEntry should produce correct file entry 1`] = `
+{
+  "oxfmt.config.ts": "import { oxfmt } from '@toolbox-ts/configs/runtime';
+
+export default oxfmt.define({
+  "proseWrap": "always",
+  "printWidth": 120,
+  "tabWidth": 10
+});",
+}
+`;

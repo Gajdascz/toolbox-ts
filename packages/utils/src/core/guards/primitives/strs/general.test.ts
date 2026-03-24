@@ -6,8 +6,8 @@ import {
   assertIsStringPunctuated,
   assertIsStringSemver,
   isStringCapitalized,
-  isStringPunctuated,
-  isStringSemVer
+  checkIsStringPunctuated,
+  checkIsStringSemVer
 } from './general.ts';
 
 const createEntry = (
@@ -28,13 +28,13 @@ const createEntry = (
 
 runGuardSuites(
   createEntry(
-    isStringSemVer,
+    checkIsStringSemVer,
     assertIsStringSemver,
     ['1.0.0', '2.0.0', '1.0.0-alpha', '1.0.0+build.1'],
     ['1', '1.0', '1.0.0.0', 'a.b.c']
   ),
   createEntry(
-    isStringPunctuated,
+    checkIsStringPunctuated,
     assertIsStringPunctuated,
     ['Hello, world!', 'This is a test.'],
     ['hello world', 'this is a test']

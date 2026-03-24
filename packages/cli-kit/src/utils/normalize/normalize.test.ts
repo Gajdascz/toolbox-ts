@@ -8,13 +8,8 @@ import {
   objToFlags,
   type ObjToFlagSpec
 } from './normalize.ts';
-vi.mock('execa', async (act) => ({
-  ...(await act()),
-  parseCommandString: vi.fn()
-}));
-vi.mocked(parseCommandString).mockImplementation((cmd: string) =>
-  cmd.split(' ')
-);
+vi.mock('execa', async (act) => ({ ...(await act()), parseCommandString: vi.fn() }));
+vi.mocked(parseCommandString).mockImplementation((cmd: string) => cmd.split(' '));
 
 describe('cli-kit: Normalize Utils', () => {
   describe('commandInput', () => {
@@ -62,12 +57,7 @@ describe('cli-kit: Normalize Utils', () => {
         tags: true,
         verbose: null
       });
-      expect(res).toEqual([
-        '--dry-run',
-        '--set-upstream',
-        'origin main',
-        '--tags'
-      ]);
+      expect(res).toEqual(['--dry-run', '--set-upstream', 'origin main', '--tags']);
     });
     it('uses equals separator when specified', () => {
       const res = objToFlags(
@@ -81,22 +71,11 @@ describe('cli-kit: Normalize Utils', () => {
         },
         { sep: 'equals' }
       );
-      expect(res).toEqual([
-        '--dry-run',
-        '--set-upstream=origin main',
-        '--tags'
-      ]);
+      expect(res).toEqual(['--dry-run', '--set-upstream=origin main', '--tags']);
     });
     it('handles boolean true/false values correctly', () => {
-      const res = objToFlags({
-        dryRun: true,
-        force: true,
-        quiet: false,
-        verbose: 2
-      });
-      expect(res).toEqual(
-        expect.arrayContaining(['--dry-run', '--force', '--verbose', '2'])
-      );
+      const res = objToFlags({ dryRun: true, force: true, quiet: false, verbose: 2 });
+      expect(res).toEqual(expect.arrayContaining(['--dry-run', '--force', '--verbose', '2']));
     });
     it('handles JSON array format', () => {
       const res = objToFlags(
@@ -104,12 +83,7 @@ describe('cli-kit: Normalize Utils', () => {
         { arrayFormat: 'json' }
       );
       expect(res).toEqual(
-        expect.arrayContaining([
-          '--include',
-          '["src","lib"]',
-          '--exclude',
-          '["test","docs"]'
-        ])
+        expect.arrayContaining(['--include', '["src","lib"]', '--exclude', '["test","docs"]'])
       );
     });
     it('handles comma array format', () => {
@@ -118,12 +92,7 @@ describe('cli-kit: Normalize Utils', () => {
         { arrayFormat: 'comma' }
       );
       expect(res).toEqual(
-        expect.arrayContaining([
-          '--include',
-          'src,lib',
-          '--exclude',
-          'test,docs'
-        ])
+        expect.arrayContaining(['--include', 'src,lib', '--exclude', 'test,docs'])
       );
     });
     it('handles repeat array format with space separator', () => {
@@ -160,12 +129,7 @@ describe('cli-kit: Normalize Utils', () => {
     });
     it('respects local spec over global options', () => {
       const res = objToFlags(
-        {
-          exclude: ['test', 'docs'],
-          include: ['src', 'lib'],
-          message: ['one', 'two'],
-          verbose: 2
-        },
+        { exclude: ['test', 'docs'], include: ['src', 'lib'], message: ['one', 'two'], verbose: 2 },
         { arrayFormat: 'comma', sep: 'equals' },
         {
           exclude: { arrayFormat: 'repeat', sep: 'space' },
@@ -187,12 +151,7 @@ describe('cli-kit: Normalize Utils', () => {
     });
     it('overrides defaults with options', () => {
       const res = objToFlags(
-        {
-          exclude: ['test', 'docs'],
-          include: ['src', 'lib'],
-          message: ['one', 'two'],
-          verbose: 2
-        },
+        { exclude: ['test', 'docs'], include: ['src', 'lib'], message: ['one', 'two'], verbose: 2 },
         { arrayFormat: 'repeat', sep: 'equals' }
       );
       expect(res).toEqual(

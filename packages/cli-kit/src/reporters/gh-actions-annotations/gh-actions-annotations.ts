@@ -2,21 +2,14 @@ import type { Obj } from '@toolbox-ts/utils';
 
 import path from 'node:path';
 
-import type {
-  Reporter as IReporter,
-  ReporterOptions,
-  StringifyOptions
-} from '../types.js';
+import type { Reporter as IReporter, ReporterOptions, StringifyOptions } from '../types.js';
 
 /**
  * Adapter function type to convert input items to GitHub Actions annotation messages.
  *
  * @template T - The type of the input item to be adapted.
  */
-export type Adapter<T = unknown> = (
-  item: T,
-  options?: FormatOptions
-) => Message;
+export type Adapter<T = unknown> = (item: T, options?: FormatOptions) => Message;
 
 export interface FormatOptions {
   /** The root directory of the workspace, used for relative paths in annotations. */
@@ -75,26 +68,19 @@ export class Reporter<T = Message> implements IReporter<T[]> {
 
   /** Parse GitHub Actions annotation string(s) back into Message objects */
   parseAnnotations(annotations: string | string[]): Message[] {
-    const _annotations =
-      Array.isArray(annotations) ? annotations : [annotations];
+    const _annotations = Array.isArray(annotations) ? annotations : [annotations];
 
     return _annotations.map<Message>((annotation) => {
       const parts = annotation.split('::').filter(Boolean);
-      if (parts.length < 2)
-        throw new Error(`Invalid annotation string: ${annotation}`);
+      if (parts.length < 2) throw new Error(`Invalid annotation string: ${annotation}`);
       const [typeAndFields, message] = parts;
       const [type, fieldsStr] = typeAndFields.split(' ');
-      if (!this.isNoticeType(type))
-        throw new Error(`Unknown annotation type: ${type}`);
-      const fields = fieldsStr
-        .split(',')
-        .reduce<Obj.StringRecord<string>>((acc, field) => {
-          const [key, value] = field.split('=');
-          if (key && value) {
-            acc[key] = decodeURIComponent(value);
-          }
-          return acc;
-        }, {});
+      if (!this.isNoticeType(type)) throw new Error(`Unknown annotation type: ${type}`);
+      const fields = fieldsStr.split(',').reduce<Obj.StringRecord<string>>((acc, field) => {
+        const [key, value] = field.split('=');
+        if (key && value) acc[key] = decodeURIComponent(value);
+        return acc;
+      }, {});
       return {
         type,
         message: decodeURIComponent(message),
@@ -106,10 +92,7 @@ export class Reporter<T = Message> implements IReporter<T[]> {
     });
   }
   /** Convert to GitHub Actions annotation string */
-  stringify(
-    items: T | T[],
-    { footer, header, ...rest }: StringifyOptions = {}
-  ): string {
+  stringify(items: T | T[], { footer, header, ...rest }: StringifyOptions = {}): string {
     let _items = this.format(items, rest).join('\n');
     if (header) _items = `${header}\n${_items}`;
     if (footer) _items = `${_items}\n${footer}`;
@@ -137,9 +120,7 @@ export class Reporter<T = Message> implements IReporter<T[]> {
 
     for (const item of items) {
       const msg = this.adapter(item, { workspaceRoot: wsRoot, ...rest });
-      grouped[msg.type].push(
-        this.adapter(item, { ...rest, workspaceRoot: wsRoot })
-      );
+      grouped[msg.type].push(this.adapter(item, { ...rest, workspaceRoot: wsRoot }));
     }
 
     return grouped;

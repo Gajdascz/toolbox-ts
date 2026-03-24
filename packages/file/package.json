@@ -1,54 +1,55 @@
 {
   "name": "@toolbox-ts/file",
   "version": "0.5.0",
-  "description": "Node file system utilities",
-  "license": "MIT",
-  "type": "module",
-  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/file",
   "private": false,
-  "publishConfig": {
-    "access": "public"
-  },
+  "description": "Node file system utilities",
+  "keywords": [
+    "file",
+    "filesystem",
+    "fs",
+    "node",
+    "toolbox-ts",
+    "typescript",
+    "utilities"
+  ],
+  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/file",
+  "license": "MIT",
   "author": {
     "name": "Nolan Gajdascz",
     "email": "dev.gajdascz@gmail.com",
     "url": "https://github.com/gajdascz"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gajdascz/toolbox-ts.git"
   },
   "files": [
     "dist",
     "LICENSE",
     "README.md"
   ],
-  "keywords": [
-    "typescript",
-    "file",
-    "filesystem",
-    "fs",
-    "node",
-    "toolbox-ts",
-    "utilities"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gajdascz/toolbox-ts.git"
-  },
-  "types": "./dist/index.d.ts",
+  "type": "module",
   "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     }
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
-    "comment-json": "^4.5.1",
+    "@toolbox-ts/constants": "workspace:^",
+    "@toolbox-ts/types": "workspace:^",
+    "@toolbox-ts/utils": "workspace:^",
+    "comment-json": "^4.6.2",
     "fast-glob": "^3.3.3",
     "jiti": "^2.6.1",
-    "yaml": "^2.8.2",
-    "@toolbox-ts/utils": "workspace:^"
+    "yaml": "^2.8.3"
   },
   "devDependencies": {
-    "@toolbox-ts/test-utils": "workspace:^",
-    "@toolbox-ts/types": "workspace:^"
+    "@toolbox-ts/test-utils": "workspace:^"
   }
 }

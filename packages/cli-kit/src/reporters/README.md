@@ -2,17 +2,18 @@
 
 `Reporters` provide a consistent way to format domain-specific data for CLI and CI/CD output.
 
-This package includes a reporter interface and a GitHub Actions Annotations reporter, driven by **adapters** you supply.
+This package includes a reporter interface and a GitHub Actions Annotations reporter, driven by
+**adapters** you supply.
 
 ---
 
 ## 🔑 Features
 
-* **Adapter-driven**: map your own data structures into annotations.
-* **Multiple output formats**: raw strings, JSON, or grouped objects.
-* **Customizable string output**: headers and footers for grouping logs.
-* **Workspace-aware paths**: supports `workspaceRoot` or `GITHUB_WORKSPACE`.
-* **Round-trip capable**: parse annotation strings back into objects.
+- **Adapter-driven**: map your own data structures into annotations.
+- **Multiple output formats**: raw strings, JSON, or grouped objects.
+- **Customizable string output**: headers and footers for grouping logs.
+- **Workspace-aware paths**: supports `workspaceRoot` or `GITHUB_WORKSPACE`.
+- **Round-trip capable**: parse annotation strings back into objects.
 
 ---
 
@@ -41,9 +42,9 @@ This package includes a reporter interface and a GitHub Actions Annotations repo
 
 **Notes:**
 
-* All reporters extend `Reporter<T>` and must implement `stringify`.
-* `toJson` and `toObject` are optional but recommended for structured output.
-* `ReporterOptions.workspaceRoot` ensures file paths resolve consistently in mono-repos or CI.
+- All reporters extend `Reporter<T>` and must implement `stringify`.
+- `toJson` and `toObject` are optional but recommended for structured output.
+- `ReporterOptions.workspaceRoot` ensures file paths resolve consistently in mono-repos or CI.
 
 ---
 
@@ -146,8 +147,10 @@ const parsed = reporter.parseAnnotations([
 
 ## 🧪 Extending
 
-* Write **custom adapters** to reuse the GitHub reporter for linters, type checkers, or test failures.
-* Build new reporters by following `src/reporters/types.ts`, implementing `stringify`, and optionally `toJson`/`toObject`.
+- Write **custom adapters** to reuse the GitHub reporter for linters, type checkers, or test
+  failures.
+- Build new reporters by following `src/reporters/types.ts`, implementing `stringify`, and
+  optionally `toJson`/`toObject`.
 
 ---
 
@@ -155,7 +158,6 @@ const parsed = reporter.parseAnnotations([
 
 MIT – © 2025 [Nolan Gajdascz](https://github.com/gajdascz)
 
-* @toolbox-ts
-
-  * [NPM](https://www.npmjs.com/org/toolbox-ts)
-  * [GitHub](https://github.com/toolbox-ts/toolbox-ts)
+- @toolbox-ts
+  - [NPM](https://www.npmjs.com/org/toolbox-ts)
+  - [GitHub](https://github.com/toolbox-ts/toolbox-ts)

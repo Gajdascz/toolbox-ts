@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`configs/runtime/lint-staged > toFileEntry should produce correct file entry 1`] = `
+{
+  "lint-staged.config.ts": "import { lint-staged } from '@toolbox-ts/configs/runtime';
+
+export default lint-staged.define({
+  "srcFilesCmds": [
+    "eslint --fix",
+    "prettier --write"
+  ],
+  "dataFilesCmds": [
+    "prettier --write"
+  ]
+});",
+}
+`;

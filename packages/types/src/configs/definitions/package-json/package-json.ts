@@ -1,7 +1,11 @@
+import type { Person } from '../../../general.js';
+
 /** @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json} */
-export interface Config {
+export type Config<D extends Record<string, unknown> = Record<string, unknown>> = {
   /**
    * A link to the JSON schema for validating the package.json file.
+   *
+   * @default "https://json.schemastore.org/package"
    */
   $schema?: string;
   /**
@@ -11,9 +15,11 @@ export interface Config {
    * - an object with `email`, `name`, and `url` properties.
    * - a string in the format "Name <email> (url)".
    *
+   * @default void
+   *
    * @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json#people-fields-author-contributors}
    */
-  author?: { email: string; name: string; url: string };
+  author?: Person;
   /**
    * A map of command-line interface (CLI) commands
    * that can be run from the package.
@@ -106,17 +112,14 @@ export interface Config {
   /**
    * Packages that this package depends on.
    * - Key: package name, Value: version range.
-   * @default
-   * ```
-   * {}
-   * ```
+   * @default {}
    * @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json#dependencies}
    */
   dependencies?: Record<string, string>;
   /**
    * Listed in npm search for package discovery.
    *
-   * @default []
+   * @default ""
    *
    * @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json#description-1}
    */
@@ -124,10 +127,7 @@ export interface Config {
   /**
    * Packages that are only needed for development.
    * - Key: package name, Value: version range.
-   * @default
-   * ```
-   * {}
-   * ```
+   * @default {}
    * @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json#devdependencies}
    */
   devDependencies?: Record<string, string>;
@@ -169,10 +169,7 @@ export interface Config {
    * - Modern alternative to main and types fields.
    * - Allows specifying different entry points for different module systems.
    *
-   * @default
-   * ```
-   * {}
-   * ```
+   * @default {}
    *
    * @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json#exports}
    *
@@ -188,10 +185,7 @@ export interface Config {
    * }
    * ```
    */
-  exports?: Record<
-    string,
-    { [key: string]: string } & { import: string; types?: string }
-  >;
+  exports?: Record<string, { [key: string]: string } & { import: string; types?: string }>;
   /**
    * Files included in the package when published and
    * installed as a dependency.
@@ -211,6 +205,8 @@ export interface Config {
   funding?: (Funding | string)[] | Funding | string;
   /**
    * The URL of the package's homepage.
+   *
+   * @default void
    *
    * @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json#homepage}
    */
@@ -270,7 +266,7 @@ export interface Config {
    * @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json#name}
    * @see {@link https://docs.npmjs.com/cli/v11/using-npm/scope}
    */
-  name?: { package: string; scope?: `@${string}` } | string;
+  name?: string;
   /**
    * Packages that are optional dependencies.
    * - If an optional dependency fails to install, it does not cause the installation to fail.
@@ -341,10 +337,7 @@ export interface Config {
    *
    * @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json#peerdependenciesmeta}
    */
-  peerDependenciesMeta?: Record<
-    string,
-    { [key: string]: unknown } & { optional?: boolean }
-  >;
+  peerDependenciesMeta?: Record<string, { [key: string]: unknown } & { optional?: boolean }>;
   /**
    * If true, the package is private and cannot be published.
    *
@@ -366,16 +359,15 @@ export interface Config {
   /**
    * The URL of the repository where the package is hosted.
    *
+   * @default void
+   *
    * @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json#repository}
    */
   repository?: { directory?: string; type: 'git'; url: string } | string;
   /**
    * Script commands that can be run using npm run <script>.
    *
-   * @default
-   * ```
-   * {}
-   * ```
+   * @default {}
    *
    * @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json#scripts}
    */
@@ -409,7 +401,7 @@ export interface Config {
    * @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json#version}
    */
   version?: string;
-}
+} & D;
 
 /** @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json#devengines} */
 export interface DevEngineEntry {
@@ -422,13 +414,5 @@ export interface Funding {
   /** The type of funding source (e.g., "individual", "organization", "patreon"). */
   type?: string;
   /** The URL of the funding page. */
-  url: string;
-}
-export interface Person {
-  /** The person's email address. */
-  email: string;
-  /** The person's name. */
-  name: string;
-  /** The URL of the person's homepage or profile. */
   url: string;
 }

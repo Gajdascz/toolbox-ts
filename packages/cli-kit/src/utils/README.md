@@ -6,22 +6,19 @@
 
 ## 🔑 Features
 
-* **Process helpers**
+- **Process helpers**
+  - Async: `spawn`, `chain`
+  - Sync: `spawnSync`
+  - Consistent error normalization via `resolveError`.
 
-  * Async: `spawn`, `chain`
-  * Sync: `spawnSync`
-  * Consistent error normalization via `resolveError`.
+- **Flag utilities**
+  - `kebabToFlagEntry`, `toFlag` for string transformations.
+  - `flagMeta` for generating Oclif-friendly flag definitions.
+  - `flagArgs` + `objToFlags` for structured → CLI flag conversion.
 
-* **Flag utilities**
-
-  * `kebabToFlagEntry`, `toFlag` for string transformations.
-  * `flagMeta` for generating Oclif-friendly flag definitions.
-  * `flagArgs` + `objToFlags` for structured → CLI flag conversion.
-
-* **Command input normalization**
-
-  * `commandInput` and `getCommandInputWrapper` handle multiple input formats.
-  * Prepend/wrap executables (`git`, `npx`, `docker exec`, etc.).
+- **Command input normalization**
+  - `commandInput` and `getCommandInputWrapper` handle multiple input formats.
+  - Prepend/wrap executables (`git`, `npx`, `docker exec`, etc.).
 
 ---
 
@@ -30,7 +27,7 @@
 ### Process
 
 | Method                     | Description                                                        |
-|----------------------------|--------------------------------------------------------------------|
+| -------------------------- | ------------------------------------------------------------------ |
 | `resolveError(err)`        | Normalize `ExecaError`, `ExecaSyncError`, or unknown into `Error`. |
 | `spawn(cmd, opts?)`        | Run a command asynchronously via `execa`.                          |
 | `spawnSync(cmd, opts?)`    | Run a command synchronously via `execaSync`.                       |
@@ -41,7 +38,7 @@
 ### Flags
 
 | Method / Type                       | Description                                                            |
-|-------------------------------------|------------------------------------------------------------------------|
+| ----------------------------------- | ---------------------------------------------------------------------- |
 | `kebabToFlagEntry(key)`             | Returns `[camelCase, '--kebab-case']`.                                 |
 | `toFlag(key)`                       | Converts camelCase → `--kebab-case`.                                   |
 | `flagMeta(name, desc, opts?)`       | Generates metadata (`description`, `aliases`, `helpLabel`).            |
@@ -54,7 +51,7 @@
 ### Command Input
 
 | Method                        | Description                                                         |
-|-------------------------------|---------------------------------------------------------------------|
+| ----------------------------- | ------------------------------------------------------------------- |
 | `commandInput(cmd)`           | Normalize string/tuple/array input into `[executable, args[]]`.     |
 | `getCommandInputWrapper(cmd)` | Returns a function that prepends a command (e.g., wrap with `git`). |
 
@@ -75,11 +72,7 @@ try {
 }
 
 // Pipeline
-const out = await chain([
-  'echo "Hello World"',
-  'grep Hello',
-  ['awk', ['{print $2}']]
-]);
+const out = await chain(['echo "Hello World"', 'grep Hello', ['awk', ['{print $2}']]]);
 
 console.log(out.stdout); // "World"
 ```
@@ -95,14 +88,12 @@ import { toFlag, flagMeta, objToFlags, flagArgs } from '@toolbox-ts/cli-kit/util
 console.log(toFlag('someFlag')); // '--some-flag'
 
 // Generate Oclif metadata
-const verboseFlag = flagMeta('verbose', 'print verbose output', {
-  char: 'v'
-});
+const verboseFlag = flagMeta('verbose', 'print verbose output', { char: 'v' });
 // { name: 'verbose', description: 'Print verbose output.', aliases: [], char:'v', helpLabel:'--verbose' }
 
 // Object → CLI flags
 const spec = { tags: { arrayFormat: 'repeat', sep: 'space' } };
-const args = objToFlags({ verbose: true, timeout: 30, tags: ['a','b'] }, {}, spec);
+const args = objToFlags({ verbose: true, timeout: 30, tags: ['a', 'b'] }, {}, spec);
 // ["--verbose", "--timeout", "30", "--tags", "a", "--tags", "b"]
 
 // Normalize raw flag input

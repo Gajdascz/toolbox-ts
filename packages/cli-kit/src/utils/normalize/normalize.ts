@@ -29,8 +29,7 @@ export const commandInput = (cmd: CommandInput): CommandTuple => {
     return [executable, args];
   }
   if (Array.isArray(cmd)) {
-    if (typeof cmd[0] === 'string' && Array.isArray(cmd[1]))
-      return [cmd[0], cmd[1]];
+    if (typeof cmd[0] === 'string' && Array.isArray(cmd[1])) return [cmd[0], cmd[1]];
     return [cmd[0], cmd.slice(1) as string[]];
   }
   throw new TypeError(
@@ -59,8 +58,7 @@ export const commandInput = (cmd: CommandInput): CommandTuple => {
  */
 export const getCommandInputWrapper = (cmd: string) => {
   const [wrappedExecutable, ...wrappedArgs] = parseCommandString(cmd);
-  if (!wrappedExecutable)
-    throw new TypeError(`Invalid command string: "${cmd}"`);
+  if (!wrappedExecutable) throw new TypeError(`Invalid command string: "${cmd}"`);
   return (input: CommandInput): CommandTuple => {
     const [executable, args] = commandInput(input);
     return [wrappedExecutable, [...wrappedArgs, executable, ...args]];
@@ -70,9 +68,7 @@ export const getCommandInputWrapper = (cmd: string) => {
 /**
  * Maps object keys to @see {@link ObjToFlagSpec} options for use with `objToFlags`.
  */
-export type FlagSpecToObjArgMap<T> = Partial<
-  Obj.MapIndexable<T, ObjToFlagSpec>
->;
+export type FlagSpecToObjArgMap<T> = Partial<Obj.MapIndexable<T, ObjToFlagSpec>>;
 /**
  * Infers the argument type for `objToFlags` based on the provided flag specifications.
  * - Converts array types to string arrays if `arrayFormat` is specified in the spec.
@@ -80,9 +76,9 @@ export type FlagSpecToObjArgMap<T> = Partial<
 export type InferObjToFlagArg<T> = {
   [K in keyof T as keyof Obj.ToIndexable<T>]?: NonNullish<
     FlagSpecToObjArgMap<T>[K]
-  >['arrayFormat'] extends string ?
-    string[]
-  : T[keyof T];
+  >['arrayFormat'] extends string
+    ? string[]
+    : T[keyof T];
 };
 /**
  * Type definition to define how to handle specific object keys when converting
@@ -140,10 +136,7 @@ export interface ObjToFlagSpec {
  *   }
  *```
  */
-export const flagArgs = <T>(
-  flags: T,
-  specs: FlagSpecToObjArgMap<T>
-): InferObjToFlagArg<T> =>
+export const flagArgs = <T>(flags: T, specs: FlagSpecToObjArgMap<T>): InferObjToFlagArg<T> =>
   Obj.reduce<T>(
     flags,
     (acc, value, key) => {
@@ -154,8 +147,7 @@ export const flagArgs = <T>(
       }
       if (spec.arrayFormat) {
         if (Array.isArray(value)) acc[key] = value;
-        else if (typeof value === 'string')
-          acc[key] = Str.Normalize.array(value.split(','));
+        else if (typeof value === 'string') acc[key] = Str.Normalize.array(value.split(','));
         else acc[key] = [String(value)];
       } else acc[key] = value;
       return acc;
@@ -163,12 +155,7 @@ export const flagArgs = <T>(
     {}
   ) as InferObjToFlagArg<T>;
 
-const pushWithSep = (
-  v: unknown,
-  sep: 'equals' | 'space',
-  flag: string,
-  acc: string[]
-) => {
+const pushWithSep = (v: unknown, sep: 'equals' | 'space', flag: string, acc: string[]) => {
   if (sep === 'equals') acc.push(`${flag}=${String(v)}`);
   else acc.push(flag, String(v));
   return acc;
@@ -235,8 +222,7 @@ export const objToFlags = <T>(
           if (arrayFormat === 'repeat') {
             for (const item of value) acc = pushWithSep(item, sep, flag, acc);
           } else {
-            const joined =
-              arrayFormat === 'json' ? JSON.stringify(value) : value.join(',');
+            const joined = arrayFormat === 'json' ? JSON.stringify(value) : value.join(',');
             acc = pushWithSep(joined, sep, flag, acc);
           }
         } else acc = pushWithSep(value, sep, flag, acc);

@@ -1,7 +1,7 @@
 import { INTERVALS } from '../../../../core/constants/nums.js';
 export {
   assertIsNumberInUnitIntervalRange as assert,
-  isNumberInUnitIntervalRange as is
+  checkIsNumberInUnitIntervalRange as check
 } from '../../../../core/guards/primitives/number/index.js';
 
 export const unit = INTERVALS.unit;
@@ -37,8 +37,7 @@ export const parse = (value: `${number}` | number): number => {
  * clamp(1.1) // 1
  * ```
  */
-export const clamp = (value: number): number =>
-  Math.min(unit[1], Math.max(unit[0], value));
+export const clamp = (value: number): number => Math.min(unit[1], Math.max(unit[0], value));
 
 /** Options for operations for a value within a range. */
 export interface OperationOpts {

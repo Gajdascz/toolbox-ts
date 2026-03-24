@@ -524,9 +524,7 @@ describe('Key types', () => {
       }
       type Result = Key.Unique<A, B>;
 
-      expectTypeOf<Result>().toEqualTypeOf<
-        'uniqueA1' | 'uniqueA2' | 'uniqueB1' | 'uniqueB2'
-      >();
+      expectTypeOf<Result>().toEqualTypeOf<'uniqueA1' | 'uniqueA2' | 'uniqueB1' | 'uniqueB2'>();
     });
   });
   //#endregion

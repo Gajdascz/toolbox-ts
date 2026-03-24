@@ -2,7 +2,7 @@ import { describe, expect, expectTypeOf, it, vi } from 'vitest';
 
 import { clone, cloneDeep, cloneShallow } from './clone.ts';
 
-describe('clone', () => {
+describe('Obj clone', () => {
   describe('cloneShallow', () => {
     it('should create copy of a simple object', () => {
       const original = { a: 1, b: 2, c: 3 };
@@ -12,16 +12,10 @@ describe('clone', () => {
       expect(result).not.toBe(original);
     });
     it('should preserve object structure', () => {
-      const original = Object.create(null, {
-        a: { value: 1, writable: false }
-      });
-      const result = cloneShallow(original, {
-        preservePlainObjectStructure: true
-      });
+      const original = Object.create(null, { a: { value: 1, writable: false } });
+      const result = cloneShallow(original, { preservePlainObjectStructure: true });
       expect(Object.getPrototypeOf(result)).toBe(null);
-      expect(Object.getOwnPropertyDescriptor(result, 'a')?.writable).toBe(
-        false
-      );
+      expect(Object.getOwnPropertyDescriptor(result, 'a')?.writable).toBe(false);
     });
 
     it('should handle objects with various value types', () => {
@@ -275,10 +269,7 @@ describe('clone', () => {
       const original = { a: 1, nested: { b: 'test' } };
       const result = cloneDeep(original);
 
-      expectTypeOf(result).toEqualTypeOf<{
-        a: number;
-        nested: { b: string };
-      }>();
+      expectTypeOf(result).toEqualTypeOf<{ a: number; nested: { b: string } }>();
     });
     it('should return the original value as-is if it is not a plain object', () => {
       // eslint-disable-next-line @typescript-eslint/no-extraneous-class
@@ -286,18 +277,29 @@ describe('clone', () => {
       const result = cloneDeep(original);
       expect(result).toBe(original);
     });
+    it('should preserve accessors', () => {
+      const original = {
+        _number: 42,
+        get number() {
+          return this._number;
+        },
+        set number(value: number) {
+          this._number = value;
+        }
+      };
+      const result = cloneDeep(original);
+      expect(result.number).toBe(42);
+      result.number = 100;
+      expect(result.number).toBe(100);
+      expect(original.number).toBe(42);
+    });
   });
   describe('structured', () => {
     it('should clone using structuredClone', () => {
       vi.spyOn(globalThis, 'structuredClone');
       const original = { a: 1, nested: { b: 'test' } };
-      clone(original, {
-        strategy: 'structured',
-        structuredSerializeOptions: { transfer: [] }
-      });
-      expect(globalThis.structuredClone).toHaveBeenCalledWith(original, {
-        transfer: []
-      });
+      clone(original, { strategy: 'structured', structuredSerializeOptions: { transfer: [] } });
+      expect(globalThis.structuredClone).toHaveBeenCalledWith(original, { transfer: [] });
     });
   });
   describe('clone', () => {
@@ -318,28 +320,21 @@ describe('clone', () => {
     it('should use structured clone when strategy is structured', () => {
       const original = { a: 1, nested: { b: 'test' } };
       vi.spyOn(globalThis, 'structuredClone');
-      const result = clone(original, {
-        strategy: 'structured',
-        structuredSerializeOptions: { transfer: [] }
-      });
-      expect(globalThis.structuredClone).toHaveBeenCalledWith(original, {
-        transfer: []
-      });
+      clone(original, { strategy: 'structured', structuredSerializeOptions: { transfer: [] } });
+      expect(globalThis.structuredClone).toHaveBeenCalledWith(original, { transfer: [] });
     });
     it('should throw when an unknown strategy is provided', () => {
       const original = { a: 1, nested: { b: 'test' } };
       expect(() => clone(original, { strategy: 'unknown' as any })).toThrow();
     });
     it('should use custom clone function when available', () => {
+      const _clone = vi.fn((_value: any) => new MyClass());
       class MyClass {
-        public clone() {
-          return new MyClass();
-        }
+        static clone = _clone;
       }
-      vi.spyOn(MyClass.prototype, 'clone');
       const original = new MyClass();
       expect(clone(original)).toBeInstanceOf(MyClass);
-      expect(MyClass.prototype.clone).toHaveBeenCalled();
+      expect(_clone).toHaveBeenCalled();
     });
   });
 
@@ -348,9 +343,7 @@ describe('clone', () => {
       const original = Object.create(null);
       const result = clone(original);
       expect(result).toEqual(original);
-      expect(Object.getPrototypeOf(result)).toBe(
-        Object.getPrototypeOf(original)
-      );
+      expect(Object.getPrototypeOf(result)).toBe(Object.getPrototypeOf(original));
     });
 
     it('should preserve property descriptors in shallow clone', () => {
@@ -366,9 +359,7 @@ describe('clone', () => {
         writable: false
       });
 
-      const result = cloneShallow(original, {
-        preservePlainObjectStructure: true
-      });
+      const result = cloneShallow(original, { preservePlainObjectStructure: true });
 
       const hiddenDesc = Object.getOwnPropertyDescriptor(result, 'hidden');
       const visibleDesc = Object.getOwnPropertyDescriptor(result, 'visible');
@@ -399,9 +390,7 @@ describe('clone', () => {
     });
 
     it('should handle deeply nested structures at depth limit', () => {
-      const original = {
-        l1: { l2: { l3: { l4: { l5: { value: 'deep' } } } } }
-      };
+      const original = { l1: { l2: { l3: { l4: { l5: { value: 'deep' } } } } } };
 
       const result = cloneDeep(original, { maxDepth: 3 });
 
@@ -412,9 +401,7 @@ describe('clone', () => {
     });
 
     it('should handle mixed object and array nesting', () => {
-      const original = {
-        arr: [{ obj: { val: 1 } }, [1, 2, { nested: true }]] as const
-      };
+      const original = { arr: [{ obj: { val: 1 } }, [1, 2, { nested: true }]] as const };
 
       const result = cloneDeep(original, { maxDepth: 3 });
 
@@ -447,7 +434,7 @@ describe('clone', () => {
       const original = {
         a: 1,
         clone() {
-          return { a: this.a };
+          return { a: original.a };
         }
       };
 

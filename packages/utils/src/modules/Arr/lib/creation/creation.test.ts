@@ -1,24 +1,24 @@
 import { describe, expect, it } from 'vitest';
 
-import { from, range, to } from './creation.ts';
+import { from, range, ensure } from './creation.ts';
 
 const numArr1 = [1, 2, 3, 4, 5];
 
-describe('Creation', () => {
+describe('Array Creation', () => {
   describe('to', () => {
     it('converts array-like to array', () => {
-      expect(to(numArr1)).toEqual(numArr1);
-      expect(to('abc')).toEqual(['abc']);
-      expect(to(new Set([1, 2, 3]))).toEqual([new Set([1, 2, 3])]);
+      expect(ensure(numArr1)).toEqual(numArr1);
+      expect(ensure('abc')).toEqual(['abc']);
+      expect(ensure(new Set([1, 2, 3]))).toEqual([new Set([1, 2, 3])]);
     });
     it('wraps non-array-like in array', () => {
-      expect(to(42)).toEqual([42]);
-      expect(to(null)).toEqual([]);
-      expect(to(undefined)).toEqual([]);
-      expect(to({})).toEqual([{}]);
+      expect(ensure(42)).toEqual([42]);
+      expect(ensure(null)).toEqual([]);
+      expect(ensure(undefined)).toEqual([]);
+      expect(ensure({})).toEqual([{}]);
     });
     it('allows null if requested', () => {
-      expect(to(null, true)).toEqual([null]);
+      expect(ensure(null, true)).toEqual([null]);
     });
   });
   describe('range', () => {

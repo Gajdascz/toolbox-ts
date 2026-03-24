@@ -21,8 +21,7 @@ runGuardSuites(
     check: checkIsStringTruthy,
     validValues: TRUTHY_VALUES,
     invalidValues: FALSY_VALUES,
-    assertType:
-      expectTypeOf(assertIsStringTruthy).asserts.toEqualTypeOf<Truthy>(),
+    assertType: expectTypeOf(assertIsStringTruthy).asserts.toEqualTypeOf<Truthy>(),
     expectType: expectTypeOf(isStringTruthy).guards.toEqualTypeOf<Truthy>()
   },
   {
@@ -31,8 +30,7 @@ runGuardSuites(
     check: checkIsStringFalsy,
     validValues: FALSY_VALUES,
     invalidValues: TRUTHY_VALUES,
-    assertType:
-      expectTypeOf(assertIsStringFalsy).asserts.toEqualTypeOf<Falsy>(),
+    assertType: expectTypeOf(assertIsStringFalsy).asserts.toEqualTypeOf<Falsy>(),
     expectType: expectTypeOf(isStringFalsy).guards.toEqualTypeOf<Falsy>()
   }
 );

@@ -14,13 +14,7 @@ type NthLastOfType = `:nth-last-of-type(${string})`;
 /** https://drafts.csswg.org/selectors/#nth-of-type-pseudo */
 type NthOfType = `:nth-of-type(${string})`;
 //#endregion
-type Functional =
-  | Dir
-  | Lang
-  | NthChild
-  | NthLastChild
-  | NthLastOfType
-  | NthOfType;
+type Functional = Dir | Lang | NthChild | NthLastChild | NthLastOfType | NthOfType;
 //#endregion
 
 //#region> Basic
@@ -37,13 +31,7 @@ type UserValid = ':user-valid';
  * https://drafts.csswg.org/selectors/#link
  */
 type Link = ':link';
-type LinkAll =
-  | Link
-  | LinkAny
-  | LinkLocal
-  | LinkTarget
-  | LinkTargetWithin
-  | LinkVisited;
+type LinkAll = Link | LinkAny | LinkLocal | LinkTarget | LinkTargetWithin | LinkVisited;
 /**
  * Targets all hyperlinks
  * https://drafts.csswg.org/selectors/#the-any-link-pseudo

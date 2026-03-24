@@ -11,7 +11,7 @@ const nestedArr = [
 ];
 const emptyArr: number[] = [];
 
-describe('clone', () => {
+describe('Array Clone', () => {
   it('creates shallow copy of array', () => {
     const cloned = clone(numArr);
     expect(cloned).toEqual(numArr);

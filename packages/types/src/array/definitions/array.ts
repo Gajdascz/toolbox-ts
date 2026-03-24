@@ -1,15 +1,18 @@
 import type { Falsy, Nullish } from '../../general.js';
+import type { Simplify } from '../../object/definitions/general.js';
 
 //#region> Base
 export type Arr<T = unknown> = Immutable<T> | Mutable<T>;
 export type Element<T extends Arr> = T[number] | undefined;
 export type ElementNotUndefined<T extends Arr> = Exclude<T[number], undefined>;
 export type Entries<T extends Arr> = [number, ElementNotUndefined<T>][];
-export type From<T> =
-  T extends undefined ? []
-  : T extends unknown[] ? ElementNotUndefined<T>[]
-  : T extends readonly unknown[] ? readonly ElementNotUndefined<T>[]
-  : T[];
+export type From<T> = T extends undefined
+  ? []
+  : T extends unknown[]
+    ? ElementNotUndefined<T>[]
+    : T extends readonly unknown[]
+      ? readonly ElementNotUndefined<T>[]
+      : T[];
 export type Immutable<T = unknown> = readonly T[];
 export type Mutable<T = unknown> = T[];
 //#endregion
@@ -42,13 +45,10 @@ export type Group<T extends Arr, K extends number | string | symbol> = Record<
   K,
   ElementNotUndefined<T>[]
 >;
-export type Merge<T extends Arr, U extends Arr | Arr<Arr>> =
-  U extends Arr<Arr> ? (T[number] | U[number][number])[]
-  : (T[number] | U[number])[];
-export type Split<T extends Arr> = [
-  ElementNotUndefined<T>[],
-  ElementNotUndefined<T>[]
-];
+export type Merged<T extends Arr, U extends Arr | Arr<Arr>> = Simplify<
+  U extends Arr<Arr> ? (T[number] | U[number][number])[] : (T[number] | U[number])[]
+>;
+export type Split<T extends Arr> = [ElementNotUndefined<T>[], ElementNotUndefined<T>[]];
 //#endregion
 
 //#region> With

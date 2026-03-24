@@ -2,20 +2,19 @@ import type {
   DepthReadonly,
   Descriptor,
   Entries,
+  FromEntries,
   InferPrototype,
   Key,
   Keys,
+  StringRecord,
   SymbolEntry,
   Symbols,
   Values
 } from '@toolbox-ts/types/defs/object';
 
-import {
-  assertIsObjectPlain,
-  isObject,
-  isObjectPlain
-} from '../../../../core/guards/objs/base/index.js';
-//#region> Base with assertions
+import { assertIsObject, isObject, isObjectAny } from '../../../../core/guards/objs/base/index.js';
+
+//#region> Indexes
 /**
  * Returns all own enumerable string keys of a plain-object as a typed array.
  *
@@ -35,49 +34,31 @@ import {
  * ```
  */
 export const keys = <const T>(obj: T): Keys<T> => {
-  assertIsObjectPlain(obj);
+  assertIsObject(obj);
   return Object.keys(obj) as Keys<T>;
 };
-
 /**
- * Returns all entries (own enumerable string-keyed-value pairs) of a plain-object as a typed array.
+ * Returns an array of all own property names of an object.
+ * - Includes non-enumerable properties
+ * - Excludes symbol properties and items on the prototype chain
+ * - Coerces the input to an object
  *
- * @template T - Plain Object (\{\}) type
- * @throws `TypeError` If the input is not an object
+ * @param o - The object from which to retrieve the property names.
  *
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries}
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertyNames}
  *
  * @example
  * ```ts
- * const obj = { a: 1, b: 2, 0: 3 };
- * const entriesArray = entries(obj); // type: (['a', 1] | ['b', 2] | ['0', 3])[]
- * console.log(entriesArray); // Output: [['a', 1], ['b', 2], ['0', 3]]
+ * const obj = Object.create({ thisIsAPrototype: true }, {
+ *   prop1: { value: 42, enumerable: true },
+ *   prop2: { value: 'hello', enumerable: false },
+ *   [Symbol('sym')]: { value: 'symbol', enumerable: true },
+ * });
+ * console.log(Object.getOwnPropertyNames(obj)); // ['prop1', 'prop2']
+ * // Note: 'thisIsAPrototype' and the symbol property are not included
  * ```
  */
-export const entries = <const T>(obj: T): Entries<T> => {
-  assertIsObjectPlain(obj);
-  return Object.entries(obj) as Entries<T>;
-};
-/**
- * Returns all values of an object's own enumerable string-keyed properties as a typed array.
- *
- * @template T - Plain Object (\{\}) type
- * @throws `TypeError` If the input is not an object
- *
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/values}
- *
- * @example
- * ```ts
- * const obj = { a: 1, b: 2, 0: 3 };
- * const valuesArray = values(obj); // type: (1 | 2 | 3)[]
- * console.log(valuesArray); // Output: [1, 2, 3]
- * ```
- *
- */
-export const values = <const T>(obj: T): Values<T> => {
-  assertIsObjectPlain(obj);
-  return Object.values(obj) as Values<T>;
-};
+export const propertyNames = Object.getOwnPropertyNames as <const T>(obj: T) => Key.String<T>[];
 /**
  * Returns an array of all symbol properties found directly on object o.
  * - Excludes symbols from the prototype chain
@@ -101,10 +82,70 @@ export const values = <const T>(obj: T): Values<T> => {
  * // Note: 'protoSym' is not included since it's from the prototype
  * ```
  */
-export const symbols = Object.getOwnPropertySymbols as <const T>(
-  obj: T
-) => Symbols<T>;
+export const symbols = Object.getOwnPropertySymbols as <const T>(obj: T) => Symbols<T>;
+//#endregion
 
+//#region> Values
+/**
+ * Returns all values of an object's own enumerable string-keyed properties as a typed array.
+ *
+ * @template T - Plain Object (\{\}) type
+ * @throws `TypeError` If the input is not an object
+ *
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/values}
+ *
+ * @example
+ * ```ts
+ * const obj = { a: 1, b: 2, 0: 3 };
+ * const valuesArray = values(obj); // type: (1 | 2 | 3)[]
+ * console.log(valuesArray); // Output: [1, 2, 3]
+ * ```
+ *
+ */
+export const values = <const T>(obj: T): Values<T> => {
+  assertIsObject(obj);
+  return Object.values(obj) as Values<T>;
+};
+/**
+ * Returns all values of an object's own symbol properties as a typed array.
+ *
+ * @param obj - The object from which to retrieve the symbol values.
+ * @returns An array of symbol property values.
+ * @example
+ * ```ts
+ * const sym1 = Symbol('sym1');
+ * const sym2 = Symbol('sym2');
+ * const obj = {
+ *  [sym1]: 'value1',
+ *  [sym2]: 'value2'
+ * };
+ * console.log(symbolValues(obj)); // ['value1', 'value2']
+ * ```
+ */
+export const symbolValues = <const T>(obj: T): T[Key.Symbol<T>][] =>
+  symbols(obj).map((sym) => obj[sym]);
+//#endregion
+
+//#region> Entries
+/**
+ * Returns all entries (own enumerable string-keyed-value pairs) of a plain-object as a typed array.
+ *
+ * @template T - Plain Object (\{\}) type
+ * @throws `TypeError` If the input is not an object
+ *
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries}
+ *
+ * @example
+ * ```ts
+ * const obj = { a: 1, b: 2, 0: 3 };
+ * const entriesArray = entries(obj); // type: (['a', 1] | ['b', 2] | ['0', 3])[]
+ * console.log(entriesArray); // Output: [['a', 1], ['b', 2], ['0', 3]]
+ * ```
+ */
+export const entries = <const T>(obj: T): Entries<T> => {
+  assertIsObject(obj);
+  return Object.entries(obj) as Entries<T>;
+};
 /**
  * Returns an array of [symbol, value] pairs for all own symbol properties of the given object.
  *
@@ -124,7 +165,6 @@ export const symbols = Object.getOwnPropertySymbols as <const T>(
  */
 export const symbolEntries = <const T>(obj: T): SymbolEntry<T>[] =>
   symbols(obj).map((sym) => [sym, obj[sym]]);
-
 /**
  * Returns all enumerable entries of a plain object + all symbol entries.
  *
@@ -143,16 +183,39 @@ export const symbolEntries = <const T>(obj: T): SymbolEntry<T>[] =>
  * console.log(allEntries(obj)); // [ ['a', 1], ['b', 2], [Symbol(sym1), 'value1'], [Symbol(sym2), 'value2'] ]
  * ```
  */
-export const allEntries = <const T>(
+export const allEnumerableEntries = <const T>(
   obj: T
 ): [Key.String<T> | Key.Symbol<T>, T[keyof T]][] =>
-  [...entries(obj), ...symbolEntries(obj)] as [
-    Key.String<T> | Key.Symbol<T>,
-    T[keyof T]
-  ][];
+  [...entries(obj), ...symbolEntries(obj)] as [Key.String<T> | Key.Symbol<T>, T[keyof T]][];
+/**
+ * Returns all own enumerable + non-enumerable entries of an object, including symbol properties.
+ *
+ * @template T - Object type
+ * @param obj - The object from which to retrieve all entries.
+ * @returns An array of [key, value] pairs for all own properties (string and symbol) of the object.
+ * @throws `TypeError` If the input is not an object
+ * @example
+ * ```ts
+ * const sym1 = Symbol('sym1');
+ * const sym2 = Symbol('sym2');
+ * const obj = Object.create({}, {
+ *  a: { value: 1, enumerable: true },
+ *  b: { value: 2, enumerable: false },
+ * [sym1]: { value: 'value1', enumerable: true },
+ * [sym2]: { value: 'value2', enumerable: false }
+ * });
+ * console.log(allEntries(obj));
+ * // Output: [ ['a', 1], ['b', 2], [Symbol(sym1), 'value1'], [Symbol(sym2), 'value2'] ]
+ */
+export const allEntries = <const T>(obj: T): { [K in keyof T]: [K, T[K]] }[keyof T][] => {
+  assertIsObject(obj);
+  return [...propertyNames(obj), ...symbols(obj)].map((i) => [i, obj[i]]) as {
+    [K in keyof T]: [K, T[K]];
+  }[keyof T][];
+};
 //#endregion
 
-//#region> Documented Aliases
+//#region> Descriptors
 /**
  * Gets the own property descriptor of the specified object. An own property descriptor is one that is defined directly on the object and is not inherited from the object's prototype.
  *
@@ -169,36 +232,21 @@ export const allEntries = <const T>(
  * // Output: { value: 1, writable: true, enumerable: true, configurable: true }
  * ```
  */
-export const descriptors = Object.getOwnPropertyDescriptor;
+export const descriptors = Object.getOwnPropertyDescriptors;
 /**
  * Returns an object containing all own property descriptor of an object
  *
  * @param o - Object that contains the properties and methods. This can be an object that you created or an existing Document Object Model (DOM) object.
  */
 export const descriptor = Object.getOwnPropertyDescriptor;
-/**
- * Returns an array of all own property names of an object.
- * - Includes non-enumerable properties
- * - Excludes symbol properties and items on the prototype chain
- * - Coerces the input to an object
- *
- * @param o - The object from which to retrieve the property names.
- *
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertyNames}
- *
- * @example
- * ```ts
- * const obj = Object.create({ thisIsAPrototype: true }, {
- *   prop1: { value: 42, enumerable: true },
- *   prop2: { value: 'hello', enumerable: false },
- *   [Symbol('sym')]: { value: 'symbol', enumerable: true },
- * });
- * console.log(Object.getOwnPropertyNames(obj)); // ['prop1', 'prop2']
- * // Note: 'thisIsAPrototype' and the symbol property are not included
- * ```
- */
-export const propertyNames = Object.getOwnPropertyNames;
+export const knownDescriptor = (o: unknown, p: PropertyKey): PropertyDescriptor => {
+  const desc = descriptor(o, p);
+  if (!desc) throw new Error(`Property ${String(p)} does not exist on the object.`);
+  return desc;
+};
+//#endregion
 
+//#region> Modifiers
 /**
  * Prevents the addition of new properties to an object.
  *
@@ -260,195 +308,6 @@ export const seal = Object.seal;
  * ```
  */
 export const assign = Object.assign;
-/**
- * Creates an object from an iterable of key-value pairs.
- *
- * @template K - Key type
- * @template V - Value type
- *
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries}
- * @example
- * ```ts
- * const entries = [['a', 1], ['b', 2], ['c', 3]];
- * const obj = fromEntries(entries);
- * console.log(obj); // { a: 1, b: 2, c: 3 }
- * ```
- */
-export const fromEntries = Object.fromEntries;
-/**
- * Groups members of an iterable according to the return value of the passed callback.
- *
- * Returns a record where keys are the return values of the callback and values are arrays
- * of items that returned that key. Unlike the native `Object.groupBy`, this wrapper
- * provides stronger typing where returned keys are guaranteed to have non-undefined arrays.
- *
- * @template K - Type of keys to group by (PropertyKey)
- * @template T - Type of items in the iterable
- *
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/groupBy}
- *
- * @example
- * ```ts
- * const numbers = [6.1, 4.2, 6.3];
- * const grouped = groupBy(numbers, Math.floor);
- * console.log(grouped);
- * // Output: { 4: [4.2], 6: [6.1, 6.3] }
- * // Type: Record<number, number[]> (no undefined!)
- *
- * const words = ['apple', 'apricot', 'banana'];
- * const byFirstLetter = groupBy(words, (w) => w[0]);
- * // Type: Record<string, string[]>
- * ```
- */
-export const groupBy = Object.groupBy as <const K extends PropertyKey, const T>(
-  items: Iterable<T>,
-  keySelector: (item: T, index: number) => K
-) => Record<K, T[]>;
-
-//#endregion
-
-//#region> Asserted Aliases
-/**
- * Returns the prototype of an object.
- * - Coerces the input to an object
- *
- * @template T - The object that references the prototype.
- *
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/getPrototypeOf}
- *
- * @example
- * ```ts
- * const proto = {
- *   greet() {
- *     return 'hello';
- *   }
- * };
- * const obj = create(proto);
- * const result = getPrototypeOf(obj);
- * console.log(result === proto); // true
- * ```
- */
-export const getPrototypeOf = Object.getPrototypeOf as <const T>(
-  obj: T
-) => InferPrototype<T>;
-/**
- *
- * Adds one or more properties to an object, and/or modifies attributes of existing properties.
- *
- * @template T - Object on which to add or modify the properties. This can be a native JavaScript object or a DOM object.
- * @template P - Object that contains one or more descriptor objects. Each descriptor object describes a data property or an accessor property.
- * @template NarrowProperties - Whether to use narrow type inference (default: false)
- *
- * @important To preserve typing across mutations, you must assign the returned object back to a new variable.
- *
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperties}
- *
- * @example
- * ```ts
- * const obj = { a: 1 };
- * const updatedObj = defineProperties(obj, {
- *   b: { value: 2, writable: true },
- *   c: { value: 3, enumerable: false }
- * });
- * console.log(updatedObj); // { a: 1, b: 2 }
- * console.log(Object.getOwnPropertyDescriptor(updatedObj, 'c'));
- * // { value: 3, writable: false, enumerable: false, configurable: false }
- * ```
- */
-export const defineProperties = Object.defineProperties as <
-  T,
-  P extends PropertyDescriptorMap,
-  NarrowProperties extends boolean = false
->(
-  obj: T,
-  properties: P
-) => Descriptor.InferValueMap<P, NarrowProperties> & T;
-/**
- * Adds a property to an object, or modifies attributes of an existing property.
- *
- * @template T - Object on which to add or modify the property. This can be a native JavaScript object (that is, a user-defined object or a built in object) or a DOM object.
- * @template P - The property name.
- * @template A - Descriptor for the property. It can be for a data property or an accessor property.
- *
- * @important To preserve typing across mutations, you must assign the returned object back to a new variable.
- *
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty}
- *
- * @example
- * ```ts
- * const obj = { a: 1 };
- * const updatedObj = defineProperty(obj, 'b', {
- *   value: 2,
- *   writable: true,
- *   enumerable: true,
- *   configurable: true
- * });
- * console.log(updatedObj); // { a: 1, b: 2 }
- * ```
- */
-export const defineProperty = Object.defineProperty as <
-  T,
-  P extends PropertyKey,
-  A extends PropertyDescriptor
->(
-  obj: T,
-  prop: P,
-  attributes: A
-) => { [K in P]: Descriptor.InferValue<A> } & T;
-
-//#region> Create
-export interface Create {
-  <T extends null | object>(proto: T): T extends null ? object : {} & T;
-  <
-    T extends null | object,
-    P extends PropertyDescriptorMap,
-    NarrowProperties extends boolean = false
-  >(
-    proto: T,
-    properties: P
-  ): Descriptor.InferValueMap<P, NarrowProperties>
-    & (T extends null ? object : {} & T);
-}
-/**
- * Creates a new object with the specified prototype and optional properties.
- *
- * @template T - Prototype object type (null or object)
- * @template P - Property descriptor map
- * @template NarrowProperties - Whether to use narrow type inference (default: false)
- *
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create}
- *
- * @example
- * ```ts
- * // Without properties - returns prototype type
- * const proto = { greet() { return 'hello'; } };
- * const obj1 = create(proto); // typeof proto with inherited methods
- *
- * // With wide properties - combines prototype + defined properties
- * const obj2 = create(proto, {
- *   name: { value: 'Alice', writable: true }
- * }); // {
- *   [key: string]: unknown;
- *   [key: symbol]: unknown;
- *   [key: number]: unknown;
- *   name: string;
- * } & typeof proto;
- * // With narrow properties - removes index signatures
- * const obj3 = create(proto, {
- *  age: { value: 30, writable: true },
- *  isAdmin: { value: true, writable: false }
- * }); // {
- *   age: number;
- *   isAdmin: boolean;
- * } & typeof proto;
- *
- * ```
- */
-export const create: Create = Object.create;
-//#endregion
-
-//#endregion
-
 //#region> Freeze
 export interface FreezeOpts<T, D extends number = 0> {
   /**
@@ -508,11 +367,10 @@ const recursiveFreeze = <const T, const D extends number = 0>(
   maxDepth: D,
   currDepth = 0
 ): DepthReadonly<T, D> => {
-  if (!isObject(obj) || Object.isFrozen(obj) || currDepth > maxDepth)
+  if (!isObjectAny(obj) || Object.isFrozen(obj) || currDepth > maxDepth)
     return obj as DepthReadonly<T, D>;
 
-  if (Array.isArray(obj))
-    for (const item of obj) recursiveFreeze(item, maxDepth, currDepth + 1);
+  if (Array.isArray(obj)) for (const item of obj) recursiveFreeze(item, maxDepth, currDepth + 1);
   else if (obj instanceof Map)
     for (const [k, v] of obj) {
       recursiveFreeze(k, maxDepth, currDepth + 1);
@@ -520,9 +378,8 @@ const recursiveFreeze = <const T, const D extends number = 0>(
     }
   else if (obj instanceof Set)
     for (const item of obj) recursiveFreeze(item, maxDepth, currDepth + 1);
-  else if (isObjectPlain(obj))
-    for (const key of keys(obj))
-      recursiveFreeze(obj[key as keyof T], maxDepth, currDepth + 1);
+  else if (isObject(obj))
+    for (const key of keys(obj)) recursiveFreeze(obj[key as keyof T], maxDepth, currDepth + 1);
 
   return Object.freeze(obj) as DepthReadonly<T, D>;
 };
@@ -581,17 +438,131 @@ export const freeze = <const T, const D extends number = 0>(
   obj: T,
   { clone, maxDepth = 0 as D }: Partial<FreezeOpts<T, D>> = {}
 ): DepthReadonly<T, D> => {
-  const target =
-    !clone ? obj
-    : clone === true ? structuredClone(obj)
-    : clone(obj);
+  const target = !clone ? obj : clone === true ? structuredClone(obj) : clone(obj);
 
-  return maxDepth === 0 ?
-      (Object.freeze(target) as DepthReadonly<T, D>)
+  return maxDepth === 0
+    ? (Object.freeze(target) as DepthReadonly<T, D>)
     : recursiveFreeze(target, maxDepth);
 };
 //#endregion
+/**
+ *
+ * Adds one or more properties to an object, and/or modifies attributes of existing properties.
+ *
+ * @template T - Object on which to add or modify the properties. This can be a native JavaScript object or a DOM object.
+ * @template P - Object that contains one or more descriptor objects. Each descriptor object describes a data property or an accessor property.
+ * @template NarrowProperties - Whether to use narrow type inference (default: false)
+ *
+ * @important To preserve typing across mutations, you must assign the returned object back to a new variable.
+ *
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperties}
+ *
+ * @example
+ * ```ts
+ * const obj = { a: 1 };
+ * const updatedObj = defineProperties(obj, {
+ *   b: { value: 2, writable: true },
+ *   c: { value: 3, enumerable: false }
+ * });
+ * console.log(updatedObj); // { a: 1, b: 2 }
+ * console.log(Object.getOwnPropertyDescriptor(updatedObj, 'c'));
+ * // { value: 3, writable: false, enumerable: false, configurable: false }
+ * ```
+ */
+export const defineProperties = Object.defineProperties as <
+  T,
+  P extends PropertyDescriptorMap,
+  NarrowProperties extends boolean = false
+>(
+  obj: T,
+  properties: P
+) => Descriptor.InferEnumerableValueMap<P, NarrowProperties> & T;
+/**
+ * Adds a property to an object, or modifies attributes of an existing property.
+ *
+ * @template T - Object on which to add or modify the property. This can be a native JavaScript object (that is, a user-defined object or a built in object) or a DOM object.
+ * @template P - The property name.
+ * @template A - Descriptor for the property. It can be for a data property or an accessor property.
+ *
+ * @important To preserve typing across mutations, you must assign the returned object back to a new variable.
+ *
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty}
+ *
+ * @example
+ * ```ts
+ * const obj = { a: 1 };
+ * const updatedObj = defineProperty(obj, 'b', {
+ *   value: 2,
+ *   writable: true,
+ *   enumerable: true,
+ *   configurable: true
+ * });
+ * console.log(updatedObj); // { a: 1, b: 2 }
+ * ```
+ */
+export const defineProperty = Object.defineProperty as <
+  T,
+  P extends PropertyKey,
+  A extends PropertyDescriptor
+>(
+  obj: T,
+  prop: P,
+  attributes: A
+) => {
+  [K in P as Descriptor.ExtractEnumerable<A> extends true ? K : never]: Descriptor.InferValue<A>;
+} & T;
+//#endregion
 
+//#region> Creation
+//#region> Create
+export interface Create {
+  <T extends null | object>(proto: T): T extends null ? object : {} & T;
+  <
+    T extends null | object,
+    P extends PropertyDescriptorMap,
+    NarrowProperties extends boolean = false
+  >(
+    proto: T,
+    properties: P
+  ): Descriptor.InferValueMap<P, NarrowProperties> & (T extends null ? object : {} & T);
+}
+/**
+ * Creates a new object with the specified prototype and optional properties.
+ *
+ * @template T - Prototype object type (null or object)
+ * @template P - Property descriptor map
+ * @template NarrowProperties - Whether to use narrow type inference (default: false)
+ *
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create}
+ *
+ * @example
+ * ```ts
+ * // Without properties - returns prototype type
+ * const proto = { greet() { return 'hello'; } };
+ * const obj1 = create(proto); // typeof proto with inherited methods
+ *
+ * // With wide properties - combines prototype + defined properties
+ * const obj2 = create(proto, {
+ *   name: { value: 'Alice', writable: true }
+ * }); // {
+ *   [key: string]: unknown;
+ *   [key: symbol]: unknown;
+ *   [key: number]: unknown;
+ *   name: string;
+ * } & typeof proto;
+ * // With narrow properties - removes index signatures
+ * const obj3 = create(proto, {
+ *  age: { value: 30, writable: true },
+ *  isAdmin: { value: true, writable: false }
+ * }); // {
+ *   age: number;
+ *   isAdmin: boolean;
+ * } & typeof proto;
+ *
+ * ```
+ */
+export const create: Create = Object.create;
+//#endregion
 /**
  * Creates a new object with the same prototype as the given object.
  *
@@ -608,3 +579,74 @@ export const freeze = <const T, const D extends number = 0>(
  */
 export const createWithPrototypeOf = <const T>(object: T): T =>
   create(Object.getPrototypeOf(object)) as T;
+/**
+ * Creates an object from an iterable of key-value pairs.
+ *
+ * @template K - Key type
+ * @template V - Value type
+ *
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries}
+ * @example
+ * ```ts
+ * const entries = [['a', 1], ['b', 2], ['c', 3]];
+ * const obj = fromEntries(entries);
+ * console.log(obj); // { a: 1, b: 2, c: 3 }
+ * ```
+ */
+export const fromEntries = Object.fromEntries as <E extends Entries<StringRecord>>(
+  entries: E
+) => FromEntries<E>;
+
+//#endregion
+
+/**
+ * Returns the prototype of an object.
+ * - Coerces the input to an object
+ *
+ * @template T - The object that references the prototype.
+ *
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/getPrototypeOf}
+ *
+ * @example
+ * ```ts
+ * const proto = {
+ *   greet() {
+ *     return 'hello';
+ *   }
+ * };
+ * const obj = create(proto);
+ * const result = getPrototypeOf(obj);
+ * console.log(result === proto); // true
+ * ```
+ */
+export const getPrototypeOf = Object.getPrototypeOf as <const T>(obj: T) => InferPrototype<T>;
+
+/**
+ * Groups members of an iterable according to the return value of the passed callback.
+ *
+ * Returns a record where keys are the return values of the callback and values are arrays
+ * of items that returned that key. Unlike the native `Object.groupBy`, this wrapper
+ * provides stronger typing where returned keys are guaranteed to have non-undefined arrays.
+ *
+ * @template K - Type of keys to group by (PropertyKey)
+ * @template T - Type of items in the iterable
+ *
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/groupBy}
+ *
+ * @example
+ * ```ts
+ * const numbers = [6.1, 4.2, 6.3];
+ * const grouped = groupBy(numbers, Math.floor);
+ * console.log(grouped);
+ * // Output: { 4: [4.2], 6: [6.1, 6.3] }
+ * // Type: Record<number, number[]> (no undefined!)
+ *
+ * const words = ['apple', 'apricot', 'banana'];
+ * const byFirstLetter = groupBy(words, (w) => w[0]);
+ * // Type: Record<string, string[]>
+ * ```
+ */
+export const groupBy = Object.groupBy as <const K extends PropertyKey, const T>(
+  items: Iterable<T>,
+  keySelector: (item: T, index: number) => K
+) => Record<K, T[]>;

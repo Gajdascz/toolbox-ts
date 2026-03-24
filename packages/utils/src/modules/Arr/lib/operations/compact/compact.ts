@@ -6,12 +6,7 @@ import type {
   WithoutUndefined
 } from '@toolbox-ts/types/defs/array';
 
-import {
-  isNotNull,
-  isNotNullish,
-  isNotUndefined,
-  isTruthy
-} from '../../../../../core/index.js';
+import { isNotNull, isNotNullish, isNotUndefined, isTruthy } from '../../../../../core/index.js';
 
 /**
  * Removes all `null` and `undefined` values from the array.
@@ -63,6 +58,5 @@ export const compactNull = <T extends Arr = Arr>(a: T): WithoutNull<T> =>
  * const compacted = compactUndefined(arr); // [1, 2, 3]
  * ```
  */
-export const compactUndefined = <T extends Arr = Arr>(
-  a: T
-): WithoutUndefined<T> => a.filter(isNotUndefined) as WithoutUndefined<T>;
+export const compactUndefined = <T extends Arr = Arr>(a: T): WithoutUndefined<T> =>
+  a.filter(isNotUndefined) as WithoutUndefined<T>;

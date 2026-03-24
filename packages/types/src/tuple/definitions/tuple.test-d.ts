@@ -38,7 +38,8 @@ import type {
   Zip,
   ZipFill,
   ZipRemainder,
-  ZipRemainderObj
+  ZipRemainderObj,
+  IntersectElementUnions
 } from './tuple.js';
 
 describe('Tuple Types', () => {
@@ -63,27 +64,21 @@ describe('Tuple Types', () => {
 
   describe('Of', () => {
     it('creates tuple of length L with element type T', () => {
-      expectTypeOf<Of3String>().toEqualTypeOf<
-        Tuple<[string, string, string]>
-      >();
+      expectTypeOf<Of3String>().toEqualTypeOf<Tuple<[string, string, string]>>();
       expectTypeOf<Of5X>().toEqualTypeOf<Tuple<['x', 'x', 'x', 'x', 'x']>>();
       type Of0Num = Of<0, number>;
       expectTypeOf<Of0Num>().toEqualTypeOf<Tuple<[]>>();
       type Of1Bool = Of<1, boolean>;
       expectTypeOf<Of1Bool>().toEqualTypeOf<Tuple<[boolean]>>();
       type OfTuples = Of<2, readonly [number, string]>;
-      expectTypeOf<OfTuples>().toEqualTypeOf<
-        Tuple<[[number, string], [number, string]]>
-      >();
+      expectTypeOf<OfTuples>().toEqualTypeOf<Tuple<[[number, string], [number, string]]>>();
     });
   });
 
   describe('Chunk', () => {
     it('splits tuple into chunks of specified size', () => {
       type Chunked1To5Size2 = Chunk<Range1To5, 2>;
-      expectTypeOf<Chunked1To5Size2>().toEqualTypeOf<
-        Tuple<[[0, 1], [2, 3], [4]]>
-      >();
+      expectTypeOf<Chunked1To5Size2>().toEqualTypeOf<Tuple<[[0, 1], [2, 3], [4]]>>();
       type ChunkedAtoGSize3 = Chunk<AToG, 3>;
       expectTypeOf<ChunkedAtoGSize3>().toEqualTypeOf<
         Tuple<[['a', 'b', 'c'], ['d', 'e', 'f'], ['g']]>
@@ -122,9 +117,7 @@ describe('Tuple Types', () => {
       expectTypeOf<OneToThreeElement>().toEqualTypeOf<1 | 2 | 3>();
 
       type AToGElement = Element<AToG>;
-      expectTypeOf<AToGElement>().toEqualTypeOf<
-        'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g'
-      >();
+      expectTypeOf<AToGElement>().toEqualTypeOf<'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g'>();
 
       type StrOrNumElement = Element<readonly [string, number]>;
       expectTypeOf<StrOrNumElement>().toEqualTypeOf<number | string>();
@@ -245,9 +238,7 @@ describe('Tuple Types', () => {
   describe('WithNullish', () => {
     it('adds nullish values to tuple type', () => {
       type Result = WithNullish<readonly [1, 2]>;
-      expectTypeOf<Result>().toEqualTypeOf<
-        Tuple<(1 | 2 | null | undefined)[]>
-      >();
+      expectTypeOf<Result>().toEqualTypeOf<Tuple<(1 | 2 | null | undefined)[]>>();
     });
   });
 
@@ -260,17 +251,13 @@ describe('Tuple Types', () => {
 
   describe('WithoutFalsy', () => {
     it('removes falsy values from tuple', () => {
-      type WithoutFalsyMixed = WithoutFalsy<
-        readonly [1, false, 2, null, 3, undefined, 0, '']
-      >;
+      type WithoutFalsyMixed = WithoutFalsy<readonly [1, false, 2, null, 3, undefined, 0, '']>;
       expectTypeOf<WithoutFalsyMixed>().toEqualTypeOf<Tuple<[1, 2, 3]>>();
 
       type WithoutFalsyClean = WithoutFalsy<OneToThree>;
       expectTypeOf<WithoutFalsyClean>().toEqualTypeOf<Tuple<[1, 2, 3]>>();
 
-      type WithoutFalsyAllFalsy = WithoutFalsy<
-        readonly [false, null, undefined]
-      >;
+      type WithoutFalsyAllFalsy = WithoutFalsy<readonly [false, null, undefined]>;
       expectTypeOf<WithoutFalsyAllFalsy>().toEqualTypeOf<Tuple<[]>>();
     });
   });
@@ -290,34 +277,26 @@ describe('Tuple Types', () => {
 
   describe('WithoutNullish', () => {
     it('removes nullish values from tuple', () => {
-      type WithoutNullishMixed = WithoutNullish<
-        readonly [1, null, 2, undefined, 3]
-      >;
+      type WithoutNullishMixed = WithoutNullish<readonly [1, null, 2, undefined, 3]>;
       expectTypeOf<WithoutNullishMixed>().toEqualTypeOf<Tuple<[1, 2, 3]>>();
 
       type WithoutNullishClean = WithoutNullish<OneToThree>;
       expectTypeOf<WithoutNullishClean>().toEqualTypeOf<Tuple<[1, 2, 3]>>();
 
-      type WithoutNullishAllNullish = WithoutNullish<
-        readonly [null, undefined]
-      >;
+      type WithoutNullishAllNullish = WithoutNullish<readonly [null, undefined]>;
       expectTypeOf<WithoutNullishAllNullish>().toEqualTypeOf<Tuple<[]>>();
     });
   });
 
   describe('WithoutUndefined', () => {
     it('removes undefined from tuple', () => {
-      type WithoutUndefinedMixed = WithoutUndefined<
-        readonly [1, undefined, 2, undefined, 3]
-      >;
+      type WithoutUndefinedMixed = WithoutUndefined<readonly [1, undefined, 2, undefined, 3]>;
       expectTypeOf<WithoutUndefinedMixed>().toEqualTypeOf<Tuple<[1, 2, 3]>>();
 
       type WithoutUndefinedClean = WithoutUndefined<OneToThree>;
       expectTypeOf<WithoutUndefinedClean>().toEqualTypeOf<Tuple<[1, 2, 3]>>();
 
-      type WithoutUndefinedAllUndefined = WithoutUndefined<
-        readonly [undefined, undefined]
-      >;
+      type WithoutUndefinedAllUndefined = WithoutUndefined<readonly [undefined, undefined]>;
       expectTypeOf<WithoutUndefinedAllUndefined>().toEqualTypeOf<Tuple<[]>>();
     });
   });
@@ -390,9 +369,7 @@ describe('Tuple Types', () => {
   describe('Zip', () => {
     it('zips two tuples together', () => {
       type Zipped1 = Zip<OneToThree, readonly ['a', 'b', 'c']>;
-      expectTypeOf<Zipped1>().toEqualTypeOf<
-        Tuple<[[1, 'a'], [2, 'b'], [3, 'c']]>
-      >();
+      expectTypeOf<Zipped1>().toEqualTypeOf<Tuple<[[1, 'a'], [2, 'b'], [3, 'c']]>>();
 
       type Zipped2 = Zip<readonly [1, 2], readonly ['a', 'b', 'c']>;
       expectTypeOf<Zipped2>().toEqualTypeOf<Tuple<[[1, 'a'], [2, 'b']]>>();
@@ -407,24 +384,14 @@ describe('Tuple Types', () => {
 
   describe('ZipFill', () => {
     it('zips tuples with filler for missing values', () => {
-      type ZipFilled1 = ZipFill<
-        readonly [1, 2],
-        readonly ['a', 'b', 'c'],
-        null
-      >;
-      expectTypeOf<ZipFilled1>().toEqualTypeOf<
-        Tuple<[[1, 'a'], [2, 'b'], [null, 'c']]>
-      >();
+      type ZipFilled1 = ZipFill<readonly [1, 2], readonly ['a', 'b', 'c'], null>;
+      expectTypeOf<ZipFilled1>().toEqualTypeOf<Tuple<[[1, 'a'], [2, 'b'], [null, 'c']]>>();
 
       type ZipFilled2 = ZipFill<OneToThree, readonly ['a'], 0>;
-      expectTypeOf<ZipFilled2>().toEqualTypeOf<
-        Tuple<[[1, 'a'], [2, 0], [3, 0]]>
-      >();
+      expectTypeOf<ZipFilled2>().toEqualTypeOf<Tuple<[[1, 'a'], [2, 0], [3, 0]]>>();
 
       type ZipFilled3 = ZipFill<Empty, readonly ['a', 'b'], false>;
-      expectTypeOf<ZipFilled3>().toEqualTypeOf<
-        Tuple<[[false, 'a'], [false, 'b']]>
-      >();
+      expectTypeOf<ZipFilled3>().toEqualTypeOf<Tuple<[[false, 'a'], [false, 'b']]>>();
 
       type ZipFilledEmpty = ZipFill<Empty, Empty, undefined>;
       expectTypeOf<ZipFilledEmpty>().toEqualTypeOf<Empty>();
@@ -434,22 +401,16 @@ describe('Tuple Types', () => {
   describe('ZipRemainder', () => {
     it('zips tuples and returns remainder', () => {
       type ZipRem1 = ZipRemainder<OneToThree, readonly ['a', 'b']>;
-      expectTypeOf<ZipRem1>().toEqualTypeOf<
-        Tuple<[[[1, 'a'], [2, 'b']], [3]]>
-      >();
+      expectTypeOf<ZipRem1>().toEqualTypeOf<Tuple<[[[1, 'a'], [2, 'b']], [3]]>>();
 
       type ZipRem2 = ZipRemainder<readonly [1], readonly ['a', 'b', 'c']>;
       expectTypeOf<ZipRem2>().toEqualTypeOf<Tuple<[[[1, 'a']], ['b', 'c']]>>();
 
       type ZipRemEqual = ZipRemainder<readonly [1, 2], readonly ['a', 'b']>;
-      expectTypeOf<ZipRemEqual>().toEqualTypeOf<
-        Tuple<[[[1, 'a'], [2, 'b']], Empty]>
-      >();
+      expectTypeOf<ZipRemEqual>().toEqualTypeOf<Tuple<[[[1, 'a'], [2, 'b']], Empty]>>();
 
       type ZipRemEmpty = ZipRemainder<Empty, readonly ['a', 'b']>;
-      expectTypeOf<ZipRemEmpty>().toEqualTypeOf<
-        Tuple<[Empty, readonly ['a', 'b']]>
-      >();
+      expectTypeOf<ZipRemEmpty>().toEqualTypeOf<Tuple<[Empty, readonly ['a', 'b']]>>();
     });
   });
 
@@ -499,12 +460,10 @@ describe('Tuple Types', () => {
 
   describe('Remove', () => {
     it('removes all elements', () => {
-      expectTypeOf<RemoveAll<readonly [1, 2, 3], 1>>().toEqualTypeOf<
-        Tuple<[2, 3]>
+      expectTypeOf<RemoveAll<readonly [1, 2, 3], 1>>().toEqualTypeOf<Tuple<[2, 3]>>();
+      expectTypeOf<RemoveAll<readonly [1, 2, 3, 2, 5, 6, 7, 8, 2, 2, 2], 2>>().toEqualTypeOf<
+        Tuple<[1, 3, 5, 6, 7, 8]>
       >();
-      expectTypeOf<
-        RemoveAll<readonly [1, 2, 3, 2, 5, 6, 7, 8, 2, 2, 2], 2>
-      >().toEqualTypeOf<Tuple<[1, 3, 5, 6, 7, 8]>>();
     });
     it('removes first element', () => {
       type HeadRemoved = RemoveFirst<readonly [1, 2, 3]>;
@@ -527,8 +486,12 @@ describe('Tuple Types', () => {
   });
   it('Entries', () => {
     type TestEntries = Entries<Tuple<[1, 'two', 3]>>;
-    expectTypeOf<TestEntries>().toEqualTypeOf<
-      readonly [[0, 1], [1, 'two'], [2, 3]]
-    >();
+    expectTypeOf<TestEntries>().toEqualTypeOf<readonly [[0, 1], [1, 'two'], [2, 3]]>();
+  });
+  describe('Intersect', () => {
+    it('intersects tuple element unions', () => {
+      type Intersected = IntersectElementUnions<readonly [1 | 2, 2 | 3, 'a' | 2]>;
+      expectTypeOf<Intersected>().toEqualTypeOf<2>();
+    });
   });
 });

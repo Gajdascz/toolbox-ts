@@ -15,10 +15,8 @@ import { recursiveReset } from '../core/index.js';
  * mockFirstArgsMatch(mock, ['a', 'c']); // false
  * ```
  */
-export const mockFirstArgsMatch = (
-  mock: ReturnType<typeof vi.fn>,
-  args: unknown[]
-) => args.every((arg, i) => isDeepStrictEqual(mock.mock.calls[i]?.[0], arg));
+export const mockFirstArgsMatch = (mock: ReturnType<typeof vi.fn>, args: unknown[]) =>
+  args.every((arg, i) => isDeepStrictEqual(mock.mock.calls[i]?.[0], arg));
 
 /* c8 ignore start */
 /**
@@ -57,11 +55,10 @@ export const mockConsole = {
   restore: () => vi.unstubAllGlobals(),
   reset: () => recursiveReset(_console)
 } as const;
-/* c8 ignore end */
+/* c8 ignore stop */
 
 export const EXPECT = {
-  toThrow: (fn: () => void, err: ErrorConstructor) =>
-    expect(() => fn()).toThrow(err),
+  toThrow: (fn: () => void, err: ErrorConstructor) => expect(() => fn()).toThrow(err),
   notToThrow: (fn: () => void) => expect(() => fn()).not.toThrow(),
   every: <T>(arr: T | T[], predicate: (v: T) => boolean) =>
     expect((Array.isArray(arr) ? arr : [arr]).every(predicate)).toBe(true),

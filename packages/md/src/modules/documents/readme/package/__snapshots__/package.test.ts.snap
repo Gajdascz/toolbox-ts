@@ -1,0 +1,69 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`(documents) packageReadme > snapshots > renders with multiple API groups 1`] = `
+"# @scope/my-pkg
+
+## 🚀 Installation
+
+\`\`\`sh
+npm install @scope/my-pkg
+or
+yarn add @scope/my-pkg
+or
+pnpm add @scope/my-pkg
+
+\`\`\`
+
+## 🗂️ API
+
+### Functions
+
+| Export | Type     | Description |
+|--------|----------|-------------|
+| foo    | Function | Does foo    |
+
+### Types
+
+| Export     | Type      | Description     |
+|------------|-----------|-----------------|
+| FooOptions | Interface | Options for foo |
+
+## ⚖️ License
+
+MIT - Copyright &copy; 2026 "
+`;
+
+exports[`(documents) packageReadme > snapshots > renders with multiple usage examples 1`] = `
+"# @scope/my-pkg
+
+## 🚀 Installation
+
+\`\`\`sh
+npm install @scope/my-pkg
+or
+yarn add @scope/my-pkg
+or
+pnpm add @scope/my-pkg
+
+\`\`\`
+
+## 📖 Usage
+
+### Basic
+
+Import the module
+
+\`\`\`ts
+import { foo } from "@scope/my-pkg";
+\`\`\`
+
+### Advanced
+
+\`\`\`ts
+foo({ bar: true });
+\`\`\`
+
+## ⚖️ License
+
+MIT - Copyright &copy; 2026 "
+`;

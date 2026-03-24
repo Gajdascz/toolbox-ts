@@ -1,13 +1,21 @@
 {
   "name": "@toolbox-ts/cli-kit",
   "version": "0.1.5",
-  "description": "CLI Kit utilities and base command for oclif.",
-  "license": "MIT",
-  "type": "module",
-  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/cli-kit",
   "private": false,
-  "publishConfig": {
-    "access": "public"
+  "description": "CLI Kit utilities and base command for oclif.",
+  "keywords": [
+    "cli",
+    "cli-kit",
+    "oclif",
+    "toolbox-ts",
+    "utilities"
+  ],
+  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/cli-kit",
+  "license": "MIT",
+  "author": {
+    "name": "Nolan Gajdascz",
+    "email": "dev.gajdascz@gmail.com",
+    "url": "https://github.com/gajdascz"
   },
   "repository": {
     "type": "git",
@@ -15,48 +23,38 @@
   },
   "files": [
     "dist",
-    "README.md",
-    "LICENSE"
+    "LICENSE",
+    "README.md"
   ],
-  "keywords": [
-    "toolbox-ts",
-    "utilities",
-    "oclif",
-    "cli",
-    "cli-kit"
-  ],
-  "author": {
-    "name": "Nolan Gajdascz",
-    "email": "dev.gajdascz@gmail.com",
-    "url": "https://github.com/gajdascz"
-  },
+  "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./utils": {
-      "import": "./dist/utils/index.js",
-      "types": "./dist/utils/index.d.ts"
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.js"
     },
     "./reporters": {
-      "import": "./dist/reporters/index.js",
-      "types": "./dist/reporters/index.d.ts"
+      "types": "./dist/reporters/index.d.ts",
+      "import": "./dist/reporters/index.js"
     },
     "./BaseCommand": {
-      "import": "./dist/BaseCommand/index.js",
-      "types": "./dist/BaseCommand/index.d.ts"
+      "types": "./dist/BaseCommand/index.d.ts",
+      "import": "./dist/BaseCommand/index.js"
     }
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
-    "@inquirer/prompts": "^7.10.1",
-    "@oclif/core": "^4.8.0",
+    "@inquirer/prompts": "^8.3.2",
+    "@oclif/core": "^4.10.2",
+    "@toolbox-ts/types": "workspace:^",
     "@toolbox-ts/utils": "workspace:^",
     "execa": "^9.6.1"
-  },
-  "devDependencies": {
-    "@toolbox-ts/types": "workspace:^"
   }
 }

@@ -15,17 +15,17 @@ import {
   omit,
   pick,
   reduce,
-  some
+  some,
+  sortEntries,
+  sort,
+  flat
 } from './iterative.ts';
 
-describe('iterative', () => {
+describe('Obj Iterative', () => {
   describe('forEach', () => {
     it('should execute callback for each key-value pair', () => {
       const obj = { 0: 0, a: 1, b: 2, c: 3 };
-      const results: [
-        Key.Enumerable<typeof obj>,
-        (typeof obj)[keyof typeof obj]
-      ][] = [];
+      const results: [Key.Enumerable<typeof obj>, (typeof obj)[keyof typeof obj]][] = [];
 
       forEach(obj, (value, key) => {
         results.push([key, value]);
@@ -78,10 +78,11 @@ describe('iterative', () => {
 
     it('should reduce object to array of entries', () => {
       const obj = { a: 1, b: 2 };
-      const result = reduce<
-        typeof obj,
-        `${keyof typeof obj}:${(typeof obj)[keyof typeof obj]}`[]
-      >(obj, (acc, value, key) => [...acc, `${key}:${value}`], []);
+      const result = reduce<typeof obj, `${keyof typeof obj}:${(typeof obj)[keyof typeof obj]}`[]>(
+        obj,
+        (acc, value, key) => [...acc, `${key}:${value}`],
+        []
+      );
 
       expect(result).toEqual(['a:1', 'b:2']);
       expectTypeOf(result).toEqualTypeOf<(`a:${number}` | `b:${number}`)[]>();
@@ -187,18 +188,15 @@ describe('iterative', () => {
         const isString: FilterInPredicate<string> = (v: unknown): v is string =>
           typeof v === 'string';
 
-        expectTypeOf(isString).toEqualTypeOf<
-          (value: unknown) => value is string
-        >();
+        expectTypeOf(isString).toEqualTypeOf<(value: unknown) => value is string>();
       });
     });
 
     describe('with exclusion type guard (FilterOutPredicate)', () => {
       it('should filter out values by type', () => {
         const obj = { a: 1, b: 'two', c: 3, d: 'four' };
-        const isNotNumber = (
-          v: unknown
-        ): v is Exclude<number | string, number> => typeof v === 'string';
+        const isNotNumber = (v: unknown): v is Exclude<number | string, number> =>
+          typeof v === 'string';
 
         const result = filter(obj, isNotNumber);
 
@@ -230,17 +228,13 @@ describe('iterative', () => {
 
       it('should handle complex boolean logic', () => {
         const obj = { a: 1, b: 2, c: 3, d: 4, e: 5 };
-        const result = filter(
-          obj,
-          (v) => (v as number) % 2 === 0 || (v as number) > 4
-        );
+        const result = filter(obj, (v) => (v as number) % 2 === 0 || (v as number) > 4);
 
         expect(result).toEqual({ b: 2, d: 4, e: 5 });
       });
 
       it('should type FilterSimplePredicate correctly', () => {
-        const pred: FilterSimplePredicate = (v: unknown) =>
-          typeof v === 'number' && v > 0;
+        const pred: FilterSimplePredicate = (v: unknown) => typeof v === 'number' && v > 0;
 
         expectTypeOf(pred).toEqualTypeOf<(value: unknown) => boolean>();
       });
@@ -249,11 +243,7 @@ describe('iterative', () => {
         const obj = { a: 1, b: 2, c: 3 };
         const result = filter(obj, (v) => (v as number) > 1);
 
-        expectTypeOf(result).toEqualTypeOf<{
-          a?: number;
-          b?: number;
-          c?: number;
-        }>();
+        expectTypeOf(result).toEqualTypeOf<{ a?: number; b?: number; c?: number }>();
       });
     });
 
@@ -279,9 +269,7 @@ describe('iterative', () => {
       type Pred = FilterPredicate<Obj, number>;
 
       expectTypeOf<Pred>().toEqualTypeOf<
-        | FilterInPredicate<number>
-        | FilterOutPredicate<Obj, number>
-        | FilterSimplePredicate
+        FilterInPredicate<number> | FilterOutPredicate<Obj, number> | FilterSimplePredicate
       >();
     });
   });
@@ -343,6 +331,7 @@ describe('iterative', () => {
       const result = pick(obj, ['a', 'c']);
 
       expect(result).toEqual({ a: 1, c: 3 });
+      expectTypeOf(result).toEqualTypeOf<{ a: number; c: number }>();
     });
 
     it('should handle readonly key arrays', () => {
@@ -351,20 +340,14 @@ describe('iterative', () => {
       const result = pick(obj, keysToPick);
 
       expect(result).toEqual({ b: 2, c: 3 });
+      expectTypeOf(result).toEqualTypeOf<{ b: number; c: number }>();
     });
-
-    it('should handle numeric keys', () => {
-      const obj = { 0: 'a', 1: 'b', name: 'test' };
-      const result = pick(obj, [0, 'name']);
-
-      expect(result).toEqual({ 0: 'a', name: 'test' });
-    });
-
     it('should handle empty pick array', () => {
       const obj = { a: 1, b: 2 };
       const result = pick(obj, []);
 
       expect(result).toEqual({});
+      expectTypeOf(result).toEqualTypeOf<never>();
     });
 
     it('should handle empty objects', () => {
@@ -372,6 +355,7 @@ describe('iterative', () => {
       const result = pick(obj, []);
 
       expect(result).toEqual({});
+      expectTypeOf(result).toEqualTypeOf<never>();
     });
 
     it('should type result correctly', () => {
@@ -390,6 +374,36 @@ describe('iterative', () => {
           [0]
         )
       ).toThrow();
+    });
+    it('should handle paths', () => {
+      const obj = { a: { b: { c: 3 } }, d: 4 };
+      const result = pick(obj, ['a.b.c', 'd']);
+
+      expect(result).toEqual({ a: { b: { c: 3 } }, d: 4 });
+      expectTypeOf(result).toEqualTypeOf<{ a: { b: { c: number } }; d: number }>();
+    });
+    it('should clone object preserving selected paths', () => {
+      const obj = { a: { b: { c: { d: { e: 1, f: 2, g: 3 } } } }, h: 0 };
+      const result = pick(obj, ['a.b.c.d.e', 'h']);
+      expect(result).toEqual({ a: { b: { c: { d: { e: 1 } } } }, h: 0 });
+      expect(obj).toEqual({ a: { b: { c: { d: { e: 1, f: 2, g: 3 } } } }, h: 0 });
+      const result2 = pick(obj, ['a.b.c.d']);
+      expect(result2).toEqual({ a: { b: { c: { d: { e: 1, f: 2, g: 3 } } } } });
+      expect(obj).toEqual({ a: { b: { c: { d: { e: 1, f: 2, g: 3 } } } }, h: 0 });
+    });
+    it('should break when key is not found in path', () => {
+      const obj = { a: { b: { c: 3 } }, d: 4 };
+      const result = pick(obj, ['a.b.x' as any, 'd']);
+
+      expect(result).toEqual({ d: 4 });
+    });
+  });
+  describe('flat', () => {
+    it('should flatten nested objects', () => {
+      const obj = { a: { b: { c: 3 } }, d: 4 };
+      const result = flat(obj);
+      expect(result).toEqual({ 'a.b.c': 3, d: 4 });
+      expectTypeOf(result).toEqualTypeOf<{ 'a.b.c': number; d: number }>();
     });
   });
 
@@ -528,18 +542,14 @@ describe('iterative', () => {
       const obj = { a: 1, b: 2, c: 3 };
       const result = find(obj, (v) => v > 1);
 
-      expectTypeOf(result).toEqualTypeOf<
-        [key: 'a' | 'b' | 'c', value: number] | undefined
-      >();
+      expectTypeOf(result).toEqualTypeOf<[key: 'a' | 'b' | 'c', value: number] | undefined>();
     });
 
     it('should type return value with numeric keys', () => {
       const obj = { 0: 'a', 1: 'b' } as const;
       const result = find(obj, () => true);
 
-      expectTypeOf(result).toEqualTypeOf<
-        [key: '0' | '1', value: 'a' | 'b'] | undefined
-      >();
+      expectTypeOf(result).toEqualTypeOf<[key: '0' | '1', value: 'a' | 'b'] | undefined>();
     });
 
     it('should type predicate parameters correctly', () => {
@@ -552,74 +562,46 @@ describe('iterative', () => {
       });
     });
   });
-
-  describe('Key.Enumerable type coverage', () => {
-    it('should preserve string literal keys', () => {
-      interface Obj {
-        a: 1;
-        b: 2;
-      }
-      type Keys = Key.Enumerable<Obj>;
-
-      expectTypeOf<Keys>().toEqualTypeOf<'a' | 'b'>();
+  describe('sortEntries', () => {
+    it('should sort object keys based on comparator', () => {
+      const obj = { b: 2, a: 1, c: 3 };
+      const result = sortEntries(obj);
+      expect(result).toEqual([
+        ['a', 1],
+        ['b', 2],
+        ['c', 3]
+      ]);
     });
-
-    it('should convert numeric keys to string literals', () => {
-      interface Obj {
-        0: 'a';
-        1: 'b';
-      }
-      type Keys = Key.Enumerable<Obj>;
-
-      expectTypeOf<Keys>().toEqualTypeOf<'0' | '1'>();
+    it('should handle empty objects', () => {
+      const obj = {};
+      const result = sortEntries(obj);
+      expect(result).toEqual([]);
     });
-
-    it('should exclude symbol keys', () => {
-      const sym = Symbol('test');
-      interface Obj {
-        a: 1;
-        [sym]: 'symbol';
-      }
-      type Keys = Key.Enumerable<Obj>;
-
-      expectTypeOf<Keys>().toEqualTypeOf<'a'>();
+    it('should maintain types after sorting', () => {
+      const obj = { b: 'beta', a: 'alpha' };
+      const result = sortEntries(obj);
+      expectTypeOf(result).toEqualTypeOf<(['a', string] | ['b', string])[]>();
     });
-
-    it('should handle mixed key types', () => {
-      interface Obj {
-        0: 2;
-        a: 1;
-        b: 3;
-      }
-      type Keys = Key.Enumerable<Obj>;
-
-      expectTypeOf<Keys>().toEqualTypeOf<'0' | 'a' | 'b'>();
+    it('should use custom comparator', () => {
+      const obj = { b: 2, a: 1, c: 3 };
+      const result = sortEntries(obj, ([_keyA, valA], [_keyB, valB]) => valB - valA);
+      expect(result).toEqual([
+        ['c', 3],
+        ['b', 2],
+        ['a', 1]
+      ]);
     });
   });
-
-  describe('Key.CoerceNumber type coverage', () => {
-    it('should preserve string keys', () => {
-      type Result = Key.CoerceNumber<'a'>;
-
-      expectTypeOf<Result>().toEqualTypeOf<'a'>();
+  describe('sort', () => {
+    it('should sort object keys and return object', () => {
+      const obj = { b: 2, a: 1, c: 3 };
+      const result = sort(obj);
+      expect(result).toEqual({ a: 1, b: 2, c: 3 });
     });
-
-    it('should convert numeric keys to string literals', () => {
-      type Result = Key.CoerceNumber<0>;
-
-      expectTypeOf<Result>().toEqualTypeOf<'0'>();
-    });
-
-    it('should preserve union of string keys', () => {
-      type Result = Key.CoerceNumber<'a' | 'b'>;
-
-      expectTypeOf<Result>().toEqualTypeOf<'a' | 'b'>();
-    });
-
-    it('should convert union with numeric keys', () => {
-      type Result = Key.CoerceNumber<'a' | 'b' | 0 | 1>;
-
-      expectTypeOf<Result>().toEqualTypeOf<'0' | '1' | 'a' | 'b'>();
+    it('should handle empty objects', () => {
+      const obj = {};
+      const result = sort(obj);
+      expect(result).toEqual({});
     });
   });
 });

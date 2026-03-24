@@ -1,8 +1,4 @@
-import {
-  dependencyExists,
-  mockKeys,
-  wrapMockExport
-} from '../../../core/index.js';
+import { dependencyExists, mockKeys, wrapMockExport } from '../../../core/index.js';
 
 export const inquirerExists = await dependencyExists('@inquirer/prompts');
 

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { array, sentence } from './normalize.ts';
 
-describe('normalize', () => {
+describe('Str Normalize', () => {
   describe('array', () => {
     it('returns [] for undefined', () => {
       expect(array(undefined)).toEqual([]);
@@ -24,9 +24,7 @@ describe('normalize', () => {
       expect(sentence(' hello world ')).toBe('Hello world.');
     });
     it('custom end punctuation', () => {
-      expect(sentence('hello world', { endPunctuation: '!' })).toBe(
-        'Hello world!'
-      );
+      expect(sentence('hello world', { endPunctuation: '!' })).toBe('Hello world!');
     });
     it('does not double end punctuation', () => {
       expect(sentence('Hello world.')).toBe('Hello world.');
@@ -36,9 +34,7 @@ describe('normalize', () => {
       expect(sentence('hello world')).toBe('Hello world.');
     });
     it('can disable first letter capitalization', () => {
-      expect(sentence('hello world', { capitalizeFirst: false })).toBe(
-        'hello world.'
-      );
+      expect(sentence('hello world', { capitalizeFirst: false })).toBe('hello world.');
     });
     it('returns empty string for non-string input', () => {
       expect(sentence(null)).toBe('');

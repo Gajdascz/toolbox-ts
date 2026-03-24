@@ -1,11 +1,19 @@
-/* c8 ignore start */
-
-import type { StringNumber } from '@toolbox-ts/types/defs/number';
+// oxlint-disable no-unused-vars
+import type {
+  StringNumber,
+  Digit,
+  PositiveDigit,
+  NegativeDigit
+} from '@toolbox-ts/types/defs/number';
 
 import {
   assertIsNumber,
   assertIsNumberDecimal,
   assertIsNumberFinite,
+  isNumberInDigitRange,
+  isNumberInNegativeDigitRange,
+  isNumberInPositiveDigitRange,
+  isNumberString,
   assertIsNumberInByteRange,
   assertIsNumberInDigitRange,
   assertIsNumberInEightBitRange,
@@ -28,96 +36,68 @@ import {
   checkIsNumber,
   checkIsNumberInNegativeDigitRange,
   checkIsNumberInPositiveDigitRange,
-  checkIsNumberString,
   isNumber,
-  isNumberDecimal,
-  isNumberFinite,
-  isNumberInByteRange,
-  isNumberInDigitRange,
-  isNumberInEightBitRange,
-  isNumberInfinite,
-  isNumberInNegativeDigitRange,
-  isNumberInPositiveDigitRange,
-  isNumberInSixteenBitRange,
-  isNumberInteger,
-  isNumberInThirtyTwoBitRange,
-  isNumberInTwentyFourBitRange,
-  isNumberInUnitIntervalRange,
-  isNumberNaN,
-  isNumberNegative,
-  isNumberNegativeInteger,
-  isNumberNotNaN,
-  isNumberPositive,
-  isNumberPositiveInteger,
-  isNumberSafeInteger,
-  isNumberString
+  checkIsNumberDecimal,
+  checkIsNumberFinite,
+  checkIsNumberInByteRange,
+  checkIsNumberInDigitRange,
+  checkIsNumberInEightBitRange,
+  checkIsNumberInfinite,
+  checkIsNumberInSixteenBitRange,
+  checkIsNumberInteger,
+  checkIsNumberInThirtyTwoBitRange,
+  checkIsNumberInTwentyFourBitRange,
+  checkIsNumberInUnitIntervalRange,
+  checkIsNumberNaN,
+  checkIsNumberNegative,
+  checkIsNumberNegativeInteger,
+  checkIsNumberNotNaN,
+  checkIsNumberPositive,
+  checkIsNumberPositiveInteger,
+  checkIsNumberSafeInteger,
+  checkIsNumberString
 } from '../../../core/guards/primitives/number/index.js';
 
 export const is = {
-  /**  @narrows `number` */
-  value: isNumber,
-  /** @checks `isNumber(n) && n !== NaN` */
-  notNaN: isNumberNotNaN,
-  /** @checks `isNumber(n) && Number.isDecimal(n)` */
-  decimal: isNumberDecimal,
-  /** @checks `isNumber(n) && Number.isFinite(n)` */
-  finite: isNumberFinite,
-  /** @checks `n >= 0 && n <= 1024` */
-  inByteRange: isNumberInByteRange,
-  /** @checks `n >= -9 && n <= 9` */
-  inDigitRange: isNumberInDigitRange,
-  /** @checks `n >= 0 && n <= 255` */
-  inEightBitRange: isNumberInEightBitRange,
-  /** @checks `n >= -9 && n <= -1` */
-  inNegativeDigitRange: isNumberInNegativeDigitRange,
-  /** @checks `n >= 1 && n <= 9` */
-  inPositiveDigitRange: isNumberInPositiveDigitRange,
-  /** @checks `n >= 0 && n <= 65_535` */
-  inSixteenBitRange: isNumberInSixteenBitRange,
-  /** @checks `n >= 0 && n <= 4_294_967_295` */
-  inThirtyTwoBitRange: isNumberInThirtyTwoBitRange,
-  /** @checks `n >= 0 && n <= 16_777_215` */
-  inTwentyFourBitRange: isNumberInTwentyFourBitRange,
-  /** @checks `n >= 0 && n <= 1` */
-  inUnitIntervalRange: isNumberInUnitIntervalRange,
-  /** @checks `n === Infinity || n === -Infinity` */
-  infinite: isNumberInfinite,
-  /** @checks `isNumber(n) && Number.isInteger(n)` */
-  integer: isNumberInteger,
-  /** @checks `isNumber(n) && Number.isNaN(n)` */
-  NaN: isNumberNaN,
-  /** @checks `isNumber(n) && n < 0` */
-  negative: isNumberNegative,
-  /** @checks `isNumber(n) && Number.isInteger(n) && n < 0` */
-  negativeInteger: isNumberNegativeInteger,
-  /** @checks `isNumber(n) && n > 0` */
-  positive: isNumberPositive,
-  /** @checks `isNumber(n) && Number.isInteger(n) && n > 0` */
-  positiveInteger: isNumberPositiveInteger,
-  /** @checks `isNumber(n) && Number.isSafeInteger(n)` */
-  safeInteger: isNumberSafeInteger,
+  /** @narrows `number` */
+  any: isNumber,
   /** @narrows {@link StringNumber} */
-  string: isNumberString
+  string: isNumberString,
+  /** @narrows {@link Digit} */
+  inDigitRange: isNumberInDigitRange,
+  /** @narrows {@link NegativeDigit} */
+  inNegativeDigitRange: isNumberInNegativeDigitRange,
+  /** @narrows {@link PositiveDigit} */
+  inPositiveDigitRange: isNumberInPositiveDigitRange
 } as const;
 
 export const assert = {
   /** @asserts `number` */
-  is: assertIsNumber,
+  any: assertIsNumber,
   /** @asserts `isNumber(n) && n !== NaN` */
   decimal: assertIsNumberDecimal,
   /** @asserts `isNumber(n) && Number.isDecimal(n)` */
   finite: assertIsNumberFinite,
   /** @asserts `isNumber(n) && Number.isFinite(n)` */
   inByteRange: assertIsNumberInByteRange,
-  /** @asserts `n >= 0 && n <= 1024` */
+  /**
+   *  @asserts `n >= 0 && n <= 1024`
+   *  @see {@link Digit}
+   */
   inDigitRange: assertIsNumberInDigitRange,
   /** @asserts `n >= -9 && n <= 9` */
   inEightBitRange: assertIsNumberInEightBitRange,
   /** @asserts `n >= 0 && n <= 255` */
   infinite: assertIsNumberInfinite,
-  /** @asserts `n >= -9 && n <= -1` */
+  /**
+   * @asserts `n >= -9 && n <= -1`
+   * @see {@link NegativeDigit}
+   */
   inNegativeDigitRange: assertIsNumberInNegativeDigitRange,
-  /** @asserts `n >= 1 && n <= 9` */
+  /**
+   * @asserts `n >= 1 && n <= 9`
+   * @see {@link PositiveDigit}
+   */
   inPositiveDigitRange: assertIsNumberInPositiveDigitRange,
   /** @asserts `n >= 0 && n <= 65_535` */
   inSixteenBitRange: assertIsNumberInSixteenBitRange,
@@ -148,12 +128,56 @@ export const assert = {
 } as const;
 export const check = {
   /** @checks `isNumber(n)` */
-  is: checkIsNumber,
-  /** @checks `n >= -9 && n <= -1` */
+  any: checkIsNumber,
+  /**
+   * @checks `n >= -9 && n <= -1`
+   * @see {@link NegativeDigit}
+   */
   inNegativeDigitRange: checkIsNumberInNegativeDigitRange,
-  /** @checks `n >= 1 && n <= 9` */
+  /**
+   * @checks `n >= 1 && n <= 9`
+   * @see {@link PositiveDigit}
+   */
   inPositiveDigitRange: checkIsNumberInPositiveDigitRange,
   /** @checks {@link StringNumber} */
-  string: checkIsNumberString
+  string: checkIsNumberString,
+  /** @checks `isNumber(n) && n !== NaN` */
+  notNaN: checkIsNumberNotNaN,
+  /** @checks `checkIsNumber(n) && Number.isDecimal(n)` */
+  decimal: checkIsNumberDecimal,
+  /** @checks `checkIsNumber(n) && Number.isFinite(n)` */
+  finite: checkIsNumberFinite,
+  /** @checks `n >= 0 && n <= 1024` */
+  inByteRange: checkIsNumberInByteRange,
+  /**
+   *  @checks `n >= -9 && n <= 9`
+   *  @see {@link Digit}
+   */
+  inDigitRange: checkIsNumberInDigitRange,
+  /** @checks `n >= 0 && n <= 255` */
+  inEightBitRange: checkIsNumberInEightBitRange,
+  /** @checks `n >= 0 && n <= 65_535` */
+  inSixteenBitRange: checkIsNumberInSixteenBitRange,
+  /** @checks `n >= 0 && n <= 4_294_967_295` */
+  inThirtyTwoBitRange: checkIsNumberInThirtyTwoBitRange,
+  /** @checks `n >= 0 && n <= 16_777_215` */
+  inTwentyFourBitRange: checkIsNumberInTwentyFourBitRange,
+  /** @checks `n >= 0 && n <= 1` */
+  inUnitIntervalRange: checkIsNumberInUnitIntervalRange,
+  /** @checks `n === Infinity || n === -Infinity` */
+  infinite: checkIsNumberInfinite,
+  /** @checks `checkIsNumber(n) && Number.isInteger(n)` */
+  integer: checkIsNumberInteger,
+  /** @checks `checkIsNumber(n) && Number.isNaN(n)` */
+  NaN: checkIsNumberNaN,
+  /** @checks `checkIsNumber(n) && n < 0` */
+  negative: checkIsNumberNegative,
+  /** @checks `checkIsNumber(n) && Number.isInteger(n) && n < 0` */
+  negativeInteger: checkIsNumberNegativeInteger,
+  /** @checks `checkIsNumber(n) && n > 0` */
+  positive: checkIsNumberPositive,
+  /** @checks `checkIsNumber(n) && Number.isInteger(n) && n > 0` */
+  positiveInteger: checkIsNumberPositiveInteger,
+  /** @checks `checkIsNumber(n) && Number.isSafeInteger(n)` */
+  safeInteger: checkIsNumberSafeInteger
 } as const;
-/* c8 ignore end */

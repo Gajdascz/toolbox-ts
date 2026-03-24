@@ -1,0 +1,24 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`configs/runtime/markdownlint > toFileEntry should produce correct file entry 1`] = `
+{
+  ".markdownlint-cli2.mjs": "import { markdownlint } from '@toolbox-ts/configs/runtime';
+
+export default markdownlint.define({
+  "globs": [
+    "**/*.md"
+  ],
+  "ignores": [
+    "**/node_modules/**"
+  ],
+  "config": {
+    "MD001": true,
+    "MD033": {
+      "allowed_elements": [
+        "span"
+      ]
+    }
+  }
+});",
+}
+`;

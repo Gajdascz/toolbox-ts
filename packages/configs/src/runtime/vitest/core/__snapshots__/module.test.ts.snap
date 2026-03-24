@@ -1,0 +1,25 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`configs/runtime/vitest > toFileEntry should produce correct file entry 1`] = `
+{
+  "vitest.config.ts": "import { vitest } from '@toolbox-ts/configs/runtime';
+
+export default vitest.define(import.meta.dirname, {
+  "hookTimeout": 20000,
+  "alias": {
+    "@": "./src"
+  },
+  "api": true,
+  "allowOnly": true,
+  "coverage": {
+    "all": true,
+    "reporter": [
+      "json"
+    ]
+  },
+  "disableConsoleIntercept": true,
+  "logHeapUsage": true,
+  "maxConcurrency": 4
+});",
+}
+`;

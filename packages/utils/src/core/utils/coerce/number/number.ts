@@ -1,7 +1,4 @@
-import {
-  isNumberFinite,
-  isNumberNaN
-} from '../../../guards/primitives/number/index.js';
+import { checkIsNumberFinite, checkIsNumberNaN } from '../../../guards/primitives/number/index.js';
 
 export interface BaseCoerceNumberOpts {
   /**
@@ -57,8 +54,8 @@ export interface BaseCoerceNumberOpts {
 export type CoerceNumberOpts = (
   | { radix?: number; stringCoercion?: 'parseInt' }
   | { radix?: void; stringCoercion?: 'NumberCstr' | 'parseFloat' }
-)
-  & BaseCoerceNumberOpts;
+) &
+  BaseCoerceNumberOpts;
 /**
  * Coerces a value to a number with various options for handling edge cases.
  * - Handles `null`, `undefined`, and `boolean` inputs based on provided options.
@@ -100,9 +97,9 @@ export const coerceNumber = (
   // ---- Boolean ----
   if (typeof input === 'boolean') {
     if (
-      fallbackOnBoolean === true
-      || (fallbackOnBoolean === 'true' && input)
-      || (fallbackOnBoolean === 'false' && !input)
+      fallbackOnBoolean === true ||
+      (fallbackOnBoolean === 'true' && input) ||
+      (fallbackOnBoolean === 'false' && !input)
     )
       return fallback;
     return Number(input); // coerces true -> 1, false -> 0 if not using fallback
@@ -113,23 +110,20 @@ export const coerceNumber = (
   if (typeof input === 'number') {
     num = input;
   } else if (typeof input === 'string') {
-    num =
-      typeof stringCoercion === 'string' ?
-        Number[stringCoercion](input, radix)
-      : Number(input);
+    num = typeof stringCoercion === 'string' ? Number[stringCoercion](input, radix) : Number(input);
   } else {
     num = Number(input);
   }
 
   // ---- NaN handling ----
-  if (isNumberNaN(num)) return fallbackOnNaN ? fallback : num;
+  if (checkIsNumberNaN(num)) return fallbackOnNaN ? fallback : num;
 
   // ---- Infinity handling ----
-  if (!isNumberFinite(num)) {
+  if (!checkIsNumberFinite(num)) {
     if (
-      allowInfinity === true
-      || (allowInfinity === 'positive' && num > 0)
-      || (allowInfinity === 'negative' && num < 0)
+      allowInfinity === true ||
+      (allowInfinity === 'positive' && num > 0) ||
+      (allowInfinity === 'negative' && num < 0)
     ) {
       return num;
     }

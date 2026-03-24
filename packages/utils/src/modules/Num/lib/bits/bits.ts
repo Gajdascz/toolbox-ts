@@ -4,10 +4,10 @@ import {
   assertIsNumberInSixteenBitRange,
   assertIsNumberInThirtyTwoBitRange,
   assertIsNumberInTwentyFourBitRange,
-  isNumberInEightBitRange,
-  isNumberInSixteenBitRange,
-  isNumberInThirtyTwoBitRange,
-  isNumberInTwentyFourBitRange
+  checkIsNumberInEightBitRange,
+  checkIsNumberInSixteenBitRange,
+  checkIsNumberInThirtyTwoBitRange,
+  checkIsNumberInTwentyFourBitRange
 } from '../../../../core/guards/primitives/number/index.js';
 
 //#region> Depths/Ranges
@@ -15,7 +15,7 @@ import {
 export const eight = {
   ...BITS.eight,
   /** Checks if a number is within the 8-bit range [0, 255] */
-  is: isNumberInEightBitRange,
+  is: checkIsNumberInEightBitRange,
   /** Asserts that a number is within the 8-bit range [0, 255], throws an error if not */
   assert: assertIsNumberInEightBitRange
 } as const;
@@ -23,7 +23,7 @@ export const eight = {
 export const sixteen = {
   ...BITS.sixteen,
   /** Checks if a number is within the 16-bit range [0, 65,535] */
-  is: isNumberInSixteenBitRange,
+  is: checkIsNumberInSixteenBitRange,
   /** Asserts that a number is within the 16-bit range [0, 65,535], throws an error if not */
   assert: assertIsNumberInSixteenBitRange
 } as const;
@@ -31,7 +31,7 @@ export const sixteen = {
 export const twentyFour = {
   ...BITS.twentyFour,
   /** Checks if a number is within the 24-bit range [0, 16,777,215] */
-  is: isNumberInTwentyFourBitRange,
+  is: checkIsNumberInTwentyFourBitRange,
   /** Asserts that a number is within the 24-bit range [0, 16,777,215], throws an error if not */
   assert: assertIsNumberInTwentyFourBitRange
 } as const;
@@ -39,7 +39,7 @@ export const twentyFour = {
 export const thirtyTwo = {
   ...BITS.thirtyTwo,
   /** Checks if a number is within the 32-bit range [0, 4,294,967,295] */
-  is: isNumberInThirtyTwoBitRange,
+  is: checkIsNumberInThirtyTwoBitRange,
   /** Asserts that a number is within the 32-bit range [0, 4,294,967,295], throws an error if not */
   assert: assertIsNumberInThirtyTwoBitRange
 } as const;

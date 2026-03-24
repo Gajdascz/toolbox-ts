@@ -1,19 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  and,
-  left,
-  mask,
-  not,
-  or,
-  right,
-  rotl,
-  rotr,
-  xor,
-  zeroFillRight
-} from './bits.ts';
+import { and, left, mask, not, or, right, rotl, rotr, xor, zeroFillRight } from './bits.ts';
 
-describe('bits module', () => {
+describe('Num Bits', () => {
   describe('operations', () => {
     it('should perform bitwise AND', () => {
       expect(and(5, 3)).toBe(1); // 0101 & 0011 = 0001

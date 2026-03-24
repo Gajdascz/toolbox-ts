@@ -155,17 +155,17 @@ export const create = (
   wsChar: string = SPACE
 ): Indenter => {
   const indent: Indenter = ((lineOrLines, ...rest) =>
-    typeof lineOrLines === 'string' ?
-      line(lineOrLines, ...(rest as [number?, boolean?]), {
-        eolChar,
-        unitChar: wsChar,
-        indentSize
-      })
-    : block(lineOrLines, ...(rest as ['all' | 'final' | 'perLine']), {
-        eolChar,
-        unitChar: wsChar,
-        indentSize
-      })) as Indenter;
+    typeof lineOrLines === 'string'
+      ? line(lineOrLines, ...(rest as [number?, boolean?]), {
+          eolChar,
+          unitChar: wsChar,
+          indentSize
+        })
+      : block(lineOrLines, ...(rest as ['all' | 'final' | 'perLine']), {
+          eolChar,
+          unitChar: wsChar,
+          indentSize
+        })) as Indenter;
   Object.assign(indent, { eolChar });
   return indent;
 };

@@ -4,11 +4,9 @@ import type { StringRecord } from '@toolbox-ts/types/defs/object';
 
 import { isTypedArray } from 'node:util/types';
 
-import {
-  isObject,
-  isObjectWithEntry
-} from '../../../../core/guards/objs/base/index.js';
+import { isObjectAny, isObjectWithEntry } from '../../../../core/guards/objs/base/index.js';
 import { allEntries, createWithPrototypeOf, descriptor } from '../base/base.js';
+import { isFunction } from '../../../../core/index.js';
 
 //#region Types
 export interface CloneOptions {
@@ -45,50 +43,19 @@ export const cloneObjectStructure = <T extends object>(value: T): T =>
     Object.getPrototypeOf(value) as null | object,
     Object.getOwnPropertyDescriptors(value)
   ) as T;
-const withSetSeen = <T extends object, R>(
-  value: T,
-  cl: (v: T) => T,
-  ctx: CloneContext
-): R => {
+const withSetSeen = <T extends object, R>(value: T, cl: (v: T) => T, ctx: CloneContext): R => {
   const cloned = cl(value);
   ctx.seen.set(value, cloned);
   return cloned as unknown as R;
 };
-const hasCloneMethod = <T>(value: unknown): value is { clone: () => T } & T =>
-  isObjectWithEntry(
-    value,
-    'clone',
-    (f: unknown): f is () => T => typeof f === 'function'
-  );
-//#endregion
-
-//#region Copy Functions (no recursion)
-export const copy = {
-  date: (value: Date) => new Date(value),
-  regex: (value: RegExp) => new RegExp(value.source, value.flags),
-  arrayBuffer: (value: ArrayBuffer) => value.slice(0).transfer(),
-  dataView: (value: ArrayBufferView) => new DataView(value.buffer.slice(0)),
-  typedArray: (value: NodeJS.TypedArray): NodeJS.TypedArray =>
-    new (
-      value as unknown as { constructor: Constructor<NodeJS.TypedArray> }
-    ).constructor(value.buffer.slice(0)),
-  set: (value: Set<unknown>) => new Set(value),
-  map: (value: Map<unknown, unknown>) => new Map(value),
-  url: (value: URL) => new URL(value.toString()),
-  array: (value: unknown[]) => [...value],
-  error: (value: Error) => {
-    const err = new (value.constructor as ErrorConstructor)(value.message);
-    err.stack = value.stack;
-    err.name = value.name;
-    err.cause = value.cause;
-    return err;
-  },
-  plainObject: (
-    value: Record<string, unknown>,
-    { preservePlainObjectStructure }: CloneContext
-  ) =>
-    preservePlainObjectStructure ? cloneObjectStructure(value) : { ...value }
-} as const;
+const tryFindCloneMethod = <T>(value: unknown): ((i?: T) => T) | undefined => {
+  // Direct top-level clone method
+  if (isObjectWithEntry(value, 'clone', isFunction<(i?: T) => T>)) return value.clone;
+  // Check for clone method on constructor
+  if (isObjectWithEntry(value, 'constructor.clone', isFunction<(i?: T) => T>))
+    return value.constructor.clone;
+  return undefined;
+};
 //#endregion
 
 //#region Internal
@@ -102,10 +69,7 @@ const deep = {
     }
     return array;
   },
-  map: (
-    value: Map<unknown, unknown>,
-    ctx: CloneContext
-  ): Map<unknown, unknown> => {
+  map: (value: Map<unknown, unknown>, ctx: CloneContext): Map<unknown, unknown> => {
     const map = new Map();
     ctx.seen.set(value, map);
     for (const [k, v] of value) {
@@ -127,33 +91,47 @@ const deep = {
     const obj = createWithPrototypeOf<StringRecord>(value);
     ctx.seen.set(value, obj);
 
-    for (const [k, v] of [...allEntries(value)]) {
-      const desc = descriptor(value, k);
-      if (desc && 'value' in desc) {
-        // Data property: preserve descriptor, deep clone value
-        Object.defineProperty(obj, k, { ...desc, value: _cloneDeep(v, ctx) });
-      } else if (desc) {
-        // Accessor property: preserve as-is
-        Object.defineProperty(obj, k, desc);
-      }
+    for (const [k, v] of allEntries(value)) {
+      const desc = descriptor(value, k)!;
+      if ('value' in desc)
+        Object.defineProperty(obj, k, { ...desc, value: _cloneDeep(v, ctx) }); // Data property: preserve descriptor, deep clone value
+      else Object.defineProperty(obj, k, desc); // Accessor property: preserve as-is
     }
 
     return obj;
   },
   date: (value: Date, ctx: CloneContext) => withSetSeen(value, copy.date, ctx),
-  regex: (value: RegExp, ctx: CloneContext) =>
-    withSetSeen(value, copy.regex, ctx),
-  arrayBuffer: (value: ArrayBuffer, ctx: CloneContext) =>
-    withSetSeen(value, copy.arrayBuffer, ctx),
-  dataView: (value: ArrayBufferView, ctx: CloneContext) =>
-    withSetSeen(value, copy.dataView, ctx),
-  error: (value: Error, ctx: CloneContext) =>
-    withSetSeen(value, copy.error, ctx),
+  regex: (value: RegExp, ctx: CloneContext) => withSetSeen(value, copy.regex, ctx),
+  arrayBuffer: (value: ArrayBuffer, ctx: CloneContext) => withSetSeen(value, copy.arrayBuffer, ctx),
+  dataView: (value: ArrayBufferView, ctx: CloneContext) => withSetSeen(value, copy.dataView, ctx),
+  error: (value: Error, ctx: CloneContext) => withSetSeen(value, copy.error, ctx),
   url: (value: URL, ctx: CloneContext) => withSetSeen(value, copy.url, ctx),
   typedArray: (value: NodeJS.TypedArray, ctx: CloneContext) =>
     withSetSeen(value, copy.typedArray, ctx)
 } as const;
-
+export const copy = {
+  date: (value: Date) => new Date(value),
+  regex: (value: RegExp) => new RegExp(value.source, value.flags),
+  arrayBuffer: (value: ArrayBuffer) => value.slice(0).transfer(),
+  dataView: (value: ArrayBufferView) => new DataView(value.buffer.slice(0)),
+  typedArray: (value: NodeJS.TypedArray): NodeJS.TypedArray =>
+    new (value as unknown as { constructor: Constructor<NodeJS.TypedArray> }).constructor(
+      value.buffer.slice(0)
+    ),
+  set: (value: Set<unknown>) => new Set(value),
+  map: (value: Map<unknown, unknown>) => new Map(value),
+  url: (value: URL) => new URL(value.toString()),
+  array: (value: unknown[]) => [...value],
+  error: (value: Error) => {
+    const err = new (value.constructor as ErrorConstructor)(value.message);
+    err.stack = value.stack;
+    err.name = value.name;
+    err.cause = value.cause;
+    return err;
+  },
+  plainObject: (value: Record<string, unknown>, { preservePlainObjectStructure }: CloneContext) =>
+    preservePlainObjectStructure ? cloneObjectStructure(value) : { ...value }
+} as const;
 //#endregion
 
 const strategies = {
@@ -175,14 +153,12 @@ const resolveCloneOperation = <T>(
   value: T,
   ctx: Omit<CloneContext & CloneOptions, 'strategy'>
 ): T => {
-  const constructorName = (value as unknown)?.constructor?.name;
-  let strategy: Fn.Any | undefined;
+  let strategy: Fn.Any | undefined = tryFindCloneMethod<T>(value);
+  if (strategy) return strategy(value) as T;
 
+  const constructorName = (value as unknown)?.constructor?.name;
   if (!constructorName || !(constructorName in strategies)) {
-    if (hasCloneMethod<T>(value)) return value.clone();
-    // Handle objects without standard constructor names
-    if (Object.getPrototypeOf(value) === null)
-      strategy = strategies.Object[type];
+    if (Object.getPrototypeOf(value) === null) strategy = strategies.Object[type];
     else if (isTypedArray(value)) strategy = strategies.TypedArray[type];
 
     // No handler for this type, return as-is
@@ -195,7 +171,7 @@ const resolveCloneOperation = <T>(
 };
 
 const _cloneDeep = <T>(value: T, ctx: CloneContext): T => {
-  if (!isObject(value)) return value;
+  if (!isObjectAny(value)) return value;
   if (ctx.seen.has(value)) return ctx.seen.get(value) as T;
 
   // Check depth limit before processing nested structures
@@ -226,10 +202,8 @@ const _cloneDeep = <T>(value: T, ctx: CloneContext): T => {
  * shallow.a.b === obj.a.b; // true (not cloned beyond depth 1)
  * ```
  */
-export const cloneDeep = <T>(
-  value: T,
-  { maxDepth = Infinity }: { maxDepth?: number } = {}
-): T => _cloneDeep(value, { seen: new WeakMap(), maxDepth, currentDepth: 0 });
+export const cloneDeep = <T>(value: T, { maxDepth = Infinity }: { maxDepth?: number } = {}): T =>
+  _cloneDeep(value, { seen: new WeakMap(), maxDepth, currentDepth: 0 });
 
 /**
  * Shallowly clones a value (top-level only).
@@ -250,18 +224,16 @@ export const cloneDeep = <T>(
  */
 export const cloneShallow = <T>(
   value: T,
-  {
-    preservePlainObjectStructure = false
-  }: { preservePlainObjectStructure?: boolean } = {}
+  { preservePlainObjectStructure = false }: { preservePlainObjectStructure?: boolean } = {}
 ): T =>
-  isObject(value) ?
-    resolveCloneOperation('shallow', value, {
-      seen: new WeakMap(),
-      maxDepth: 1,
-      currentDepth: 0,
-      preservePlainObjectStructure
-    })
-  : value;
+  isObjectAny(value)
+    ? resolveCloneOperation('shallow', value, {
+        seen: new WeakMap(),
+        maxDepth: 1,
+        currentDepth: 0,
+        preservePlainObjectStructure
+      })
+    : value;
 
 /**
  * Clones a value using the specified strategy.

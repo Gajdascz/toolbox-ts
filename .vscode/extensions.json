@@ -1,10 +1,12 @@
 {
   "recommendations": [
+    "oxc.oxc-vscode",
+    "vitest.explorer",
+    "juanallo.vscode-dependency-cruiser",
+    "oxc.oxc-vscode",
     "streetsidesoftware.code-spell-checker",
     "YoavBls.pretty-ts-errors",
     "DavidAnson.vscode-markdownlint",
-    "aaron-bond.better-comments",
-    "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode"
+    "aaron-bond.better-comments"
   ]
 }

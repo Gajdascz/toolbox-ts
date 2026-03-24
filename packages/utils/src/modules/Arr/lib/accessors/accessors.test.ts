@@ -1,18 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 
-import {
-  at,
-  atOrThrow,
-  first,
-  firstOrThrow,
-  last,
-  lastIndex,
-  lastOrThrow
-} from './accessors.ts';
+import { at, atOrThrow, first, firstOrThrow, last, lastIndex, lastOrThrow } from './accessors.ts';
 
 const testArray = [1, 2, 3, 4, 5];
 
-describe('Accessors', () => {
+describe('Array Accessors', () => {
   describe('at & atOrThrow', () => {
     it('in-bound positive index', () => {
       expect(at(testArray, 0)).toBe(1);
@@ -24,7 +16,18 @@ describe('Accessors', () => {
     });
     it('out-of-bounds index', () => {
       expect(at(testArray, 10)).toBeUndefined();
-      expect(() => atOrThrow(testArray, 10)).toThrowError();
+      expect(() => atOrThrow(testArray, 10)).toThrow();
+    });
+    it('uses fallback if provided', () => {
+      const result1 = at(testArray, 10, null);
+      expect(result1).toBe(null);
+      expectTypeOf(result1).toEqualTypeOf<number | null>();
+      const result2 = at(testArray, 100, 'out-of-bounds' as const);
+      expect(result2).toBe('out-of-bounds');
+      expectTypeOf(result2).toEqualTypeOf<number | 'out-of-bounds'>();
+      const result3 = at(testArray, 100);
+      expect(result3).toBe(undefined);
+      expectTypeOf(result3).toEqualTypeOf<number | undefined>();
     });
   });
   describe('last & lastOrThrow', () => {
@@ -34,7 +37,7 @@ describe('Accessors', () => {
     });
     it('empty array', () => {
       expect(last([])).toBeUndefined();
-      expect(() => lastOrThrow([])).toThrowError();
+      expect(() => lastOrThrow([])).toThrow();
     });
   });
   describe('first & firstOrThrow', () => {
@@ -44,7 +47,7 @@ describe('Accessors', () => {
     });
     it('empty array', () => {
       expect(first([])).toBeUndefined();
-      expect(() => firstOrThrow([])).toThrowError();
+      expect(() => firstOrThrow([])).toThrow();
     });
   });
   describe('lastIndex', () => {

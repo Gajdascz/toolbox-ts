@@ -66,9 +66,7 @@ export const camel = {
    * ```
    */
   toSnake: <S extends string>(str: S): KebabToSnake<CamelToKebab<S>> =>
-    str.replaceAll(/([A-Z])/g, '_$1').toLowerCase() as KebabToSnake<
-      CamelToKebab<S>
-    >
+    str.replaceAll(/([A-Z])/g, '_$1').toLowerCase() as KebabToSnake<CamelToKebab<S>>
 } as const;
 export const pascal = {
   is: isStringPascalCase,
@@ -82,8 +80,7 @@ export const pascal = {
    * pascal.toKebab('HelloWorld') // 'hello-world'
    * ```
    */
-  toKebab: <S extends string>(str: S): PascalToKebab<S> =>
-    camel.toKebab(uncapitalize(str)),
+  toKebab: <S extends string>(str: S): PascalToKebab<S> => camel.toKebab(uncapitalize(str)),
   /**
    * Converts a PascalCase string to camelCase.
    *
@@ -103,8 +100,7 @@ export const pascal = {
    * pascal.toSnake('HelloWorld') // 'hello_world'
    * ```
    */
-  toSnake: <S extends string>(str: S): PascalToSnake<S> =>
-    camel.toSnake(uncapitalize(str))
+  toSnake: <S extends string>(str: S): PascalToSnake<S> => camel.toSnake(uncapitalize(str))
 } as const;
 export const kebab = {
   is: isStringKebabCase,
@@ -131,8 +127,7 @@ export const kebab = {
    * kebab.toPascal('a-a-a-a-a-a')      // 'AAAAAA'
    * ```
    */
-  toPascal: <S extends string>(str: S): KebabToPascal<S> =>
-    capitalize(kebab.toCamel(str)),
+  toPascal: <S extends string>(str: S): KebabToPascal<S> => capitalize(kebab.toCamel(str)),
   /**
    * Converts a kebab-case string to snake_case.
    *
@@ -168,8 +163,7 @@ export const snake = {
    * snake.toCamel('no_verify')  // 'noVerify'
    * ```
    */
-  toCamel: <S extends string>(str: S): SnakeToCamel<S> =>
-    kebab.toCamel(snake.toKebab(str)),
+  toCamel: <S extends string>(str: S): SnakeToCamel<S> => kebab.toCamel(snake.toKebab(str)),
   /**
    * Converts a snake_case string to PascalCase.
    *
@@ -179,7 +173,6 @@ export const snake = {
    * snake.toPascal('no_verify')  // 'NoVerify'
    * ```
    */
-  toPascal: <S extends string>(str: S): SnakeToPascal<S> =>
-    kebab.toPascal(snake.toKebab(str))
+  toPascal: <S extends string>(str: S): SnakeToPascal<S> => kebab.toPascal(snake.toKebab(str))
 } as const;
 //#endregion

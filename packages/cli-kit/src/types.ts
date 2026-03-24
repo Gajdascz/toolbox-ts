@@ -14,9 +14,7 @@ export interface CommandOptions<O extends Options | SyncOptions = Options> {
   onExecFail?: ErrorBehavior;
 }
 
-export interface CommandOptionsNoStdio<
-  O extends Options | SyncOptions = Options
-> {
+export interface CommandOptionsNoStdio<O extends Options | SyncOptions = Options> {
   execaOpts?: ExecaOptionsNoStdio<O>;
   onExecFail?: ErrorBehavior;
 }
@@ -30,7 +28,6 @@ export type CommandTuple<Executable extends string = string> = [
 ];
 export type ErrorBehavior = 'terminate' | 'throw';
 
-export type ExecaOptionsNoStdio<O extends Options | SyncOptions = Options> =
-  Omit<O, 'stdio'>;
+export type ExecaOptionsNoStdio<O extends Options | SyncOptions = Options> = Omit<O, 'stdio'>;
 
 export type FlagToken<S extends string = string> = `--${S}`;

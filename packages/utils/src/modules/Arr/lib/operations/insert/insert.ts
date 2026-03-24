@@ -16,11 +16,7 @@ import type { Arr } from '@toolbox-ts/types/defs/array';
  * ```
  *
  */
-export function insert<T extends Arr = Arr, E = unknown>(
-  t: T,
-  e: E,
-  i: number
-) {
+export function insert<T extends Arr = Arr, E = unknown>(t: T, e: E, i: number) {
   const elements = Array.isArray(e) ? e : [e];
   const length = t.length;
   if (i === 0) return [...elements, ...t];

@@ -22,10 +22,11 @@ export type CaseType = 'camel' | 'kebab' | 'pascal' | 'snake';
  * type Camel = KebabToCamel<'hello-world'>; // "helloWorld"
  * ```
  */
-export type KebabToCamel<S extends string> =
-  S extends `${infer H}-${infer T}` ? `${H}${Capitalize<KebabToCamel<T>>}`
-  : S extends `${infer H}` ? H
-  : S;
+export type KebabToCamel<S extends string> = S extends `${infer H}-${infer T}`
+  ? `${H}${Capitalize<KebabToCamel<T>>}`
+  : S extends `${infer H}`
+    ? H
+    : S;
 /**
  * Converts a camelCase string to PascalCase.
  *
@@ -47,10 +48,11 @@ export type KebabToPascal<S extends string> = Capitalize<KebabToCamel<S>>;
  * type Snake = KebabToSnake<'hello-world'>; // "hello_world"
  * ```
  */
-export type KebabToSnake<S extends string> =
-  S extends `${infer H}-${infer T}` ? `${H}_${KebabToSnake<T>}`
-  : S extends `${infer H}` ? H
-  : S;
+export type KebabToSnake<S extends string> = S extends `${infer H}-${infer T}`
+  ? `${H}_${KebabToSnake<T>}`
+  : S extends `${infer H}`
+    ? H
+    : S;
 //#region> ConversionMap
 /**
  * Maps a kebab-case string to its equivalent camelCase, PascalCase, and snake_case representations.
@@ -77,10 +79,9 @@ export interface KebabToConversionMap<S extends string> {
  * type Kebab = CamelToKebab<'helloWorld'>; // "hello-world"
  * ```
  */
-export type CamelToKebab<S extends string> =
-  S extends `${infer H}${infer T}` ?
-    T extends Uncapitalize<T> ?
-      `${Lowercase<H>}${CamelToKebab<T>}`
+export type CamelToKebab<S extends string> = S extends `${infer H}${infer T}`
+  ? T extends Uncapitalize<T>
+    ? `${Lowercase<H>}${CamelToKebab<T>}`
     : `${Lowercase<H>}-${CamelToKebab<T>}`
   : S;
 /**
@@ -189,10 +190,11 @@ export type SnakeToCamel<S extends string> = KebabToCamel<SnakeToKebab<S>>;
  * type Kebab = SnakeToKebab<'hello_world'>; // "hello-world"
  * ```
  */
-export type SnakeToKebab<S extends string> =
-  S extends `${infer H}_${infer T}` ? `${H}-${SnakeToKebab<T>}`
-  : S extends `${infer H}` ? H
-  : S;
+export type SnakeToKebab<S extends string> = S extends `${infer H}_${infer T}`
+  ? `${H}-${SnakeToKebab<T>}`
+  : S extends `${infer H}`
+    ? H
+    : S;
 /**
  * Converts a snake_case string to PascalCase.
  *
@@ -267,9 +269,7 @@ export type ConvertCase<
  * ```
  */
 export type IsCamelCase<S extends string = string> =
-  HasSeparator<S> extends true ? never
-  : IsCapitalized<S> extends true ? never
-  : S;
+  HasSeparator<S> extends true ? never : IsCapitalized<S> extends true ? never : S;
 /**
  * Checks if a string is in kebab-case.
  *
@@ -284,9 +284,11 @@ export type IsCamelCase<S extends string = string> =
  * ```
  */
 export type IsKebabCase<S extends string = string> =
-  HasSeparator<S, Exclude<Separator, '-'>> extends true ? never
-  : IsNotLowercase<S> extends true ? never
-  : S;
+  HasSeparator<S, Exclude<Separator, '-'>> extends true
+    ? never
+    : IsNotLowercase<S> extends true
+      ? never
+      : S;
 
 /**
  * Checks if a string is in PascalCase.
@@ -302,9 +304,7 @@ export type IsKebabCase<S extends string = string> =
  * ```
  */
 export type IsPascalCase<S extends string> =
-  HasSeparator<S> extends true ? never
-  : IsNotCapitalized<S> extends true ? never
-  : S;
+  HasSeparator<S> extends true ? never : IsNotCapitalized<S> extends true ? never : S;
 
 /**
  * Checks if a string is in snake_case.
@@ -320,14 +320,14 @@ export type IsPascalCase<S extends string> =
  * ```
  */
 export type IsSnakeCase<S extends string> =
-  HasSeparator<S, Exclude<Separator, '_'>> extends true ? never
-  : IsNotLowercase<S> extends true ? never
-  : S;
+  HasSeparator<S, Exclude<Separator, '_'>> extends true
+    ? never
+    : IsNotLowercase<S> extends true
+      ? never
+      : S;
 //#endregion
 
 export type CamelCase = `${Lowercase<string>}${string}`;
 export type KebabCase = `${Lowercase<string>}-${Lowercase<string>}`;
 export type PascalCase = `${Capitalize<string>}${string}`;
-export type SnakeCase =
-  | `${Lowercase<string>}_${Lowercase<string>}`
-  | Lowercase<string>;
+export type SnakeCase = `${Lowercase<string>}_${Lowercase<string>}` | Lowercase<string>;

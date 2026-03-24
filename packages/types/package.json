@@ -1,34 +1,30 @@
 {
   "name": "@toolbox-ts/types",
   "version": "0.2.0",
-  "description": "TypeScript Types",
-  "license": "MIT",
-  "type": "module",
-  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/types",
   "private": false,
-  "publishConfig": {
-    "access": "public"
-  },
+  "description": "TypeScript Types",
+  "keywords": [
+    "toolbox-ts",
+    "types",
+    "typescript",
+    "utilities"
+  ],
+  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/types",
+  "license": "MIT",
   "author": {
     "name": "Nolan Gajdascz",
     "email": "dev.gajdascz@gmail.com",
     "url": "https://github.com/gajdascz"
   },
-  "files": [
-    "dist",
-    "LICENSE",
-    "README.md"
-  ],
-  "keywords": [
-    "typescript",
-    "types",
-    "toolbox-ts",
-    "utilities"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/gajdascz/toolbox-ts.git"
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "type": "module",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
@@ -68,7 +64,11 @@
       "types": "./dist/general.d.ts"
     }
   },
-  "devDependencies": {
-    "vitest": "^3.2.4"
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "markdownlint": "^0.40.0",
+    "vitest": "^4.1.1"
   }
 }

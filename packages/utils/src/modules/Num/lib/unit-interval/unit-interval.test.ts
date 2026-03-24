@@ -2,25 +2,25 @@ import { describe, expect, it } from 'vitest';
 
 import * as unitInterval from './unit-interval.ts';
 
-describe('unitInterval', () => {
-  describe('is', () => {
+describe('Num UnitInterval', () => {
+  describe('check', () => {
     it('returns true for numbers in [0, 1]', () => {
-      expect(unitInterval.is(0)).toBe(true);
-      expect(unitInterval.is(0.5)).toBe(true);
-      expect(unitInterval.is(1)).toBe(true);
+      expect(unitInterval.check(0)).toBe(true);
+      expect(unitInterval.check(0.5)).toBe(true);
+      expect(unitInterval.check(1)).toBe(true);
     });
     it('returns false for numbers outside [0, 1]', () => {
-      expect(unitInterval.is(-0.1)).toBe(false);
-      expect(unitInterval.is(1.1)).toBe(false);
-      expect(unitInterval.is(Number.NaN)).toBe(false);
-      expect(unitInterval.is(Infinity)).toBe(false);
-      expect(unitInterval.is(-Infinity)).toBe(false);
+      expect(unitInterval.check(-0.1)).toBe(false);
+      expect(unitInterval.check(1.1)).toBe(false);
+      expect(unitInterval.check(Number.NaN)).toBe(false);
+      expect(unitInterval.check(Infinity)).toBe(false);
+      expect(unitInterval.check(-Infinity)).toBe(false);
     });
     it('returns false for non-numbers', () => {
-      expect(unitInterval.is('0.5')).toBe(false);
-      expect(unitInterval.is(null)).toBe(false);
-      expect(unitInterval.is(undefined)).toBe(false);
-      expect(unitInterval.is({})).toBe(false);
+      expect(unitInterval.check('0.5')).toBe(false);
+      expect(unitInterval.check(null)).toBe(false);
+      expect(unitInterval.check(undefined)).toBe(false);
+      expect(unitInterval.check({})).toBe(false);
     });
   });
 

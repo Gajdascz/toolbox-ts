@@ -1,1 +1,1 @@
-export * from './repo.js';
+export * as Repo from './core/index.js';

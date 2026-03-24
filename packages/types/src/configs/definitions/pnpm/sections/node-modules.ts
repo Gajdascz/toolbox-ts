@@ -74,12 +74,7 @@ export interface NodeModules {
    *
    * @see https://pnpm.io/settings#packageimportmethod
    */
-  packageImportMethod?:
-    | 'auto'
-    | 'clone-or-copy'
-    | 'clone'
-    | 'copy'
-    | 'hardlink';
+  packageImportMethod?: 'auto' | 'clone-or-copy' | 'clone' | 'copy' | 'hardlink';
 
   /**
    * Whether pnpm should create symlinks inside node_modules.

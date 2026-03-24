@@ -7,7 +7,7 @@ const numArr = [1, 2, 3, 4, 5];
 const strArr = ['a', 'b', 'c'];
 const emptyArr: number[] = [];
 
-describe('insert', () => {
+describe('Array Insert', () => {
   it('inserts at beginning', () => {
     expect(insert(numArr, [0], 0)).toEqual([0, 1, 2, 3, 4, 5]);
   });

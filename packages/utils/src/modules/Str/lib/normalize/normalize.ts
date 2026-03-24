@@ -1,6 +1,6 @@
 import type { Arr } from '@toolbox-ts/types/defs/array';
 
-import { isStringPunctuated } from '../../../../core/guards/primitives/strs/index.js';
+import { checkIsStringPunctuated } from '../../../../core/guards/primitives/strs/index.js';
 import { capitalize } from '../base/base.js';
 
 export interface NormalizeArrayOptions {
@@ -53,14 +53,11 @@ export const array = <A extends Arr = unknown[]>(
  * normalize.sentence('Hello world.') // 'Hello world.'
  * ```
  */
-export const sentence = (
-  str: unknown,
-  { capitalizeFirst = true, endPunctuation = '.' } = {}
-) => {
+export const sentence = (str: unknown, { capitalizeFirst = true, endPunctuation = '.' } = {}) => {
   if (typeof str !== 'string') return '';
   let result = str.trim();
   if (!result) return '';
   if (capitalizeFirst) result = capitalize(result);
-  if (endPunctuation && !isStringPunctuated(result)) result += endPunctuation;
+  if (endPunctuation && !checkIsStringPunctuated(result)) result += endPunctuation;
   return result;
 };

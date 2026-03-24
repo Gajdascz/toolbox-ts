@@ -1,1 +1,1 @@
-export type * as TsConfig from './tsconfig.js';
+export type * from './tsconfig.js';

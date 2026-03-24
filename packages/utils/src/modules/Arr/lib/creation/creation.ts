@@ -18,18 +18,16 @@ import {
  *
  * @example
  * ```ts
- * to(5) // [5]
- * to([1, 2, 3]) // [1, 2, 3]
- * to(null) // []
- * to(undefined) // []
- * to(new Map()) // [Map{}]
- * to(null, true) // [null]
+ * ensure(5) // [5]
+ * ensure([1, 2, 3]) // [1, 2, 3]
+ * ensure(null) // []
+ * ensure(undefined) // []
+ * ensure(new Map()) // [Map{}]
+ * ensure(null, true) // [null]
  * ```
  */
-export const to = <V = unknown>(v: V, allowNull = false): From<V> =>
-  (v === undefined || (!allowNull && v === null) ? []
-  : Array.isArray(v) ? v
-  : [v]) as From<V>;
+export const ensure = <V = unknown>(v: V, allowNull = false): From<V> =>
+  (v === undefined || (!allowNull && v === null) ? [] : Array.isArray(v) ? v : [v]) as From<V>;
 
 /**
  * Creates and returns an array of specified length, filled with the provided initial value.
@@ -52,10 +50,8 @@ export const from = <T = null>(
   initialValue: ((index: number) => T) | T = null as T
 ): T[] => {
   assertIsNumberPositiveInteger(length);
-  return typeof initialValue === 'function' ?
-      Array.from<number, T>({ length }, (_, i) =>
-        (initialValue as (index: number) => T)(i)
-      )
+  return typeof initialValue === 'function'
+    ? Array.from<number, T>({ length }, (_, i) => (initialValue as (index: number) => T)(i))
     : Array.from<number, T>({ length }, () => initialValue);
 };
 /**

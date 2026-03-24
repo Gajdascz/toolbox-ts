@@ -1,7 +1,5 @@
 name: Setup Node/PNPM environment
-description:
-  Checkout code (in caller), setup Node and PNPM, install deps, and build
-  packages.
+description: Checkout code (in caller), setup Node and PNPM, install deps, and build packages.
 
 runs:
   using: 'composite'

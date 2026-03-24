@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { partition } from './partition.ts';
 
-describe('partition', () => {
+describe('Array Partition', () => {
   describe('basic partitioning', () => {
     it('should partition numbers by even/odd', () => {
       const [evens, odds] = partition([1, 2, 3, 4, 5], (n) => n % 2 === 0);
@@ -11,10 +11,7 @@ describe('partition', () => {
     });
 
     it('should partition strings by length', () => {
-      const [long, short] = partition(
-        ['a', 'hello', 'hi', 'world', 'x'],
-        (s) => s.length > 2
-      );
+      const [long, short] = partition(['a', 'hello', 'hi', 'world', 'x'], (s) => s.length > 2);
       expect(long).toEqual(['hello', 'world']);
       expect(short).toEqual(['a', 'hi', 'x']);
     });
@@ -73,10 +70,7 @@ describe('partition', () => {
   describe('type handling', () => {
     it('should handle mixed types', () => {
       const items: (number | string)[] = [1, 'a', 2, 'b', 3];
-      const [numbers, strings] = partition(
-        items,
-        (item) => typeof item === 'number'
-      );
+      const [numbers, strings] = partition(items, (item) => typeof item === 'number');
       expect(numbers).toEqual([1, 2, 3]);
       expect(strings).toEqual(['a', 'b']);
     });
@@ -114,10 +108,7 @@ describe('partition', () => {
 
     it('should handle predicate with string methods', () => {
       const words = ['apple', 'BANANA', 'Cherry', 'DATE'];
-      const [uppercase, notUppercase] = partition(
-        words,
-        (w) => w === w.toUpperCase()
-      );
+      const [uppercase, notUppercase] = partition(words, (w) => w === w.toUpperCase());
       expect(uppercase).toEqual(['BANANA', 'DATE']);
       expect(notUppercase).toEqual(['apple', 'Cherry']);
     });

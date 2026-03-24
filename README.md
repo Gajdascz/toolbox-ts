@@ -10,7 +10,7 @@ A monorepo for Typescript utility packages and libraries.
 ## Packages
 
 | Package                                    | Version                                            | Description                            |
-|--------------------------------------------|----------------------------------------------------|----------------------------------------|
+| ------------------------------------------ | -------------------------------------------------- | -------------------------------------- |
 | [`@toolbox-ts/configs`][configs-pkg]       | [![npm version][configs-badge]][configs-npm]       | Repository config utils                |
 | [`@toolbox-ts/types`][types-pkg]           | [![npm version][types-badge]][types-npm]           | Type definitions                       |
 | [`@toolbox-ts/cli-kit`][cli-kit-pkg]       | [![npm version][cli-kit-badge]][cli-kit-npm]       | CLI building utils                     |
@@ -24,31 +24,24 @@ A monorepo for Typescript utility packages and libraries.
 [configs-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/configs
 [configs-badge]: https://img.shields.io/npm/v/@toolbox-ts/configs?label=
 [configs-npm]: https://www.npmjs.com/package/@toolbox-ts/configs
-
 [cli-kit-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/cli-kit
 [cli-kit-badge]: https://img.shields.io/npm/v/@toolbox-ts/cli-kit?label=
 [cli-kit-npm]: https://www.npmjs.com/package/@toolbox-ts/cli-kit
-
 [file-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/file
 [file-badge]: https://img.shields.io/npm/v/@toolbox-ts/file?label=
 [file-npm]: https://www.npmjs.com/package/@toolbox-ts/file
-
 [test-utils-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/test-utils
 [test-utils-badge]: https://img.shields.io/npm/v/@toolbox-ts/test-utils?label=
 [test-utils-npm]: https://www.npmjs.com/package/@toolbox-ts/test-utils
-
 [tseslint-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/tseslint
 [tseslint-badge]: https://img.shields.io/npm/v/@toolbox-ts/tseslint?label=
 [tseslint-npm]: https://www.npmjs.com/package/@toolbox-ts/tseslint
-
 [utils-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/utils
 [utils-badge]: https://img.shields.io/npm/v/@toolbox-ts/utils?label=
 [utils-npm]: https://www.npmjs.com/package/@toolbox-ts/utils
-
 [types-pkg]: https://github.com/Gajdascz/toolbox-ts/tree/main/packages/types
 [types-badge]: https://img.shields.io/npm/v/@toolbox-ts/types?label=
 [types-npm]: https://www.npmjs.com/package/@toolbox-ts/types
-
 
 ## Tooling
 
@@ -59,27 +52,24 @@ A monorepo for Typescript utility packages and libraries.
 <details><summary><b>Quality & Standards</b></summary>
 
 - [`vitest`](https://vitest.dev): Unit and Integration testing.
-- [`depcruiser`](https://github.com/Gajdascz/toolbox-ts/tree/main/packages/depcruiser):
-  Validates and provides visualization for project dependencies.
+- [`depcruiser`](https://github.com/Gajdascz/toolbox-ts/tree/main/packages/depcruiser): Validates
+  and provides visualization for project dependencies.
 - [`prettier`](https://prettier.io/): Formatter.
 - [`typescript-eslint`](https://typescript-eslint.io/): Linter
 - [`tsdoc`](https://tsdoc.org/): Standardizes doc comments in TypeScript.
 - [`commitlint`](https://commitlint.js.org/): Enforces commit convention.
-- [`markdownlint`](https://github.com/DavidAnson/markdownlint): Markdown file
-  linting
+- [`markdownlint`](https://github.com/DavidAnson/markdownlint): Markdown file linting
 
 </details>
 
 <details><summary><b>Automation</b></summary>
 
-- [`changesets`](https://github.com/changesets/changesets): automates package
-  versioning, changelog generation, and npm publishing.
-- [`github-actions`](https://github.com/features/actions): Remotely automates
-  CI/CD workflows.
-- [`husky`](https://typicode.github.io/husky/): Extends git hooks automating
-  standards enforcement locally.
-- [`lint-staged`](https://github.com/lint-staged/lint-staged): Runs tasks
-  against staged git files.
+- [`changesets`](https://github.com/changesets/changesets): automates package versioning, changelog
+  generation, and npm publishing.
+- [`github-actions`](https://github.com/features/actions): Remotely automates CI/CD workflows.
+- [`husky`](https://typicode.github.io/husky/): Extends git hooks automating standards enforcement
+  locally.
+- [`lint-staged`](https://github.com/lint-staged/lint-staged): Runs tasks against staged git files.
 
 </details>
 
@@ -95,9 +85,8 @@ A monorepo for Typescript utility packages and libraries.
 - **Packages**
   - [ ] Find and fix pain-points/bugs
   - [ ] Finalize apis and implementations for stable releases
-  
+
 ## ⚖️ License
 
 MIT – © 2025 [Nolan Gajdascz](https://github.com/gajdascz)
-[GitHub](https://github.com/gajdascz/toolbox-ts) |
-[NPM](https://npmjs.com/package/@toolbox-ts)
+[GitHub](https://github.com/gajdascz/toolbox-ts) | [NPM](https://npmjs.com/package/@toolbox-ts)

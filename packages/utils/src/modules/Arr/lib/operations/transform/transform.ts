@@ -30,3 +30,18 @@ export function transform<T extends Arr = Arr, U extends Arr = Arr>(
   }
   return result as U;
 }
+
+export function transformInPlace<T extends unknown[] = unknown[]>(
+  arr: T,
+  fn: (item: T[number]) => T[number] | undefined
+): void {
+  let writeIndex = 0;
+  for (let readIndex = 0; readIndex < arr.length; readIndex++) {
+    const mapped = fn(arr[readIndex]);
+    if (mapped !== undefined) {
+      arr[writeIndex] = mapped;
+      writeIndex++;
+    }
+  }
+  arr.length = writeIndex;
+}

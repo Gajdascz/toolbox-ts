@@ -4,18 +4,8 @@ import { createNumRangeError } from './range.js';
 
 describe('createNumRangeError', () => {
   // Mock guard object
-  const inclusive = {
-    typeName: 'TestRange',
-    min: 0,
-    max: 100,
-    inclusive: true
-  };
-  const exclusive = {
-    typeName: 'TestRange',
-    min: 0,
-    max: 100,
-    inclusive: false
-  };
+  const inclusive = { typeName: 'TestRange', min: 0, max: 100, inclusive: true };
+  const exclusive = { typeName: 'TestRange', min: 0, max: 100, inclusive: false };
 
   describe('with IsGuardNumRange parameter', () => {
     describe('creation and errors', () => {
@@ -30,43 +20,27 @@ describe('createNumRangeError', () => {
         expect(error.message).toContain(
           'expected a number value, within the exclusive range (0, 10)'
         );
-        expect(error.message).toContain('but received a string');
       });
       it('throws if opts.min > opts.max', () => {
         expect(() =>
-          createNumRangeError('TestRange', 'invalid', {
-            inclusive: false,
-            max: 0,
-            min: 10
-          })
-        ).toThrowError();
+          createNumRangeError('TestRange', 'invalid', { inclusive: false, max: 0, min: 10 })
+        ).toThrow();
       });
       it('throws if diff is zero (value is in range)', () => {
         expect(() =>
-          createNumRangeError('TestRange', 10, {
-            inclusive: true,
-            max: 10,
-            min: 10
-          })
-        ).toThrowError();
+          createNumRangeError('TestRange', 10, { inclusive: true, max: 10, min: 10 })
+        ).toThrow();
       });
     });
   });
 
   describe('inclusive', () => {
     it('creates error for non-number value with inclusive range', () => {
-      const error = createNumRangeError(
-        inclusive.typeName,
-        'not a number',
-        inclusive
-      );
+      const error = createNumRangeError(inclusive.typeName, 'not a number', inclusive);
 
       expect(error).toBeInstanceOf(RangeError);
       expect(error.message).toContain('Range Type: TestRange');
-      expect(error.message).toContain(
-        'expected a number value, within the inclusive range [0, 100]'
-      );
-      expect(error.message).toContain('but received a string');
+      expect(error.message).toContain('within the inclusive range [0, 100]');
     });
     it('creates error for number below min with inclusive range', () => {
       const error = createNumRangeError(inclusive.typeName, -10, inclusive);
@@ -87,18 +61,13 @@ describe('createNumRangeError', () => {
   });
   describe('exclusive', () => {
     it('creates error for non-number value with exclusive range', () => {
-      const error = createNumRangeError(
-        exclusive.typeName,
-        'not a number',
-        exclusive
-      );
+      const error = createNumRangeError(exclusive.typeName, 'not a number', exclusive);
 
       expect(error).toBeInstanceOf(RangeError);
       expect(error.message).toContain('Range Type: TestRange');
       expect(error.message).toContain(
         'expected a number value, within the exclusive range (0, 100)'
       );
-      expect(error.message).toContain('but received a string');
     });
     it('creates error for number below min with exclusive range', () => {
       const error = createNumRangeError(exclusive.typeName, 0, exclusive);

@@ -13,10 +13,13 @@ import {
   getPrototypeOf,
   keys,
   symbolEntries,
-  values
+  values,
+  symbolValues,
+  allEnumerableEntries,
+  knownDescriptor
 } from './base.ts';
 
-describe('base', () => {
+describe('Obj Base', () => {
   //#region> keys
   describe('keys', () => {
     it('should return typed array of object keys', () => {
@@ -33,19 +36,14 @@ describe('base', () => {
       expectTypeOf(result).toEqualTypeOf<(keyof typeof obj & string)[]>();
     });
     it('should only return enumerable keys', () => {
-      const obj = defineProperty({}, 'hidden', {
-        value: 'secret',
-        enumerable: false
-      });
-      const updatedObj = defineProperty(obj, 'visible', {
-        value: 'shown',
-        enumerable: true
-      });
+      const obj = defineProperty({}, 'hidden', { value: 'secret', enumerable: false });
+      const updatedObj = defineProperty(obj, 'visible', { value: 'shown', enumerable: true });
 
       const result = keys(updatedObj);
 
       expect(result).toEqual(['visible']);
       expect(result).not.toContain('hidden');
+      expectTypeOf(result).toEqualTypeOf<'visible'[]>();
     });
 
     it('should throw TypeError for null', () => {
@@ -74,9 +72,7 @@ describe('base', () => {
         ['a', 1],
         ['b', 'two']
       ]);
-      expectTypeOf(result).toEqualTypeOf<
-        (['0', 3] | ['a', 1] | ['b', 'two'])[]
-      >();
+      expectTypeOf(result).toEqualTypeOf<(['0', 3] | ['a', 1] | ['b', 'two'])[]>();
     });
 
     it('should work with empty objects', () => {
@@ -88,23 +84,17 @@ describe('base', () => {
     });
 
     it('should only return enumerable entries', () => {
-      const obj = defineProperty({}, 'hidden', {
-        value: 'secret',
-        enumerable: false
-      });
-      const updatedObj = defineProperty(obj, 'visible', {
-        value: 'shown',
-        enumerable: true
-      });
+      const obj = defineProperty({}, 'hidden', { value: 'secret', enumerable: false });
+      const updatedObj = defineProperty(obj, 'visible', { value: 'shown', enumerable: true });
 
       interface O {
-        hidden: string;
         visible: string;
       }
       const result = entries<O>(updatedObj);
 
       expect(result).toEqual([['visible', 'shown']]);
-      expect(result.some(([key]) => key === 'hidden')).toBe(false);
+      expect(result.some(([key]) => (key as any) === 'hidden')).toBe(false);
+      expectTypeOf(result).toEqualTypeOf<['visible', string][]>();
     });
 
     it('should throw TypeError for null', () => {
@@ -143,14 +133,8 @@ describe('base', () => {
     });
 
     it('should only return enumerable values', () => {
-      const obj = Object.defineProperty({}, 'hidden', {
-        value: 'secret',
-        enumerable: false
-      });
-      Object.defineProperty(obj, 'visible', {
-        value: 'shown',
-        enumerable: true
-      });
+      const obj = Object.defineProperty({}, 'hidden', { value: 'secret', enumerable: false });
+      Object.defineProperty(obj, 'visible', { value: 'shown', enumerable: true });
 
       const result = values(obj);
 
@@ -172,7 +156,18 @@ describe('base', () => {
     });
   });
   //#endregion
-
+  //#region> symbolValues
+  describe('symbolValues', () => {
+    it('should return typed array of symbol values', () => {
+      const sym1 = Symbol('sym1');
+      const sym2 = Symbol('sym2');
+      const obj = { [sym1]: 'value1', [sym2]: 'value2' } as const;
+      const result = symbolValues(obj);
+      expect(result).toEqual(['value1', 'value2']);
+      expectTypeOf(result).toEqualTypeOf<('value1' | 'value2')[]>();
+    });
+  });
+  //#endregion
   //#region> symbolEntries
   describe('symbolEntries', () => {
     it('should return typed array of symbol entries', () => {
@@ -185,10 +180,7 @@ describe('base', () => {
         [sym2, 'value2']
       ]);
       expectTypeOf(result).toEqualTypeOf<
-        (
-          | [typeof sym1, (typeof obj)[typeof sym1]]
-          | [typeof sym2, (typeof obj)[typeof sym2]]
-        )[]
+        ([typeof sym1, (typeof obj)[typeof sym1]] | [typeof sym2, (typeof obj)[typeof sym2]])[]
       >();
     });
   });
@@ -205,13 +197,37 @@ describe('base', () => {
   });
   //#endregion
 
-  //#region> allEntries
-  describe('allEntries', () => {
+  //#region> allEnumerableEntries
+  describe('allEnumerableEntries', () => {
     it('should return all enumerable entries and symbol entries', () => {
       const sym1 = Symbol('sym1');
       const sym2 = Symbol('sym2');
       const obj = { a: 1, b: 2, [sym1]: 'value1', [sym2]: 'value2' };
-      const result = allEntries(obj);
+      const result = allEnumerableEntries(obj);
+      expect(result).toEqual([
+        ['a', 1],
+        ['b', 2],
+        [sym1, 'value1'],
+        [sym2, 'value2']
+      ]);
+    });
+  });
+  //#endregion
+  //#region> allEntries
+  describe('allEntries', () => {
+    it('should return all string and symbol entries', () => {
+      const sym1 = Symbol('sym1');
+      const sym2 = Symbol('sym2');
+      const obj = defineProperty(defineProperty({}, 'a', { value: 1, enumerable: false }), sym1, {
+        value: 'value1',
+        enumerable: false
+      });
+      const updatedObj = defineProperty(
+        defineProperty(obj, 'b', { value: 2, enumerable: true }),
+        sym2,
+        { value: 'value2', enumerable: true }
+      );
+      const result = allEntries(updatedObj);
       expect(result).toEqual([
         ['a', 1],
         ['b', 2],
@@ -294,11 +310,7 @@ describe('base', () => {
         c: { value: true, enumerable: true }
       });
 
-      expectTypeOf(result).branded.toEqualTypeOf<{
-        a: number;
-        b: string;
-        c: boolean;
-      }>();
+      expectTypeOf(result).branded.toEqualTypeOf<{ a: number; b: string; c: boolean }>();
     });
 
     it('should handle accessor properties', () => {
@@ -329,19 +341,19 @@ describe('base', () => {
       });
 
       expect(Object.keys(result)).toEqual(['visible']);
-      expect(result.hidden).toBe('secret');
+      expect((result as any).hidden).toBe('secret');
+      expectTypeOf(result).branded.toEqualTypeOf<{ visible: string }>();
     });
 
     it('should handle non-writable properties', () => {
       const obj = {};
-      const result = defineProperties(obj, {
-        readonly: { value: 42, writable: false }
-      });
+      const result = defineProperties(obj, { readonly: { value: 42, writable: false } });
 
       expect(result.readonly).toBe(42);
       expect(() => {
         (result as any).readonly = 100;
       }).toThrow();
+      expectTypeOf(result).branded.toEqualTypeOf<{ readonly: number }>();
     });
 
     it('should handle configurable properties', () => {
@@ -357,6 +369,7 @@ describe('base', () => {
       expect(() => {
         delete (result as any).permanent;
       }).toThrow();
+      expectTypeOf(result).branded.toEqualTypeOf<{ deletable: number; permanent: number }>();
     });
   });
   //#endregion
@@ -365,23 +378,17 @@ describe('base', () => {
   describe('defineProperty', () => {
     it('should add a single property to an object', () => {
       const obj = { a: 1 };
-      const result = defineProperty(obj, 'b', {
-        value: 2,
-        writable: true,
-        enumerable: true
-      });
+      const result = defineProperty(obj, 'b', { value: 2, writable: true, enumerable: true });
 
       expect(result.a).toBe(1);
       expect(result.b).toBe(2);
       expect(result).toBe(obj); // mutates original
+      expectTypeOf<typeof result>().branded.toEqualTypeOf<{ a: number; b: number }>();
     });
 
     it('should infer property type correctly', () => {
       const obj = { a: 1 };
-      const result = defineProperty(obj, 'b', {
-        value: 'string',
-        writable: true
-      });
+      const result = defineProperty(obj, 'b', { value: 'string', writable: true });
 
       expectTypeOf(result).branded.toEqualTypeOf<{ a: number; b: string }>();
     });
@@ -405,21 +412,16 @@ describe('base', () => {
 
     it('should handle non-enumerable property', () => {
       const obj = { a: 1 };
-      const result = defineProperty(obj, 'hidden', {
-        value: 'secret',
-        enumerable: false
-      });
+      const result = defineProperty(obj, 'hidden', { value: 'secret', enumerable: false });
 
       expect(Object.keys(result)).toEqual(['a']);
-      expect(result.hidden).toBe('secret');
+      expect((result as any).hidden).toBe('secret');
+      expectTypeOf(result).branded.toEqualTypeOf<{ a: number }>();
     });
 
     it('should handle non-writable property', () => {
       const obj = {};
-      const result = defineProperty(obj, 'readonly', {
-        value: 42,
-        writable: false
-      });
+      const result = defineProperty(obj, 'readonly', { value: 42, writable: false });
 
       expect(result.readonly).toBe(42);
       expect(() => {
@@ -430,10 +432,7 @@ describe('base', () => {
     it('should handle symbol keys', () => {
       const sym = Symbol('key');
       const obj = {};
-      const result = defineProperty(obj, sym, {
-        value: 'symbol value',
-        enumerable: true
-      });
+      const result = defineProperty(obj, sym, { value: 'symbol value', enumerable: true });
 
       expect(result[sym]).toBe('symbol value');
     });
@@ -485,9 +484,7 @@ describe('base', () => {
         }
       };
       const result = create(proto);
-
       expectTypeOf(result).toEqualTypeOf<typeof proto>();
-      expectTypeOf(result.method).toEqualTypeOf<() => string>();
     });
 
     it('should infer types correctly with properties', () => {
@@ -501,9 +498,7 @@ describe('base', () => {
         age: { value: 30 as const }
       });
 
-      expectTypeOf(result).toEqualTypeOf<
-        { age: 30; name: 'Alice' } & typeof proto
-      >();
+      expectTypeOf(result).toEqualTypeOf<{ age: 30; name: 'Alice' } & typeof proto>();
     });
 
     it('should handle non-enumerable properties', () => {
@@ -608,12 +603,7 @@ describe('base', () => {
       });
 
       it('should handle complex nested structures', () => {
-        const obj = {
-          user: {
-            name: 'Alice',
-            profile: { age: 30, address: { city: 'NYC' } }
-          }
-        };
+        const obj = { user: { name: 'Alice', profile: { age: 30, address: { city: 'NYC' } } } };
         const result = freeze(obj, { maxDepth: 3 });
 
         expect(Object.isFrozen(result)).toBe(true);
@@ -638,8 +628,7 @@ describe('base', () => {
         const set = new Set([{ a: 1 }, { b: 2 }, { c: 3 }]);
         const result = freeze({ set }, { maxDepth: Infinity });
         expect(Object.isFrozen(result)).toBe(true);
-        for (const value of result.set.values())
-          expect(Object.isFrozen(value)).toBe(true);
+        for (const value of result.set.values()) expect(Object.isFrozen(value)).toBe(true);
       });
     });
 
@@ -727,13 +716,7 @@ describe('base', () => {
       });
 
       it('should stop at primitives in nested structures', () => {
-        const obj = {
-          str: 'text',
-          num: 42,
-          bool: true,
-          nil: null,
-          undef: undefined
-        };
+        const obj = { str: 'text', num: 42, bool: true, nil: null, undef: undefined };
         const result = freeze(obj, { maxDepth: 2 });
 
         expect(Object.isFrozen(result)).toBe(true);
@@ -784,4 +767,16 @@ describe('base', () => {
     });
   });
   //#endregion
+
+  describe('knownDescriptor', () => {
+    it('throws for non-existent property', () => {
+      const obj = { a: 1 };
+      expect(() => knownDescriptor(obj, 'b')).toThrow();
+    });
+    it('returns existing property', () => {
+      const obj = { a: 1 };
+      const desc = knownDescriptor(obj, 'a');
+      expect(desc).toEqual({ value: 1, writable: true, enumerable: true, configurable: true });
+    });
+  });
 });

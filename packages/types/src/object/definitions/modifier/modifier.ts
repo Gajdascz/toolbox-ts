@@ -1,11 +1,6 @@
-import type {
-  IsFunction,
-  IsNever,
-  IsNullish,
-  IsObject,
-  NonNullish
-} from '../../../general.js';
+import type { IsFunction, IsNever, IsNullish, IsObject, NonNullish } from '../../../general.js';
 import type { Increment } from '../../../number/definitions/number.js';
+import type { Simplify } from '../general.js';
 /**
  * Removes readonly modifiers from top level properties of a type.
  *
@@ -21,9 +16,14 @@ export type Mutable<T> = { -readonly [P in keyof T]: T[P] };
 /**
  * Mark keys K in T as required, keep the rest as original (optional or otherwise)
  * @shallow
+ *
+ * @example
+ * ```ts
+ * type User = { id?: number, name?: string, address?: { street?: string, zip?: number } }
+ * type UserWithRequiredId = RequiredProps<User, 'id'> // { id: number, name?: string, address?: { street?: string, zip?: number } }
+ * ```
  */
-export type RequiredProps<T, K extends keyof T> = Omit<T, K>
-  & Required<Pick<T, K>>;
+export type RequiredProps<T, K extends keyof T> = Simplify<Omit<T, K> & Required<Pick<T, K>>>;
 
 //#region>> Deep
 /**
@@ -38,8 +38,7 @@ export type RequiredProps<T, K extends keyof T> = Omit<T, K>
  * type WritableUser = NestedWritable<User> // { name: string, address: { street: string } }
  * ```
  */
-export type DeepMutable<T> =
-  T extends object ? { -readonly [P in keyof T]: DeepMutable<T[P]> } : T;
+export type DeepMutable<T> = T extends object ? { -readonly [P in keyof T]: DeepMutable<T[P]> } : T;
 /**
  * Marks all properties of a type as optional, including nested objects.
  *
@@ -51,10 +50,11 @@ export type DeepMutable<T> =
  * type PartialUser = DeepPartial<User> // { name?: string, address?: { street?: string } }
  * ```
  */
-export type DeepPartial<T> =
-  T extends readonly unknown[] | unknown[] ? T | undefined
-  : T extends object ? { [P in keyof T]?: DeepPartial<T[P]> }
-  : T;
+export type DeepPartial<T> = T extends readonly unknown[] | unknown[]
+  ? T | undefined
+  : T extends object
+    ? { [P in keyof T]?: DeepPartial<T[P]> }
+    : T;
 /**
  * Mark keys K in T as optional (nested), keep the rest as original (optional or otherwise)
  *
@@ -66,10 +66,9 @@ export type DeepPartial<T> =
  * type PartialAddress = PartiallyOptional<User, 'address'> // { id: number, name?: string, address?: { street?: string } }
  * ```
  */
-export type DeepPartiallyOptional<T, K extends keyof T> = DeepPartial<
-  Pick<T, K>
->
-  & Omit<T, K>;
+export type DeepPartiallyOptional<T, K extends keyof T> = Simplify<
+  DeepPartial<Pick<T, K>> & Omit<T, K>
+>;
 /**
  * Marks all properties of a type as readonly, including nested objects.
  *
@@ -81,8 +80,9 @@ export type DeepPartiallyOptional<T, K extends keyof T> = DeepPartial<
  * type ReadonlyUser = DeepReadonly<User> // { readonly name: string, readonly address: { readonly street: string } }
  * ```
  */
-export type DeepReadonly<T> =
-  T extends object ? { readonly [P in keyof T]: DeepReadonly<T[P]> } : T;
+export type DeepReadonly<T> = T extends object
+  ? { readonly [P in keyof T]: DeepReadonly<T[P]> }
+  : T;
 /**
  * Marks all properties of a type as required, including nested objects.
  *
@@ -94,8 +94,7 @@ export type DeepReadonly<T> =
  * type RequiredUser = DeepRequired<User> // { name: string, address: { street: string } }
  * ```
  */
-export type DeepRequired<T> =
-  T extends object ? { [P in keyof T]-?: DeepRequired<T[P]> } : T;
+export type DeepRequired<T> = T extends object ? { [P in keyof T]-?: DeepRequired<T[P]> } : T;
 /**
  * Mark keys K in T as required (nested), keep the rest as original (optional or otherwise)
  *
@@ -107,8 +106,9 @@ export type DeepRequired<T> =
  * type RequiredAddress = RequiredProps<User, 'address'> // { id: number, name?: string, address: { street: string } }
  * ```
  */
-export type DeepRequiredProps<T, K extends keyof T> = DeepRequired<Pick<T, K>>
-  & Omit<T, K>;
+export type DeepRequiredProps<T, K extends keyof T> = Simplify<
+  DeepRequired<Pick<T, K>> & Omit<T, K>
+>;
 //#endregion
 
 //#region>> Depth Based
@@ -138,15 +138,12 @@ export type DeepRequiredProps<T, K extends keyof T> = DeepRequired<Pick<T, K>>
  * }
  * ```
  */
-export type DepthReadonly<
-  T,
-  D extends number = 9999,
-  I extends number = 0
-> = Readonly<{
-  [P in keyof T]: I extends D ? T[P]
-  : T[P] extends object ?
-    DepthReadonly<T[P], D, I extends number ? Increment<I> : never>
-  : T[P];
+export type DepthReadonly<T, D extends number = 9999, I extends number = 0> = Readonly<{
+  [P in keyof T]: I extends D
+    ? T[P]
+    : T[P] extends object
+      ? DepthReadonly<T[P], D, I extends number ? Increment<I> : never>
+      : T[P];
 }>;
 //#endregion
 
@@ -161,9 +158,8 @@ export type DepthReadonly<
  * type DeepFrozenUser = Frozen<User, 1> // { readonly id: number, readonly name: string, readonly address: { readonly street: string } }
  * ```
  */
-export type Frozen<T, Depth extends number = 0> = DepthReadonly<
-  { __frozen__: true } & T,
-  Depth
+export type Frozen<T, Depth extends number = 0> = Simplify<
+  DepthReadonly<{ __frozen__: true } & T, Depth>
 >;
 //#endregion
 
@@ -203,11 +199,15 @@ export type Frozen<T, Depth extends number = 0> = DepthReadonly<
  * ```
  */
 export type StripNullish<T> =
-  IsNullish<T> extends true ? never
-  : T extends (infer U)[] ? StripNullish<NonNullish<U>>[]
-  : IsFunction<T> extends true ? T
-  : IsObject<T> extends true ? { [K in keyof T]: StripNullish<T[K]> }
-  : NonNullish<T>;
+  IsNullish<T> extends true
+    ? never
+    : T extends (infer U)[]
+      ? StripNullish<NonNullish<U>>[]
+      : IsFunction<T> extends true
+        ? T
+        : IsObject<T> extends true
+          ? { [K in keyof T]: StripNullish<T[K]> }
+          : NonNullish<T>;
 //#endregion
 
 //#region> Remove
@@ -221,10 +221,13 @@ export type StripNullish<T> =
  * ```
  */
 export type RemoveIndexSignature<T> = {
-  [K in keyof T as string extends K ? never
-  : number extends K ? never
-  : symbol extends K ? never
-  : K]: T[K];
+  [K in keyof T as string extends K
+    ? never
+    : number extends K
+      ? never
+      : symbol extends K
+        ? never
+        : K]: T[K];
 };
 
 /**
@@ -257,13 +260,16 @@ export type RemoveIndexSignature<T> = {
  * ```
  */
 export type RemoveNever<T> =
-  IsNever<T> extends true ? never
-  : T extends (infer U)[] ? RemoveNever<U>[]
-  : IsObject<T> extends true ?
-    {
-      [K in keyof T as IsNever<RemoveNever<T[K]>> extends true ? never
-      : K]: RemoveNever<T[K]>;
-    }
-  : T;
+  IsNever<T> extends true
+    ? never
+    : T extends (infer U)[]
+      ? RemoveNever<U>[]
+      : IsObject<T> extends true
+        ? {
+            [K in keyof T as IsNever<RemoveNever<T[K]>> extends true ? never : K]: RemoveNever<
+              T[K]
+            >;
+          }
+        : T;
 
 //#endregion

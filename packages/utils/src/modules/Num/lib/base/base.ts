@@ -93,8 +93,7 @@ export const average = (numbers: number[], roundTo?: number): number => {
  * range([]) // NaN
  * ```
  */
-export const range = (numbers: number[]): number =>
-  Math.max(...numbers) - Math.min(...numbers);
+export const range = (numbers: number[]): number => Math.max(...numbers) - Math.min(...numbers);
 
 export interface ClampOpts {
   decimal?: number;

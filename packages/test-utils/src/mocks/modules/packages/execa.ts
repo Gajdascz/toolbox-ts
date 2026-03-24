@@ -1,10 +1,6 @@
 import { vi } from 'vitest';
 
-import {
-  dependencyExists,
-  mockKeys,
-  wrapMockExport
-} from '../../../core/index.js';
+import { dependencyExists, mockKeys, wrapMockExport } from '../../../core/index.js';
 
 export const execaExists = await dependencyExists('execa');
 

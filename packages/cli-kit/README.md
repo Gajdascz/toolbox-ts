@@ -15,7 +15,8 @@ yarn add @toolbox-ts/cli-kit
 
 ## [BaseCommand](https://github.com/Gajdascz/toolbox-ts/tree/main/packages/cli-kit/src/BaseCommand/README.md)
 
-`BaseCommand` is an abstract [`@oclif/core`](https://oclif.io/) `Command` subclass that standardizes CLI command execution using [`execa`](https://www.npmjs.com/package/execa/v/5.1.0).
+`BaseCommand` is an abstract [`@oclif/core`](https://oclif.io/) `Command` subclass that standardizes
+CLI command execution using [`execa`](https://www.npmjs.com/package/execa/v/5.1.0).
 
 ```ts
 import { BaseCommand } from '@toolbox-ts/cli-kit';
@@ -40,7 +41,8 @@ export class Reporter<T = Message> implements reporters.Reporter<T[]> {
 
 ## [Utils](https://github.com/Gajdascz/toolbox-ts/tree/main/packages/cli-kit/src/utils/README.md)
 
-`Utils` provide low-level helpers for working with shell processes, flags, and command input. They power higher-level abstractions like `BaseCommand` and `Reporters`.
+`Utils` provide low-level helpers for working with shell processes, flags, and command input. They
+power higher-level abstractions like `BaseCommand` and `Reporters`.
 
 ## ⚖️ License
 

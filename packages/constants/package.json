@@ -1,0 +1,43 @@
+{
+  "name": "@toolbox-ts/constants",
+  "version": "0.0.0",
+  "private": false,
+  "description": "Constants for toolbox-ts packages",
+  "keywords": [
+    "toolbox-ts",
+    "typescript",
+    "utilities"
+  ],
+  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/constants",
+  "license": "MIT",
+  "author": {
+    "name": "Nolan Gajdascz",
+    "email": "dev.gajdascz@gmail.com",
+    "url": "https://github.com/gajdascz"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gajdascz/toolbox-ts.git"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./*": {
+      "types": "./dist/*/definitions/index.d.ts",
+      "import": "./dist/*/definitions/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

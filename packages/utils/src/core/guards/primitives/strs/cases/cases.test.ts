@@ -31,17 +31,11 @@ runGuardSuites(
     assertType:
       expectTypeOf(
         assertIsStringSnakeCase<SnakeCaseString>
-      ).asserts.toEqualTypeOf<SnakeCaseString>()
-      && expectTypeOf(
-        assertIsStringSnakeCase<CamelCaseString>
-      ).asserts.toEqualTypeOf<never>(),
+      ).asserts.toEqualTypeOf<SnakeCaseString>() &&
+      expectTypeOf(assertIsStringSnakeCase<CamelCaseString>).asserts.toEqualTypeOf<never>(),
     expectType:
-      expectTypeOf(
-        isStringSnakeCase<SnakeCaseString>
-      ).guards.toEqualTypeOf<'snake_case'>()
-      && expectTypeOf(
-        isStringSnakeCase<PascalCaseString>
-      ).guards.toEqualTypeOf<never>()
+      expectTypeOf(isStringSnakeCase<SnakeCaseString>).guards.toEqualTypeOf<'snake_case'>() &&
+      expectTypeOf(isStringSnakeCase<PascalCaseString>).guards.toEqualTypeOf<never>()
   },
   {
     is: isStringKebabCase,
@@ -52,17 +46,11 @@ runGuardSuites(
     assertType:
       expectTypeOf(
         assertIsStringKebabCase<KebabCaseString>
-      ).asserts.toEqualTypeOf<KebabCaseString>()
-      && expectTypeOf(
-        assertIsStringKebabCase<CamelCaseString>
-      ).asserts.toEqualTypeOf<never>(),
+      ).asserts.toEqualTypeOf<KebabCaseString>() &&
+      expectTypeOf(assertIsStringKebabCase<CamelCaseString>).asserts.toEqualTypeOf<never>(),
     expectType:
-      expectTypeOf(
-        isStringKebabCase<KebabCaseString>
-      ).guards.toEqualTypeOf<'kebab-case'>()
-      && expectTypeOf(
-        isStringKebabCase<CamelCaseString>
-      ).guards.toEqualTypeOf<never>()
+      expectTypeOf(isStringKebabCase<KebabCaseString>).guards.toEqualTypeOf<'kebab-case'>() &&
+      expectTypeOf(isStringKebabCase<CamelCaseString>).guards.toEqualTypeOf<never>()
   },
   {
     is: isStringCamelCase,
@@ -73,17 +61,11 @@ runGuardSuites(
     assertType:
       expectTypeOf(
         assertIsStringCamelCase<CamelCaseString>
-      ).asserts.toEqualTypeOf<CamelCaseString>()
-      && expectTypeOf(
-        assertIsStringCamelCase<KebabCaseString>
-      ).asserts.toEqualTypeOf<never>(),
+      ).asserts.toEqualTypeOf<CamelCaseString>() &&
+      expectTypeOf(assertIsStringCamelCase<KebabCaseString>).asserts.toEqualTypeOf<never>(),
     expectType:
-      expectTypeOf(
-        isStringCamelCase<CamelCaseString>
-      ).guards.toEqualTypeOf<'camelCase'>()
-      && expectTypeOf(
-        isStringCamelCase<KebabCaseString>
-      ).guards.toEqualTypeOf<never>()
+      expectTypeOf(isStringCamelCase<CamelCaseString>).guards.toEqualTypeOf<'camelCase'>() &&
+      expectTypeOf(isStringCamelCase<KebabCaseString>).guards.toEqualTypeOf<never>()
   },
   {
     is: isStringPascalCase,
@@ -94,16 +76,10 @@ runGuardSuites(
     assertType:
       expectTypeOf(
         assertIsStringPascalCase<PascalCaseString>
-      ).asserts.toEqualTypeOf<PascalCaseString>()
-      && expectTypeOf(
-        assertIsStringPascalCase<CamelCaseString>
-      ).asserts.toEqualTypeOf<never>(),
+      ).asserts.toEqualTypeOf<PascalCaseString>() &&
+      expectTypeOf(assertIsStringPascalCase<CamelCaseString>).asserts.toEqualTypeOf<never>(),
     expectType:
-      expectTypeOf(
-        isStringPascalCase<PascalCaseString>
-      ).guards.toEqualTypeOf<'PascalCase'>()
-      && expectTypeOf(
-        isStringPascalCase<CamelCaseString>
-      ).guards.toEqualTypeOf<never>()
+      expectTypeOf(isStringPascalCase<PascalCaseString>).guards.toEqualTypeOf<'PascalCase'>() &&
+      expectTypeOf(isStringPascalCase<CamelCaseString>).guards.toEqualTypeOf<never>()
   }
 );

@@ -21,10 +21,8 @@ export const longer = <A extends Arr = Arr, B extends Arr = Arr>(a: A, b: B) =>
  * shorter([], []) // []
  * ```
  */
-export const shorter = <A extends Arr = Arr, B extends Arr = Arr>(
-  a: A,
-  b: B
-) => (a.length <= b.length ? a : b);
+export const shorter = <A extends Arr = Arr, B extends Arr = Arr>(a: A, b: B) =>
+  a.length <= b.length ? a : b;
 /**
  * Returns a reference to the longest array among the provided arrays.
  * @example
@@ -33,9 +31,8 @@ export const shorter = <A extends Arr = Arr, B extends Arr = Arr>(
  * // ['a', 'b', 'c']
  * ```
  */
-export const longest = <A extends Arr[] = Arr[]>(
-  ...[f, ...rest]: A
-): A[number] => rest.reduce(longer, f);
+export const longest = <A extends Arr[] = Arr[]>(...[f, ...rest]: A): A[number] =>
+  rest.reduce(longer, f);
 /**
  * Returns a reference to the shortest array among the provided arrays.
  *
@@ -45,6 +42,5 @@ export const longest = <A extends Arr[] = Arr[]>(
  * // [true]
  * ```
  */
-export const shortest = <A extends Arr[] = Arr[]>(...[f, ...r]: A) =>
-  r.reduce(shorter, f);
+export const shortest = <A extends Arr[] = Arr[]>(...[f, ...r]: A) => r.reduce(shorter, f);
 //#endregion

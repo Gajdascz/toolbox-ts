@@ -1,0 +1,22 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`configs/static/packageJson > toFileEntry should produce correct file entry 1`] = `
+{
+  "package.json": "{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "my-package",
+  "version": "1.2.3",
+  "type": "module",
+  "license": "Apache-2.0",
+  "dependencies": {},
+  "scripts": {},
+  "description": "Test package",
+  "keywords": [
+    "test"
+  ],
+  "private": true,
+  "devDependencies": {},
+  "files": []
+}",
+}
+`;

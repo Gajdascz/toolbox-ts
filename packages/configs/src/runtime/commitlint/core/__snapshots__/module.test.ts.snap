@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`configs/runtime/commitlint > toFileEntry should produce correct file entry 1`] = `
+{
+  "commitlint.config.ts": "import { commitlint } from '@toolbox-ts/configs/runtime';
+
+export default commitlint.define({
+  "rules": {
+    "type-enum": [
+      2,
+      "always",
+      [
+        "feat"
+      ]
+    ]
+  }
+});",
+}
+`;

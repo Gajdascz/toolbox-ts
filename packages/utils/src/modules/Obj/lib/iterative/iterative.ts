@@ -1,10 +1,21 @@
-import type { Key, StringRecord } from '@toolbox-ts/types/defs/object';
+import type {
+  Key,
+  StringRecord,
+  Entry,
+  Entries,
+  FromEntries,
+  Paths,
+  PickPaths,
+  Flat
+} from '@toolbox-ts/types/defs/object';
 
 import {
-  assertIsObjectPlain,
-  isObjectEmpty
+  assertIsObject,
+  isObject,
+  isObjectEmpty,
+  isObjectWithKeys
 } from '../../../../core/guards/index.js';
-import { entries, keys } from '../base/index.js';
+import { entries, fromEntries, keys } from '../base/index.js';
 
 /**
  * Callback function for iterating over object key-value pairs.
@@ -31,7 +42,6 @@ import { entries, keys } from '../base/index.js';
  * ```
  */
 export type KeyValueCb<T, R> = (value: T[keyof T], key: Key.Enumerable<T>) => R;
-
 //#region> ForEach
 /**
  * Executes a callback for each key-value pair in an object
@@ -49,11 +59,7 @@ export const forEach = <T>(obj: T, cb: KeyValueCb<T, void>): void => {
 };
 //#endregion
 //#region> Reduce
-export type ReduceCb<T, R> = (
-  acc: R,
-  value: T[keyof T],
-  key: Key.Enumerable<T>
-) => R;
+export type ReduceCb<T, R> = (acc: R, value: T[keyof T], key: Key.Enumerable<T>) => R;
 /**
  * Reduces an object to a single value by applying a reducer function to each key-value pair.
  *
@@ -71,11 +77,10 @@ export type ReduceCb<T, R> = (
 export const reduce = <T, R = StringRecord>(
   obj: T,
   cb: ReduceCb<T, R>,
-  initial: R
+  initial: R = {} as R
 ): R => {
   let acc = initial;
   for (const [key, value] of entries(obj)) acc = cb(acc, value, key);
-
   return acc;
 };
 //#endregion
@@ -93,10 +98,7 @@ export const reduce = <T, R = StringRecord>(
  * ) // { a: 2, b: 4, c: 6 }
  * ```
  */
-export const map = <T, R>(
-  obj: T,
-  cb: KeyValueCb<T, R>
-): { [K in Key.Enumerable<T>]: R } => {
+export const map = <T, R>(obj: T, cb: KeyValueCb<T, R>): { [K in Key.Enumerable<T>]: R } => {
   const result: StringRecord<R> = {};
   for (const [key, value] of entries<T>(obj)) result[key] = cb(value, key);
   return result as { [K in Key.Enumerable<T>]: R };
@@ -118,21 +120,15 @@ export interface FilterFunction {
   ): { [K in keyof T as Key.CoerceNumber<K>]?: T[K] };
 }
 export type FilterInPredicate<V> = (value: unknown) => value is V;
-export type FilterOutPredicate<T, V> = (
-  value: unknown
-) => value is Exclude<T[keyof T], V>;
+export type FilterOutPredicate<T, V> = (value: unknown) => value is Exclude<T[keyof T], V>;
 export type FilterPredicate<T, V> =
   | FilterInPredicate<V>
   | FilterOutPredicate<T, V>
   | FilterSimplePredicate;
 export type FilterSimplePredicate = (value: unknown) => boolean;
-export const filter: FilterFunction = <T, V>(
-  obj: T,
-  predicate: FilterPredicate<T, V>
-) => {
+export const filter: FilterFunction = <T, V>(obj: T, predicate: FilterPredicate<T, V>) => {
   const result: StringRecord = {};
-  for (const [key, value] of entries<T>(obj))
-    if (predicate(value)) result[key] = value;
+  for (const [key, value] of entries<T>(obj)) if (predicate(value)) result[key] = value;
   return result;
 };
 //#endregion
@@ -148,9 +144,8 @@ export const omit = <T, K extends keyof T>(
   for (const key of keys(obj)) {
     if (!omitKeys.some((k) => String(k) === key)) {
       const numKey = Number(key);
-      result[key] =
-        !Number.isNaN(numKey) ?
-          (obj as StringRecord)[numKey]
+      result[key] = !Number.isNaN(numKey)
+        ? (obj as StringRecord)[numKey]
         : (obj as StringRecord)[key];
     }
   }
@@ -160,19 +155,76 @@ export const omit = <T, K extends keyof T>(
 };
 //#endregion
 //#region> Pick
-/** Creates a new object by picking specified keys from the original object. */
-export const pick = <T, K extends keyof T>(
-  /** Object to pick properties from */
+/**
+ * Creates a new object by picking specified paths from the original object.
+ *
+ * @important Keys with dots that are not paths will not properly reconstruct as nested objects.
+ *
+ * @example
+ * ```ts
+ * const obj = { a: { b: { c: 3 } }, d: 4 };
+ * const result = pick(obj, ['a.b.c', 'd']);
+ * // result is { a: { b: { c: 3 } }, d: 4 }
+ *
+ * const obj2 = { 'x.y': { z: 5 } };
+ * const result2 = pick(obj2, ['x.y']);
+ * // result2 is { x: { y: { z: never } } }
+ */
+export const pick = <T, const P extends Paths<T>>(
   obj: T,
-  /** Keys of properties to pick */
-  pickKeys: K[] | readonly K[]
-): Pick<T, K> => {
-  assertIsObjectPlain(obj);
-  if (isObjectEmpty(obj)) return {} as Pick<T, K>;
+  pickPaths: P[] | readonly P[]
+): PickPaths<T, P> => {
+  assertIsObject(obj);
+  if (isObjectEmpty(obj)) return {} as PickPaths<T, P>;
+  let result: StringRecord = {};
+  for (const p of pickPaths) {
+    const keys = p.split('.');
+    let current: unknown = structuredClone(obj);
+    let found = true;
+    for (const key of keys) {
+      if (isObjectWithKeys(current, [key])) current = current[key];
+      else {
+        found = false;
+        break;
+      }
+    }
+    if (!found) continue;
+    let nested: StringRecord = { [keys[keys.length - 1]]: current };
+    for (let i = keys.length - 2; i >= 0; i--) nested = { [keys[i]]: nested };
+    result = { ...result, ...nested };
+  }
+  return result as PickPaths<T, P>;
+};
+//#endregion
+//#region> Flat
+/**
+ * Flattens a nested object into a single-level object with dot-separated keys.
+ *
+ * @important Objects with keys that contain dots will not be flattened correctly.
+ *
+ * @example
+ * ```ts
+ * // ✅
+ * const obj = { a: { b: { c: 3 } }, d: 4 };
+ * const result = flat(obj);
+ * // result is { 'a.b.c': 3, d: 4 }
+ *
+ * // ❌
+ * const obj2 = { 'x.y': { z: 5 } };
+ * const result2 = flat(obj2);
+ * // result2 is {}
+ * ```
+ */
+export const flat = <T>(obj: T): Flat<T> => {
   const result: StringRecord = {};
-  for (const key of keys(obj))
-    if (pickKeys.some((k) => String(k) === key)) result[key] = obj[key];
-  return result as Pick<T, K>;
+  for (const [key, value] of entries(obj)) {
+    if (isObject(value)) {
+      const flatObject = flat(value);
+      for (const [flatKey, flatValue] of entries(flatObject))
+        result[`${key}.${flatKey}`] = flatValue;
+    } else result[key] = value;
+  }
+  return result as Flat<T>;
 };
 //#endregion
 //#region> Some
@@ -185,8 +237,7 @@ export const pick = <T, K extends keyof T>(
  * ```
  */
 export const some = <T>(obj: T, predicate: KeyValueCb<T, boolean>): boolean => {
-  for (const [key, value] of entries(obj))
-    if (predicate(value, key)) return true;
+  for (const [key, value] of entries(obj)) if (predicate(value, key)) return true;
 
   return false;
 };
@@ -200,12 +251,8 @@ export const some = <T>(obj: T, predicate: KeyValueCb<T, boolean>): boolean => {
  * every({ a: 1, b: 2, c: 3 }, v => v > 0) // true
  * ```
  */
-export const every = <T>(
-  obj: T,
-  predicate: KeyValueCb<T, boolean>
-): boolean => {
-  for (const [key, value] of entries(obj))
-    if (!predicate(value, key)) return false;
+export const every = <T>(obj: T, predicate: KeyValueCb<T, boolean>): boolean => {
+  for (const [key, value] of entries(obj)) if (!predicate(value, key)) return false;
 
   return true;
 };
@@ -223,9 +270,55 @@ export const find = <T>(
   obj: T,
   predicate: KeyValueCb<T, boolean>
 ): [key: Key.Enumerable<T>, value: T[keyof T]] | undefined => {
-  for (const [key, value] of entries(obj))
-    if (predicate(value, key)) return [key, value];
+  for (const [key, value] of entries(obj)) if (predicate(value, key)) return [key, value];
 
   return undefined;
 };
+//#endregion
+//#region> Sort
+export type ObjectSortComparator<T> = (a: Entry<T>, b: Entry<T>) => number;
+/**
+ * Creates a new object with its keys sorted based on the provided comparator function.
+ *
+ * @template T - Object type
+ * @template K - Key type
+ * @param obj - The object to be sorted.
+ * @param comparator - A function that defines the sort order of the keys.
+ * By default, it sorts keys in ascending lexicographical order.
+ * @returns A new object with the same key-values but in sorted order.
+ *
+ * @example
+ * ```ts
+ * const unsorted = { b: 2, a: 1, c: 3 };
+ * const sorted = sort(unsorted);
+ * // sorted is { a: 1, b: 2, c: 3 }
+ * const customSorted = sort(unsorted, (a, b) => b[0].localeCompare(a[0]));
+ * // customSorted is { c: 3, b: 2, a: 1 }
+ * ```
+ */
+export const sort = <T>(obj: T, comparator?: ObjectSortComparator<T>): FromEntries<Entries<T>> =>
+  fromEntries(sortEntries(obj, comparator));
+
+/**
+ * Sorts the entries of an object based on the provided comparator function.
+ *
+ * @template T - Object type
+ * @param obj - The object whose entries are to be sorted.
+ * @param comparator - A function that defines the sort order of the entries.
+ * By default, it sorts entries in ascending lexicographical order based on their keys.
+ * @returns An array of sorted entries (key-value pairs) from the object.
+ *
+ * @example
+ * ```ts
+ * const unsorted = { b: 2, a: 1, c: 3 };
+ * const sortedEntries = sortEntries(unsorted);
+ * // sortedEntries is [['a', 1], ['b', 2], ['c', 3]]
+ * const customSortedEntries = sortEntries(unsorted, (a, b) => b[0].localeCompare(a[0]));
+ * // customSortedEntries is [['c', 3], ['b', 2], ['a', 1]]
+ * ```
+ */
+export const sortEntries = <T>(
+  obj: T,
+  comparator: ObjectSortComparator<T> = ([aKey], [bKey]) => aKey.localeCompare(bKey)
+): Entries<T> => entries(obj).sort(comparator);
 //#endregion

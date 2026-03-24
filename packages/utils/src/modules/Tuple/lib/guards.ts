@@ -1,27 +1,26 @@
-/* c8 ignore start */
+// oxlint-disable no-unused-vars
 import type { Tuple } from '@toolbox-ts/types/defs/tuple';
 
 import {
-  assertIsInArrBounds,
+  assertIsInArrayBounds,
   assertIsTuple,
   checkIsTuple,
-  isInArrBounds,
+  checkIsInArrayBounds,
   isTuple
 } from '../../../core/guards/objs/array/index.js';
 export const is = {
   /**@narrows {@link Tuple} */
-  value: isTuple,
-  /** @checks `i >= 0 && i < tuple.length` */
-  inBounds: isInArrBounds
+  any: isTuple
 } as const;
 export const assert = {
   /** @asserts {@link Tuple} */
-  value: assertIsTuple,
+  any: assertIsTuple,
   /** @asserts `i >= 0 && i < tuple.length` */
-  inBounds: assertIsInArrBounds
+  inBounds: assertIsInArrayBounds
 } as const;
 export const check = {
   /** @checks {@link Tuple} */
-  value: checkIsTuple
+  any: checkIsTuple,
+  /** @checks `i >= 0 && i < tuple.length` */
+  inBounds: checkIsInArrayBounds
 } as const;
-/* c8 ignore end */

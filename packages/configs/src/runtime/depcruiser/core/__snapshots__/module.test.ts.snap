@@ -1,0 +1,56 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`configs/runtime/depcruiser > toFileEntry should produce correct file content 1`] = `
+{
+  ".dependency-cruiser.js": "import { depcruiser } from '@toolbox-ts/configs/runtime';
+
+export default depcruiser.define({
+  "extends": [
+    "config1",
+    "config2"
+  ],
+  "allowedSeverity": "warn",
+  "forbidden": {
+    "cfg": {
+      "noCircular": true,
+      "noOrphans": true,
+      "noDeprecatedCore": false,
+      "noDuplicateDepTypes": false,
+      "noNonPackageJson": {
+        "from": {
+          "path": "from-path",
+          "orphan": true
+        },
+        "to": {
+          "exoticRequireNot": "some-package"
+        }
+      }
+    },
+    "extended": [
+      {
+        "module": {
+          "numberOfDependentsLessThan": 5,
+          "path": "**/src/**"
+        },
+        "from": {},
+        "to": {
+          "reachable": true,
+          "path": "to-path"
+        }
+      }
+    ]
+  },
+  "allowed": [
+    {
+      "from": {
+        "path": "allowed-from-path"
+      },
+      "to": {
+        "reachable": true,
+        "path": "allowed-to-path"
+      }
+    }
+  ]
+});",
+}
+`;

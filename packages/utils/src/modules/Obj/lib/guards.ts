@@ -1,77 +1,84 @@
-/* c8 ignore start */
+// oxlint-disable no-unused-vars
 import type { Frozen } from '@toolbox-ts/types/defs/object';
 
 import {
-  assertIsNotObjectEmpty,
   assertIsObject,
-  assertIsObjectEmpty,
-  assertIsObjectExtensible,
-  assertIsObjectFrozen,
-  assertIsObjectIterable,
-  assertIsObjectPlain,
-  assertIsObjectPrototypeKey,
-  assertIsObjectProxy,
-  assertIsObjectSealed,
-  assertIsObjectWithConstructor,
-  assertIsObjectWithEntries,
-  assertIsObjectWithEntry,
-  assertIsObjectWithKeys,
-  assertIsObjectWithPropertyKey,
-  assertIsObjectWithValues,
-  checkIsNotObjectEmpty,
   checkIsObject,
-  checkIsObjectEmpty,
-  checkIsObjectExtensible,
-  checkIsObjectFrozen,
-  checkIsObjectIterable,
-  checkIsObjectPlain,
-  checkIsObjectPrototypeKey,
-  checkIsObjectProxy,
-  checkIsObjectSealed,
-  checkIsObjectWithConstructor,
-  checkIsObjectWithEntries,
-  checkIsObjectWithEntry,
-  checkIsObjectWithKeys,
-  checkIsObjectWithPropertyKey,
-  checkIsObjectWithValues,
-  isNotObjectEmpty,
   isObject,
+  //
+  assertIsObjectEmpty,
+  checkIsObjectEmpty,
   isObjectEmpty,
+  //
+  assertIsNotObjectEmpty,
+  checkIsNotObjectEmpty,
+  isNotObjectEmpty,
+  //
+  assertIsObjectExtensible,
+  checkIsObjectExtensible,
   isObjectExtensible,
+  //
+  assertIsObjectAny,
+  checkIsObjectAny,
+  isObjectAny,
+  //
+  assertIsObjectNotPlain,
+  checkIsObjectNotPlain,
+  isObjectNotPlain,
+  //
+  assertIsObjectFrozen,
+  checkIsObjectFrozen,
   isObjectFrozen,
+  //
+  assertIsObjectIterable,
+  checkIsObjectIterable,
   isObjectIterable,
-  isObjectPlain,
+  //
+  assertIsObjectPrototypeKey,
+  checkIsObjectPrototypeKey,
   isObjectPrototypeKey,
+  //
+  assertIsObjectProxy,
+  checkIsObjectProxy,
   isObjectProxy,
-  isObjectSealed,
-  isObjectWithConstructor,
-  isObjectWithEntries,
+  //
+  assertIsObjectWithEntry,
+  checkIsObjectWithEntry,
   isObjectWithEntry,
+  //
+  assertIsObjectWithKeys,
+  checkIsObjectWithKeys,
   isObjectWithKeys,
-  isObjectWithPropertyKey,
-  isObjectWithValues
+  //
+  assertIsObjectWithValues,
+  checkIsObjectWithValues,
+  isObjectWithValues,
+  //
+  assertIsObjectSealed,
+  checkIsObjectSealed,
+  isObjectSealed
 } from '../../../core/guards/objs/base/index.js';
 import {
   assertIsMapWithEntries,
-  assertIsMapWithKeys,
-  assertIsMapWithValues,
   checkIsMapWithEntries,
-  checkIsMapWithKeys,
-  checkIsMapWithValues,
   isMapWithEntries,
+  //
+  assertIsMapWithKeys,
+  checkIsMapWithKeys,
   isMapWithKeys,
+  //
+  assertIsMapWithValues,
+  checkIsMapWithValues,
   isMapWithValues
 } from '../../../core/guards/objs/map/index.js';
-import {
-  assertIsSetOf,
-  checkIsSetOf,
-  isSetOf
-} from '../../../core/guards/objs/set/index.js';
+import { assertIsSetOf, checkIsSetOf, isSetOf } from '../../../core/guards/objs/set/index.js';
 export const is = {
+  /** @narrows `object` */
+  any: isObjectAny,
+  /** @narrows `T & object` */
+  notPlain: isObjectNotPlain,
   /** @narrows `T & Record\<string, unknown\>` */
   notEmpty: isNotObjectEmpty,
-  /** @narrows `object` */
-  value: isObject,
   /** @narrows `Record\<string, never\>` */
   empty: isObjectEmpty,
   /** @narrows `Iterable<T>` */
@@ -80,14 +87,12 @@ export const is = {
   prototypeKey: isObjectPrototypeKey,
   /** @narrows `T & InstanceType\<typeof Proxy\>` */
   proxy: isObjectProxy,
-  /** @narrows `T & Record\<keyof typeof validators, unknown\>` */
-  withEntries: isObjectWithEntries,
+  /** @narrows `T & T.Key0.Key1...KeyN: V */
+  withEntry: isObjectWithEntry,
   /** @narrows `T & \{ [K in Keys]: unknown \}` */
   withKeys: isObjectWithKeys,
   /** @narrows `Record\<string, V\>` */
   withValues: isObjectWithValues,
-  /** @narrows `T & \{ [K]: unknown \}` */
-  withPropertyKey: isObjectWithPropertyKey,
   /** @narrows `T & object` */
   extensible: isObjectExtensible,
   /** @narrows {@link Frozen} */
@@ -95,11 +100,8 @@ export const is = {
   /** @narrows `T & object` */
   sealed: isObjectSealed,
   /** @narrows `T & Record\<K, unknown\>` */
-  plain: isObjectPlain,
-  /** @narrows `T & \{ constructor: {@link Constructor} \}` */
-  withConstructor: isObjectWithConstructor,
-  /** @narrows `T & \{ [Key in K]: V \} & object` */
-  withEntry: isObjectWithEntry,
+  plain: isObject,
+
   /** @narrows `Map\<K, V\>` */
   mapWithEntries: isMapWithEntries,
   /** @narrows `Map\<K, unknown\>` */
@@ -110,10 +112,12 @@ export const is = {
   setOf: isSetOf
 } as const;
 export const assert = {
+  /** @asserts `object` */
+  any: assertIsObjectAny,
+  /** @asserts `T & object` */
+  notPlain: assertIsObjectNotPlain,
   /** @asserts `T & Record\<string, unknown\>` */
   notEmpty: assertIsNotObjectEmpty,
-  /** @asserts `object` */
-  value: assertIsObject,
   /** @asserts `Record\<string, never\>` */
   empty: assertIsObjectEmpty,
   /** @asserts `Iterable<T>` */
@@ -122,14 +126,12 @@ export const assert = {
   prototypeKey: assertIsObjectPrototypeKey,
   /** @asserts `T & InstanceType\<typeof Proxy\>` */
   proxy: assertIsObjectProxy,
-  /** @asserts `T & Record\<keyof typeof validators, unknown\>` */
-  withEntries: assertIsObjectWithEntries,
+  /** @asserts `T & T.Key0.Key1...KeyN: V */
+  withEntry: assertIsObjectWithEntry,
   /** @asserts `T & \{ [K in Keys]: unknown \}` */
   withKeys: assertIsObjectWithKeys,
   /** @asserts `Record\<string, V\>` */
   withValues: assertIsObjectWithValues,
-  /** @asserts `T & \{ [K]: unknown \}` */
-  withPropertyKey: assertIsObjectWithPropertyKey,
   /** @asserts `T & object` */
   extensible: assertIsObjectExtensible,
   /** @asserts {@link Frozen} */
@@ -137,11 +139,7 @@ export const assert = {
   /** @asserts `T & object` */
   sealed: assertIsObjectSealed,
   /** @asserts `T & Record\<K, unknown\>` */
-  plain: assertIsObjectPlain,
-  /** @asserts `T & \{ constructor: {@link Constructor} \}` */
-  withConstructor: assertIsObjectWithConstructor,
-  /** @asserts `T & \{ [Key in K]: V \} & object` */
-  withEntry: assertIsObjectWithEntry,
+  plain: assertIsObject,
   /** @asserts `Map\<K, V\>` */
   mapWithEntries: assertIsMapWithEntries,
   /** @asserts `Map\<K, unknown\>` */
@@ -152,10 +150,12 @@ export const assert = {
   setOf: assertIsSetOf
 };
 export const check = {
+  /** @checks `object` */
+  any: checkIsObjectAny,
+  /** @checks `T & object` */
+  notPlain: checkIsObjectNotPlain,
   /** @checks `T & Record\<string, unknown\>` */
   notEmpty: checkIsNotObjectEmpty,
-  /** @checks `object` */
-  value: checkIsObject,
   /** @checks `Record\<string, never\>` */
   empty: checkIsObjectEmpty,
   /** @checks `Iterable<T>` */
@@ -164,14 +164,12 @@ export const check = {
   prototypeKey: checkIsObjectPrototypeKey,
   /** @checks `T & InstanceType\<typeof Proxy\>` */
   proxy: checkIsObjectProxy,
-  /** @checks `T & Record\<keyof typeof validators, unknown\>` */
-  withEntries: checkIsObjectWithEntries,
+  /** @checks `T & T.Key0.Key1...KeyN: V */
+  withEntry: checkIsObjectWithEntry,
   /** @checks `T & \{ [K in Keys]: unknown \}` */
   withKeys: checkIsObjectWithKeys,
   /** @checks `Record\<string, V\>` */
   withValues: checkIsObjectWithValues,
-  /** @checks `T & \{ [K]: unknown \}` */
-  withPropertyKey: checkIsObjectWithPropertyKey,
   /** @checks `T & object` */
   extensible: checkIsObjectExtensible,
   /** @checks {@link Frozen} */
@@ -179,11 +177,7 @@ export const check = {
   /** @checks `T & object` */
   sealed: checkIsObjectSealed,
   /** @checks `T & Record\<K, unknown\>` */
-  plain: checkIsObjectPlain,
-  /** @checks `T & \{ constructor: {@link Constructor} \}` */
-  withConstructor: checkIsObjectWithConstructor,
-  /** @checks `T & \{ [Key in K]: V \} & object` */
-  withEntry: checkIsObjectWithEntry,
+  plain: checkIsObject,
   /** @checks `Map\<K, V\>` */
   mapWithEntries: checkIsMapWithEntries,
   /** @checks `Map\<K, unknown\>` */
@@ -193,4 +187,3 @@ export const check = {
   /** @checks `Set<T>` */
   setOf: checkIsSetOf
 } as const;
-/* c8 ignore end */

@@ -1,35 +1,26 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 
-import {
-  doTry,
-  doTrySync,
-  handleCatch,
-  resolveError,
-  resolveTypeName
-} from './utils.ts';
+import { resolveError, resolveTypeName, normalizeError } from './utils.ts';
 
-let consoleErrorSpy;
 beforeEach(() => {
-  consoleErrorSpy = vi
-    .spyOn(console, 'error')
-    .mockImplementation((m, ...o: any[]) => ({ m, o }));
+  vi.spyOn(console, 'error').mockImplementation((m, ...o: any[]) => ({ m, o }));
 });
 describe('Error Utils', () => {
   describe('resolveTypeName', () => {
     it('resolves type name for primitives', () => {
-      expect(resolveTypeName(123)).toBe('number');
-      expect(resolveTypeName('hello')).toBe('string');
-      expect(resolveTypeName(true)).toBe('boolean');
-      expect(resolveTypeName(undefined)).toBe('undefined');
-      expect(resolveTypeName(null)).toBe('null');
-      expect(resolveTypeName(Symbol('sym'))).toBe('symbol');
-      expect(resolveTypeName(10n)).toBe('bigint');
+      expect(resolveTypeName(123)).toBe('Number');
+      expect(resolveTypeName('hello')).toBe('String');
+      expect(resolveTypeName(true)).toBe('Boolean');
+      expect(resolveTypeName(undefined)).toBe('Undefined');
+      expect(resolveTypeName(null)).toBe('Null');
+      expect(resolveTypeName(Symbol('sym'))).toBe('Symbol');
+      expect(resolveTypeName(10n)).toBe('BigInt');
     });
 
     it('resolves type name for objects and functions', () => {
       expect(resolveTypeName({})).toBe('Object');
       expect(resolveTypeName([])).toBe('Array');
-      expect(resolveTypeName(() => {})).toBe('Function');
+      expect(resolveTypeName(() => {})).toBe('Function(anonymous)');
       expect(resolveTypeName(new Date())).toBe('Date');
       // eslint-disable-next-line @typescript-eslint/no-extraneous-class
       class CustomClass {}
@@ -46,10 +37,7 @@ describe('Error Utils', () => {
   });
   describe('resolveError', () => {
     it('resolves string errors', () => {
-      expect(resolveError('error message')).toEqual({
-        message: 'error message',
-        type: 'string'
-      });
+      expect(resolveError('error message')).toEqual({ message: 'error message', type: 'string' });
     });
 
     it('resolves Error instances', () => {
@@ -64,218 +52,59 @@ describe('Error Utils', () => {
     });
 
     it('resolves non-string, non-Error values', () => {
-      expect(resolveError(123)).toEqual({ message: '123', type: 'number' });
+      expect(resolveError(123)).toEqual({ message: '123', type: 'Number' });
 
-      expect(resolveError({ key: 'value' })).toEqual({
-        message: '[object Object]',
-        type: 'object'
-      });
-
-      expect(resolveError(null)).toEqual({ message: 'null', type: 'object' });
-    });
-  });
-
-  describe('doTry', () => {
-    it('returns the result on success', async () => {
-      const result = await doTry(() => Promise.resolve('success'), 'throw');
-      expect(result).toMatchObject({ ok: true, value: 'success' });
-    });
-
-    it('throws on error when onErr is "throw"', async () => {
-      await expect(
-        doTry(() => {
-          throw new Error('test error');
-        }, 'throw')
-      ).rejects.toThrow('test error');
-    });
-
-    it('logs and returns undefined when onErr is "log"', async () => {
-      const result = await doTry(() => {
-        throw new Error('test error');
-      }, 'log');
-
-      expect(result).toBeUndefined();
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error caught', {
-        message: 'test error',
-        type: 'Error',
-        cause: undefined,
-        stack: expect.any(String)
-      });
-
-      consoleErrorSpy.mockRestore();
-    });
-
-    it('calls custom error handler', async () => {
-      const result = await doTry(
-        () => {
-          throw new Error('test error');
-        },
-        (err) => {
-          return `handled: ${err.message}`;
-        }
-      );
-
-      expect(result).toBe('handled: test error');
-    });
-
-    it('calls custom error handler that returns synchronously', async () => {
-      const result = await doTry(
-        () => {
-          throw new Error('test error');
-        },
-        (err) => {
-          return `handled: ${err.message}`;
-        }
-      );
-
-      expect(result).toBe('handled: test error');
-    });
-    it('returns Result type when onErr is "return"', async () => {
-      const result = await doTry(() => {
-        throw new Error('test error');
-      }, 'return');
-
-      expect(result).toEqual({
-        ok: false,
-        error: {
-          message: 'test error',
-          type: 'Error',
-          stack: expect.any(String),
-          cause: undefined
-        }
-      });
-    });
-  });
-
-  describe('doTrySync', () => {
-    it('returns the result on success', () => {
-      const result = doTrySync(() => 'success', 'throw');
-      expect(result).toMatchObject({ ok: true, value: 'success' });
-    });
-
-    it('throws on error when onErr is "throw"', () => {
-      expect(() =>
-        doTrySync(() => {
-          throw new Error('test error');
-        }, 'throw')
-      ).toThrow('test error');
-    });
-
-    it('logs and returns undefined when onErr is "log"', () => {
-      const result = doTrySync(() => {
-        throw new Error('test error');
-      }, 'log');
-
-      expect(result).toBeUndefined();
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error caught', {
-        message: 'test error',
-        type: 'Error',
-        cause: undefined,
-        stack: expect.any(String)
-      });
-
-      consoleErrorSpy.mockRestore();
-    });
-
-    it('calls custom error handler', () => {
-      const result = doTrySync(
-        () => {
-          throw new Error('test error');
-        },
-        (err) => {
-          return `handled: ${err.message}`;
-        }
-      );
-
-      expect(result).toBe('handled: test error');
-    });
-    it('returns Result type when onErr is "return"', () => {
-      const result = doTrySync(() => {
-        throw new Error('test error');
-      }, 'return');
-
-      expect(result).toEqual({
-        ok: false,
-        error: {
-          message: 'test error',
-          type: 'Error',
-          stack: expect.any(String),
-          cause: undefined
-        }
-      });
-    });
-  });
-
-  describe('handleCatch', () => {
-    it('logs error when onErr is "log"', () => {
-      handleCatch(new Error('test error'), 'log');
-
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error caught', {
-        message: 'test error',
-        type: 'Error',
-        cause: undefined,
-        stack: expect.any(String)
-      });
-
-      consoleErrorSpy.mockRestore();
-    });
-
-    it('throws error when onErr is "throw"', () => {
-      expect(() => handleCatch(new Error('test error'), 'throw')).toThrow(
-        'test error'
-      );
-    });
-
-    it('preserves error type and stack when throwing', () => {
-      const originalError = new TypeError('type error');
-      originalError.cause = 'cause';
-      let cause, message, name, stack;
-      try {
-        handleCatch(originalError, 'throw');
-      } catch (error) {
-        name = (error as Error).name;
-        message = (error as Error).message;
-        cause = (error as Error).cause;
-        stack = (error as Error).stack;
-      }
-      expect(name).toBe('TypeError');
-      expect(message).toBe('type error');
-      expect(cause).toBe('cause');
-      expect(stack).toBeDefined();
-    });
-
-    it('calls custom error handler', () => {
-      const result = handleCatch(new Error('test error'), (err) => {
-        return `custom: ${err.message}`;
-      });
-
-      expect(result).toBe('custom: test error');
-    });
-
-    it('handles string errors', () => {
-      handleCatch('string error', 'log');
-
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error caught', {
-        message: 'string error',
-        type: 'string',
+      expect(resolveError({ key: 'value' })).toMatchObject({
+        message: expect.stringContaining('"key":"value"'),
+        type: 'Object',
         cause: undefined,
         stack: undefined
       });
 
-      consoleErrorSpy.mockRestore();
+      expect(resolveError(null)).toEqual({ message: 'null', type: 'Null' });
     });
-    it('throws provided error type when throwing', () => {
-      class CustomError extends Error {
-        message: string;
-        constructor(message?: string) {
-          super(message);
-          this.name = 'CustomError';
-        }
-      }
+  });
+  describe('normalizeError', () => {
+    it('returns the error if it is already an instance of the specified type', () => {
+      const error = new TypeError('Example error');
+      expect(normalizeError(error)).toBe(error);
+    });
 
-      expect(() =>
-        handleCatch(new Error('test error'), 'throw', CustomError)
-      ).toThrow(CustomError);
+    it('normalizes non-error values to the specified error type', () => {
+      const normalized = normalizeError('Not an error');
+      expect(normalized).toBeInstanceOf(Error);
+      expect(normalized.message).toBe('Not an error');
+      expectTypeOf(normalized).toEqualTypeOf<Error>();
+    });
+    it('preserves stack and cause when normalizing', () => {
+      const originalError = new Error('Original error');
+      originalError.stack = 'Custom stack trace';
+      originalError.cause = 'Root cause';
+
+      const normalized = normalizeError(originalError);
+      expect(normalized).toBeInstanceOf(Error);
+      expect(normalized.message).toBe('Original error');
+      expect(normalized.stack).toBe('Custom stack trace');
+      expect(normalized.cause).toBe('Root cause');
+    });
+    it('skips stack and cause if not present in the original error', () => {
+      const normalized = normalizeError(5);
+      expect(normalized).toBeInstanceOf(Error);
+      expect(normalized.message).toBe('5');
+      expect(normalized.stack).toBeUndefined();
+      expect(normalized.cause).toBeUndefined();
+    });
+    it('retains a stack and cause in a custom error object', () => {
+      resolveError({ message: 'Custom error', stack: 'Custom stack' });
+      const normalized = normalizeError({
+        message: 'Custom error',
+        stack: 'Custom stack',
+        cause: 'Custom cause'
+      });
+      expect(normalized).toBeInstanceOf(Error);
+      expect(normalized.message).toBe('Custom error');
+      expect(normalized.stack).toBe('Custom stack');
+      expect(normalized.cause).toBe('Custom cause');
     });
   });
 });

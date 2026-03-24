@@ -1,0 +1,109 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`(blocks/badges) npm > bundleSize > renders with packageName and format - snapshots 1`] = `"https://shields.io/bundlephobia/min/react"`;
+
+exports[`(blocks/badges) npm > bundleSize > renders with packageName and format - snapshots 2`] = `"![](https://shields.io/bundlephobia/min/react)"`;
+
+exports[`(blocks/badges) npm > bundleSize > renders with packageName and format - snapshots 3`] = `"<img src="https://shields.io/bundlephobia/min/react" />"`;
+
+exports[`(blocks/badges) npm > bundleSize > renders with packageName, format, and version - snapshots 1`] = `"https://shields.io/bundlephobia/min/react/latest"`;
+
+exports[`(blocks/badges) npm > bundleSize > renders with packageName, format, and version - snapshots 2`] = `"![](https://shields.io/bundlephobia/min/react/latest)"`;
+
+exports[`(blocks/badges) npm > bundleSize > renders with packageName, format, and version - snapshots 3`] = `"<img src="https://shields.io/bundlephobia/min/react/latest" />"`;
+
+exports[`(blocks/badges) npm > collaborators > renders with packageName - snapshots 1`] = `"https://shields.io//npm/collaborators/react"`;
+
+exports[`(blocks/badges) npm > collaborators > renders with packageName - snapshots 2`] = `"![](https://shields.io//npm/collaborators/react)"`;
+
+exports[`(blocks/badges) npm > collaborators > renders with packageName - snapshots 3`] = `"<img src="https://shields.io//npm/collaborators/react" />"`;
+
+exports[`(blocks/badges) npm > dependencyVersion > renders with packageName and dev dependency version - snapshots 1`] = `"https://shields.io//npm/dependency-version/react/dev/debug"`;
+
+exports[`(blocks/badges) npm > dependencyVersion > renders with packageName and dev dependency version - snapshots 2`] = `"![](https://shields.io//npm/dependency-version/react/dev/debug)"`;
+
+exports[`(blocks/badges) npm > dependencyVersion > renders with packageName and dev dependency version - snapshots 3`] = `"<img src="https://shields.io//npm/dependency-version/react/dev/debug" />"`;
+
+exports[`(blocks/badges) npm > dependencyVersion > renders with packageName and peer dependency version - snapshots 1`] = `"https://shields.io//npm/dependency-version/react/peer/debug"`;
+
+exports[`(blocks/badges) npm > dependencyVersion > renders with packageName and peer dependency version - snapshots 2`] = `"![](https://shields.io//npm/dependency-version/react/peer/debug)"`;
+
+exports[`(blocks/badges) npm > dependencyVersion > renders with packageName and peer dependency version - snapshots 3`] = `"<img src="https://shields.io//npm/dependency-version/react/peer/debug" />"`;
+
+exports[`(blocks/badges) npm > dependencyVersion > renders with packageName and prod dependency version - snapshots 1`] = `"https://shields.io//npm/dependency-version/react/debug"`;
+
+exports[`(blocks/badges) npm > dependencyVersion > renders with packageName and prod dependency version - snapshots 2`] = `"![](https://shields.io//npm/dependency-version/react/debug)"`;
+
+exports[`(blocks/badges) npm > dependencyVersion > renders with packageName and prod dependency version - snapshots 3`] = `"<img src="https://shields.io//npm/dependency-version/react/debug" />"`;
+
+exports[`(blocks/badges) npm > downloads > renders with packageName and interval - snapshots 1`] = `"https://shields.io//npm/dm/react"`;
+
+exports[`(blocks/badges) npm > downloads > renders with packageName and interval - snapshots 2`] = `"![](https://shields.io//npm/dm/react)"`;
+
+exports[`(blocks/badges) npm > downloads > renders with packageName and interval - snapshots 3`] = `"<img src="https://shields.io//npm/dm/react" />"`;
+
+exports[`(blocks/badges) npm > downloadsByAuthor > renders author downloads with interval - snapshots 1`] = `"https://shields.io/npm-stat/dm/gajdascz"`;
+
+exports[`(blocks/badges) npm > downloadsByAuthor > renders author downloads with interval - snapshots 2`] = `"![](https://shields.io/npm-stat/dm/gajdascz)"`;
+
+exports[`(blocks/badges) npm > downloadsByAuthor > renders author downloads with interval - snapshots 3`] = `"<img src="https://shields.io/npm-stat/dm/gajdascz" />"`;
+
+exports[`(blocks/badges) npm > jsDelivrHits > renders hits with period and packageName - snapshots 1`] = `"https://shields.io/jsdelivr/npm/month/react"`;
+
+exports[`(blocks/badges) npm > jsDelivrHits > renders hits with period and packageName - snapshots 2`] = `"![](https://shields.io/jsdelivr/npm/month/react)"`;
+
+exports[`(blocks/badges) npm > jsDelivrHits > renders hits with period and packageName - snapshots 3`] = `"<img src="https://shields.io/jsdelivr/npm/month/react" />"`;
+
+exports[`(blocks/badges) npm > lastUpdate > renders with packageName and tag - snapshots 1`] = `"https://shields.io//npm/last-update/react/latest"`;
+
+exports[`(blocks/badges) npm > lastUpdate > renders with packageName and tag - snapshots 2`] = `"![](https://shields.io//npm/last-update/react/latest)"`;
+
+exports[`(blocks/badges) npm > lastUpdate > renders with packageName and tag - snapshots 3`] = `"<img src="https://shields.io//npm/last-update/react/latest" />"`;
+
+exports[`(blocks/badges) npm > lastUpdate > renders with packageName only - snapshots 1`] = `"https://shields.io//npm/last-update/react"`;
+
+exports[`(blocks/badges) npm > lastUpdate > renders with packageName only - snapshots 2`] = `"![](https://shields.io//npm/last-update/react)"`;
+
+exports[`(blocks/badges) npm > lastUpdate > renders with packageName only - snapshots 3`] = `"<img src="https://shields.io//npm/last-update/react" />"`;
+
+exports[`(blocks/badges) npm > license > renders with packageName - snapshots 1`] = `"https://shields.io//npm/l/react"`;
+
+exports[`(blocks/badges) npm > license > renders with packageName - snapshots 2`] = `"![](https://shields.io//npm/l/react)"`;
+
+exports[`(blocks/badges) npm > license > renders with packageName - snapshots 3`] = `"<img src="https://shields.io//npm/l/react" />"`;
+
+exports[`(blocks/badges) npm > minGzippedSize > renders with packageName - snapshots 1`] = `"https://shields.io/bundlejs/size/react"`;
+
+exports[`(blocks/badges) npm > minGzippedSize > renders with packageName - snapshots 2`] = `"![](https://shields.io/bundlejs/size/react)"`;
+
+exports[`(blocks/badges) npm > minGzippedSize > renders with packageName - snapshots 3`] = `"<img src="https://shields.io/bundlejs/size/react" />"`;
+
+exports[`(blocks/badges) npm > typeDefinitions > renders with packageName - snapshots 1`] = `"https://shields.io//npm/types/react"`;
+
+exports[`(blocks/badges) npm > typeDefinitions > renders with packageName - snapshots 2`] = `"![](https://shields.io//npm/types/react)"`;
+
+exports[`(blocks/badges) npm > typeDefinitions > renders with packageName - snapshots 3`] = `"<img src="https://shields.io//npm/types/react" />"`;
+
+exports[`(blocks/badges) npm > unpackedSize > renders with packageName and version - snapshots 1`] = `"https://shields.io//npm/unpacked-size/react/latest"`;
+
+exports[`(blocks/badges) npm > unpackedSize > renders with packageName and version - snapshots 2`] = `"![](https://shields.io//npm/unpacked-size/react/latest)"`;
+
+exports[`(blocks/badges) npm > unpackedSize > renders with packageName and version - snapshots 3`] = `"<img src="https://shields.io//npm/unpacked-size/react/latest" />"`;
+
+exports[`(blocks/badges) npm > unpackedSize > renders with packageName only - snapshots 1`] = `"https://shields.io//npm/unpacked-size/react"`;
+
+exports[`(blocks/badges) npm > unpackedSize > renders with packageName only - snapshots 2`] = `"![](https://shields.io//npm/unpacked-size/react)"`;
+
+exports[`(blocks/badges) npm > unpackedSize > renders with packageName only - snapshots 3`] = `"<img src="https://shields.io//npm/unpacked-size/react" />"`;
+
+exports[`(blocks/badges) npm > version > renders with packageName and tag - snapshots 1`] = `"https://shields.io//npm/v/react/latest"`;
+
+exports[`(blocks/badges) npm > version > renders with packageName and tag - snapshots 2`] = `"![](https://shields.io//npm/v/react/latest)"`;
+
+exports[`(blocks/badges) npm > version > renders with packageName and tag - snapshots 3`] = `"<img src="https://shields.io//npm/v/react/latest" />"`;
+
+exports[`(blocks/badges) npm > version > renders with packageName only - snapshots 1`] = `"https://shields.io//npm/v/react"`;
+
+exports[`(blocks/badges) npm > version > renders with packageName only - snapshots 2`] = `"![](https://shields.io//npm/v/react)"`;
+
+exports[`(blocks/badges) npm > version > renders with packageName only - snapshots 3`] = `"<img src="https://shields.io//npm/v/react" />"`;

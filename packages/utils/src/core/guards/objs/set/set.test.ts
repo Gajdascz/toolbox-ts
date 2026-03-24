@@ -11,12 +11,8 @@ runGuardSuites({
   is: (v) => isSetOf(v, isStrOrNum),
   assert: (v) => assertIsSetOf(v, isStrOrNum),
   check: (v) => checkIsSetOf(v, isStrOrNum),
-  expectType: expectTypeOf(
-    isSetOf<number | string>
-  ).guards.toEqualTypeOf<SetOfStrOrNum>(),
-  assertType: expectTypeOf(
-    assertIsSetOf<number | string>
-  ).asserts.toEqualTypeOf<SetOfStrOrNum>(),
+  expectType: expectTypeOf(isSetOf<number | string>).guards.toEqualTypeOf<SetOfStrOrNum>(),
+  assertType: expectTypeOf(assertIsSetOf<number | string>).asserts.toEqualTypeOf<SetOfStrOrNum>(),
   validValues: [new Set(), new Set([1, 2, 3]), new Set(['hello', 'world'])],
   invalidValues: [null, undefined, 42, 'string', [], {}, new Map(), new Date()]
 });

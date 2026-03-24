@@ -1,13 +1,20 @@
 {
   "name": "@toolbox-ts/utils",
   "version": "0.6.0",
-  "description": "Utils",
-  "type": "module",
-  "license": "MIT",
-  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/utils",
   "private": false,
-  "publishConfig": {
-    "access": "public"
+  "description": "Utils",
+  "keywords": [
+    "toolbox-ts",
+    "typescript",
+    "utilities",
+    "utils"
+  ],
+  "homepage": "https://github.com/gajdascz/toolbox-ts/tree/main/packages/utils",
+  "license": "MIT",
+  "author": {
+    "name": "Nolan Gajdascz",
+    "email": "dev.gajdascz@gmail.com",
+    "url": "https://github.com/gajdascz"
   },
   "repository": {
     "type": "git",
@@ -15,59 +22,53 @@
   },
   "files": [
     "dist",
-    "README.md",
-    "LICENSE"
+    "README.md"
   ],
-  "keywords": [
-    "toolbox-ts",
-    "utilities",
-    "utils",
-    "typescript"
-  ],
-  "author": {
-    "name": "Nolan Gajdascz",
-    "email": "dev.gajdascz@gmail.com",
-    "url": "https://github.com/gajdascz"
-  },
-  "devDependencies": {
-    "@toolbox-ts/test-utils": "workspace:^",
-    "@toolbox-ts/types": "workspace:^",
-    "@types/node": "^22.19.7"
-  },
+  "type": "module",
   "main": "./dist/modules/index.js",
   "types": "./dist/modules/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/modules/index.js",
-      "types": "./dist/modules/index.d.ts"
+      "types": "./dist/modules/index.d.ts",
+      "import": "./dist/modules/index.js"
     },
     "./core": {
-      "import": "./dist/core/index.js",
-      "types": "./dist/core/index.d.ts"
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js"
     },
     "./Obj": {
-      "import": "./dist/modules/Obj/index.js",
-      "types": "./dist/modules/Obj/index.d.ts"
+      "types": "./dist/modules/Obj/index.d.ts",
+      "import": "./dist/modules/Obj/index.js"
     },
     "./Arr": {
-      "import": "./dist/modules/Arr/index.js",
-      "types": "./dist/modules/Arr/index.d.ts"
+      "types": "./dist/modules/Arr/index.d.ts",
+      "import": "./dist/modules/Arr/index.js"
     },
     "./Tuple": {
-      "import": "./dist/modules/Tuple/index.js",
-      "types": "./dist/modules/Tuple/index.d.ts"
+      "types": "./dist/modules/Tuple/index.d.ts",
+      "import": "./dist/modules/Tuple/index.js"
     },
     "./Str": {
-      "import": "./dist/modules/Str/index.js",
-      "types": "./dist/modules/Str/index.d.ts"
+      "types": "./dist/modules/Str/index.d.ts",
+      "import": "./dist/modules/Str/index.js"
     },
     "./Num": {
-      "import": "./dist/modules/Num/index.js",
-      "types": "./dist/modules/Num/index.d.ts"
+      "types": "./dist/modules/Num/index.d.ts",
+      "import": "./dist/modules/Num/index.js"
     },
     "./libs/*": {
-      "import": "./dist/modules/*/lib/index.js",
-      "types": "./dist/modules/*/lib/index.d.ts"
+      "types": "./dist/modules/*/lib/index.d.ts",
+      "import": "./dist/modules/*/lib/index.js"
     }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@toolbox-ts/types": "workspace:^",
+    "@types/node": "^25.5.0"
+  },
+  "devDependencies": {
+    "@toolbox-ts/test-utils": "workspace:^"
   }
 }

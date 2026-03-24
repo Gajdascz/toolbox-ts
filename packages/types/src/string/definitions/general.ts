@@ -39,44 +39,14 @@ export type LetteringType = 'alphabetic' | 'alphanumeric';
 /**
  * String representations of negative digits (-0 to -9)
  */
-export type NegativeDigit =
-  | '-0'
-  | '-1'
-  | '-2'
-  | '-3'
-  | '-4'
-  | '-5'
-  | '-6'
-  | '-7'
-  | '-8'
-  | '-9';
+export type NegativeDigit = '-0' | '-1' | '-2' | '-3' | '-4' | '-5' | '-6' | '-7' | '-8' | '-9';
 
 /**
  * String representations of positive digits (0 to 9)
  */
-export type PositiveDigit =
-  | '0'
-  | '1'
-  | '2'
-  | '3'
-  | '4'
-  | '5'
-  | '6'
-  | '7'
-  | '8'
-  | '9';
+export type PositiveDigit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
 
-export type Separator =
-  | '_'
-  | '-'
-  | ','
-  | ';'
-  | ':'
-  | '.'
-  | ' '
-  | '/'
-  | '\\'
-  | '|';
+export type Separator = '_' | '-' | ',' | ';' | ':' | '.' | ' ' | '/' | '\\' | '|';
 //#endregion
 
 //#region> Unions
@@ -110,8 +80,10 @@ export type Digit = NegativeDigit | PositiveDigit;
  * type NoUnderscore = HasSeparator<'hello-world',Exclude<Separator, '_'>>; // false
  * ```
  */
-export type HasSeparator<S extends string, T extends Separator = Separator> =
-  S extends `${string}${T}${string}` ? true : false;
+export type HasSeparator<
+  S extends string,
+  T extends Separator = Separator
+> = S extends `${string}${T}${string}` ? true : false;
 /**
  * Checks if a string is capitalized.
  * @template S - The string to check.
@@ -123,8 +95,7 @@ export type HasSeparator<S extends string, T extends Separator = Separator> =
  * type NotCapitalized = IsCapitalized<'hello'>; // false
  * ```
  */
-export type IsCapitalized<S extends string> =
-  S extends Capitalize<S> ? true : false;
+export type IsCapitalized<S extends string> = S extends Capitalize<S> ? true : false;
 /**
  * Checks if a string is lowercase.
  *
@@ -137,8 +108,7 @@ export type IsCapitalized<S extends string> =
  * type NotLowercase = IsLowercase<'Hello'>; // false
  * ```
  */
-export type IsLowercase<S extends string> =
-  S extends Lowercase<S> ? true : false;
+export type IsLowercase<S extends string> = S extends Lowercase<S> ? true : false;
 /**
  * Checks if a string is not capitalized.
  *
@@ -151,8 +121,7 @@ export type IsLowercase<S extends string> =
  * type Capitalized = IsNotCapitalized<'Hello'>; // false
  * ```
  */
-export type IsNotCapitalized<S extends string> =
-  IsCapitalized<S> extends true ? false : true;
+export type IsNotCapitalized<S extends string> = IsCapitalized<S> extends true ? false : true;
 /**
  * Checks if a string is not lowercase.
  *
@@ -165,8 +134,7 @@ export type IsNotCapitalized<S extends string> =
  * type Lowercase = IsNotLowercase<'hello'>; // false
  * ```
  */
-export type IsNotLowercase<S extends string> =
-  S extends Lowercase<S> ? false : true;
+export type IsNotLowercase<S extends string> = S extends Lowercase<S> ? false : true;
 /**
  * Checks if a type is not a string.
  *

@@ -10,13 +10,7 @@ import type {
 } from '../types.js';
 
 import { ghActionsAnnotations } from '../reporters/index.js';
-import {
-  chain,
-  normalize,
-  resolveError,
-  spawn,
-  spawnSync
-} from '../utils/index.js';
+import { chain, normalize, resolveError, spawn, spawnSync } from '../utils/index.js';
 
 /** Base command class for executing shell commands with Oclif. */
 export abstract class BaseCommand extends Command {
@@ -36,11 +30,8 @@ export abstract class BaseCommand extends Command {
   }
   /* c8 ignore start */
   /** Utility methods for normalizing command arguments. */
-  protected readonly normalize = {
-    objArgs: normalize.objToFlags,
-    flagArgs: normalize.flagArgs
-  };
-  /* c8 ignore end */
+  protected readonly normalize = { objArgs: normalize.objToFlags, flagArgs: normalize.flagArgs };
+  /* c8 ignore stop */
 
   protected resolveError = resolveError;
 
@@ -55,10 +46,7 @@ export abstract class BaseCommand extends Command {
      * console.log(result.stdout) // lists files in /some/path in console
      * ```
      */
-    exec: <O extends SyncOptions = SyncOptions>(
-      cmd: CommandInput,
-      opts?: CommandOptions<O>
-    ) => {
+    exec: <O extends SyncOptions = SyncOptions>(cmd: CommandInput, opts?: CommandOptions<O>) => {
       const { execaOpts, onExecFail = this._defaultErrorBehavior } = opts ?? {};
       try {
         return spawnSync<O>(cmd, execaOpts);
@@ -79,8 +67,7 @@ export abstract class BaseCommand extends Command {
      */
     execWithStdio<
       S extends SyncOptions['stdio'],
-      O extends CommandOptionsNoStdio<SyncOptions> =
-        CommandOptionsNoStdio<SyncOptions>
+      O extends CommandOptionsNoStdio<SyncOptions> = CommandOptionsNoStdio<SyncOptions>
     >(cmd: CommandInput, stdio: S, opts?: O) {
       return this.exec<{ stdio: S }>(cmd, {
         execaOpts: { ...opts?.execaOpts, stdio },
@@ -118,10 +105,7 @@ export abstract class BaseCommand extends Command {
    * // Result: { stdout: 'World', ... }
    * ```
    */
-  protected async chain(
-    input: CommandInput[],
-    opts?: CommandOptionsNoStdio
-  ): Promise<Result> {
+  protected async chain(input: CommandInput[], opts?: CommandOptionsNoStdio): Promise<Result> {
     const { execaOpts, onExecFail = this._defaultErrorBehavior } = opts ?? {};
     try {
       this.preExec();
@@ -134,7 +118,7 @@ export abstract class BaseCommand extends Command {
     } finally {
       this.postExec();
     }
-    /* c8 ignore end */
+    /* c8 ignore stop */
   }
 
   /**
@@ -146,10 +130,7 @@ export abstract class BaseCommand extends Command {
    * console.log(result.stdout) // lists files in /some/path in console
    * ```
    */
-  protected async exec<O extends Options = Options>(
-    cmd: CommandInput,
-    opts?: CommandOptions<O>
-  ) {
+  protected async exec<O extends Options = Options>(cmd: CommandInput, opts?: CommandOptions<O>) {
     const { execaOpts, onExecFail = this._defaultErrorBehavior } = opts ?? {};
     try {
       this.preExec();
@@ -235,10 +216,7 @@ export abstract class BaseCommand extends Command {
    */
   protected wrap(mainCommand: string) {
     const normalizeInput = normalize.getCommandInputWrapper(mainCommand);
-    const exec = <O extends CommandOptions = CommandOptions>(
-      cmd: CommandInput,
-      opts?: O
-    ) => {
+    const exec = <O extends CommandOptions = CommandOptions>(cmd: CommandInput, opts?: O) => {
       return this.exec(normalizeInput(cmd), opts);
     };
     const execWithStdio = <
@@ -258,9 +236,7 @@ export abstract class BaseCommand extends Command {
       return this.string(normalizeInput(cmd), opts);
     };
     const sync = {
-      exec: <
-        O extends CommandOptions<SyncOptions> = CommandOptions<SyncOptions>
-      >(
+      exec: <O extends CommandOptions<SyncOptions> = CommandOptions<SyncOptions>>(
         cmd: CommandInput,
         opts?: O
       ) => {
@@ -268,8 +244,7 @@ export abstract class BaseCommand extends Command {
       },
       execWithStdio: <
         S extends SyncOptions['stdio'],
-        O extends CommandOptionsNoStdio<SyncOptions> =
-          CommandOptionsNoStdio<SyncOptions>
+        O extends CommandOptionsNoStdio<SyncOptions> = CommandOptionsNoStdio<SyncOptions>
       >(
         cmd: CommandInput,
         stdio: S,
@@ -277,10 +252,7 @@ export abstract class BaseCommand extends Command {
       ) => {
         return this.sync.execWithStdio(normalizeInput(cmd), stdio, opts);
       },
-      string: <
-        O extends CommandOptionsNoStdio<SyncOptions> =
-          CommandOptionsNoStdio<SyncOptions>
-      >(
+      string: <O extends CommandOptionsNoStdio<SyncOptions> = CommandOptionsNoStdio<SyncOptions>>(
         cmd: CommandInput,
         opts?: O
       ) => {

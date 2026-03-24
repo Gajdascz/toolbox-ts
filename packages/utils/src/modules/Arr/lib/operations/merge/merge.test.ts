@@ -1,285 +1,158 @@
-import { describe, expect, it } from 'vitest';
+import { describe, it, expect, expectTypeOf } from 'vitest';
+import { mergeConcat, mergeUnique, mergePrepend, mergeCombine } from './merge.js';
 
-import { merge, type MergeItemHandler } from './merge.ts';
-
-describe('merge', () => {
-  describe('append behavior', () => {
-    it('should append arrays in order', () => {
-      const result = merge({ behavior: 'append' }, [1, 2], [3, 4], [5, 6]);
-      expect(result).toEqual([1, 2, 3, 4, 5, 6]);
+describe('Array merge', () => {
+  it('mergeConcat', () => {
+    const r1 = mergeConcat([1, 2], [[3], [4]]);
+    expect(r1).toEqual([1, 2, 3, 4]);
+    expectTypeOf(r1).toEqualTypeOf<number[]>();
+    const r2 = mergeConcat([1, 2], [3, 4]);
+    expect(mergeConcat([1, 2], [3, 4])).toEqual([1, 2, 3, 4]);
+    expectTypeOf(r2).toEqualTypeOf<number[]>();
+  });
+  describe('mergeUnique', () => {
+    it('concats unique values by default', () => {
+      const r1 = mergeUnique([1, 2, 1], [[2], [3]]);
+      expect(r1).toEqual([1, 2, 3]);
+      expectTypeOf(r1).toEqualTypeOf<number[]>();
+      const r2 = mergeUnique([1, 2, 1], [2, 3]);
+      expect(r2).toEqual([1, 2, 3]);
+      expectTypeOf(r2).toEqualTypeOf<number[]>();
     });
-
-    it('should handle empty arrays', () => {
-      const result = merge({ behavior: 'append' }, [], [1, 2], []);
-      expect(result).toEqual([1, 2]);
-    });
-
-    it('should handle single array', () => {
-      const result = merge({ behavior: 'append' }, [1, 2, 3]);
-      expect(result).toEqual([1, 2, 3]);
-    });
-
-    it('should handle arrays with different types', () => {
-      const result = merge({ behavior: 'append' }, ['a', 'b'], ['c', 'd']);
-      expect(result).toEqual(['a', 'b', 'c', 'd']);
+    it('prepends unique values when end is set to prepend', () => {
+      const r1 = mergeUnique([1, 2, 1], [[2], [3]], { end: 'prepend' });
+      expect(r1).toEqual([2, 3, 1]);
+      expectTypeOf(r1).toEqualTypeOf<number[]>();
+      const r2 = mergeUnique([1, 2, 1], [2, 3], { end: 'prepend' });
+      expect(r2).toEqual([2, 3, 1]);
+      expectTypeOf(r2).toEqualTypeOf<number[]>();
     });
   });
-
-  describe('prepend behavior', () => {
-    it('should prepend arrays in reverse order', () => {
-      const result = merge({ behavior: 'prepend' }, [1, 2], [3, 4], [5, 6]);
-      expect(result).toEqual([5, 6, 3, 4, 1, 2]);
-    });
-
-    it('should handle empty arrays', () => {
-      const result = merge({ behavior: 'prepend' }, [], [1, 2], []);
-      expect(result).toEqual([1, 2]);
-    });
-
-    it('should handle single array', () => {
-      const result = merge({ behavior: 'prepend' }, [1, 2, 3]);
-      expect(result).toEqual([1, 2, 3]);
-    });
-
-    it('should handle arrays with different types', () => {
-      const result = merge({ behavior: 'prepend' }, ['a', 'b'], ['c', 'd']);
-      expect(result).toEqual(['c', 'd', 'a', 'b']);
-    });
+  it('mergePrepend', () => {
+    const r1 = mergePrepend([1, 2], [[3], ['4']]);
+    expect(r1).toEqual([3, '4', 1, 2]);
+    expectTypeOf(r1).toEqualTypeOf<(number | string)[]>();
+    const r2 = mergePrepend([1, 2], [3, '4']);
+    expect(r2).toEqual([3, '4', 1, 2]);
+    expectTypeOf(r2).toEqualTypeOf<(number | string)[]>();
   });
-  describe('overwrite behavior', () => {
-    it('should return last defined array', () => {
-      const result = merge({ behavior: 'overwrite' }, [1, 2], [3, 4], [5, 6]);
-      expect(result).toEqual([5, 6]);
-    });
-
-    it('should skip undefined arrays', () => {
-      const result = merge(
-        { behavior: 'overwrite' },
-        [1, 2],
-        undefined as unknown as number[],
-        [5, 6]
-      );
-      expect(result).toEqual([5, 6]);
-    });
-
-    it('should return first array if others are undefined', () => {
-      const result = merge(
-        { behavior: 'overwrite' },
-        [1, 2],
-        undefined as unknown as number[],
-        undefined as unknown as number[]
-      );
-      expect(result).toEqual([1, 2]);
-    });
-
-    it('should return empty array if all arrays are undefined', () => {
-      const result = merge(
-        { behavior: 'overwrite' },
-        undefined as unknown as number[],
-        undefined as unknown as number[],
-        undefined as unknown as number[]
-      );
-      expect(result).toEqual([]);
-    });
-
-    it('should handle single array', () => {
-      const result = merge({ behavior: 'overwrite' }, [1, 2, 3]);
-      expect(result).toEqual([1, 2, 3]);
-    });
-  });
-  describe('unique behavior', () => {
-    it('should remove duplicate values', () => {
-      const result = merge({ behavior: 'unique' }, [1, 2, 2, 3], [3, 4, 4, 5]);
-      expect(result).toEqual([1, 2, 3, 4, 5]);
-    });
-    it('should use comparator function if provided', () => {
-      const comparator = (a: number, b: number) => a === b;
-      const result = merge(
-        { behavior: 'unique', comparator },
-        [1, 2, 2, 3],
-        [3, 4, 4, 5]
-      );
-      expect(result).toEqual([1, 2, 3, 4, 5]);
-    });
-  });
-  describe('per-item merge function behavior', () => {
-    it('should merge items using custom function', () => {
-      const mergeFn: MergeItemHandler<number[]> = (current, incoming) =>
-        current + incoming;
-      const result = merge(
-        { behavior: 'per-item', handler: mergeFn },
-        [1, 2, 3],
-        [10, 20, 30]
-      );
-      expect(result).toEqual([11, 22, 33]);
-    });
-
-    it('should handle arrays of different lengths', () => {
-      const mergeFn: MergeItemHandler<number[]> = (current, incoming) =>
-        current + incoming;
-      const result = merge(
-        { behavior: 'per-item', handler: mergeFn },
-        [1, 2],
-        [10, 20, 30, 40]
-      );
-      expect(result).toEqual([11, 22, 30, 40]);
-    });
-
-    it('should handle first array longer than others', () => {
-      const mergeFn: MergeItemHandler<number[]> = (current, incoming) =>
-        current + incoming;
-      const result = merge(
-        { behavior: 'per-item', handler: mergeFn },
-        [1, 2, 3, 4],
-        [10, 20]
-      );
-      expect(result).toEqual([11, 22, 3, 4]);
-    });
-
-    it('should provide index to merge function', () => {
-      const indices: number[] = [];
-      const mergeFn: MergeItemHandler<number[]> = (
-        current,
-        incoming,
-        index
-      ) => {
-        indices.push(index);
-        return current + incoming;
-      };
-      merge(
-        { behavior: 'per-item', handler: mergeFn },
-        [1, 2, 3],
-        [10, 20, 30]
-      );
-      expect(indices).toEqual([0, 1, 2]);
-    });
-
-    it('should handle multiple arrays with custom function', () => {
-      const mergeFn: MergeItemHandler<number[]> = (current, incoming) =>
-        current + incoming;
-      const result = merge(
-        { behavior: 'per-item', handler: mergeFn },
-        [1, 2],
-        [10, 20],
-        [100, 200]
-      );
-      expect(result).toEqual([111, 222]);
-    });
-
-    it('should handle undefined values in arrays', () => {
-      const mergeFn: MergeItemHandler<(number | undefined)[]> = (
-        current,
-        incoming
-      ) => (current ?? 0) + (incoming ?? 0);
-      const result = merge(
-        { behavior: 'per-item', handler: mergeFn },
-        [1, undefined, 3],
-        [10, 20, undefined],
-        [undefined, 200, 300]
-      );
-      expect(result).toEqual([11, 220, 303]);
-    });
-
-    it('should use incoming value when current is undefined', () => {
-      const mergeFn: MergeItemHandler<number[]> = (current, incoming) =>
-        current + incoming;
-      const arr1: number[] = [];
-      arr1[2] = 3;
-      const result = merge(
-        { behavior: 'per-item', handler: mergeFn },
-        arr1,
-        [10, 20, 30]
-      );
-      expect(result).toEqual([10, 20, 33]);
-    });
-
-    it('should keep current value when incoming is undefined', () => {
-      const mergeFn: MergeItemHandler<number[]> = (current, incoming) =>
-        current + incoming;
-      const arr2: number[] = [];
-      arr2[1] = 20;
-      const result = merge(
-        { behavior: 'per-item', handler: mergeFn },
-        [1, 2, 3],
-        arr2
-      );
-      expect(result).toEqual([1, 22, 3]);
-    });
-
-    it('should handle string concatenation', () => {
-      const mergeFn: MergeItemHandler<string[]> = (current, incoming) =>
-        current + incoming;
-      const result = merge(
-        { behavior: 'per-item', handler: mergeFn },
-        ['a', 'b'],
-        ['x', 'y']
-      );
-      expect(result).toEqual(['ax', 'by']);
-    });
-
-    it('should handle object merging', () => {
-      interface Obj {
-        value: number;
-      }
-      const mergeFn: MergeItemHandler<Obj[]> = (current, incoming) => ({
-        value: current.value + incoming.value
+  describe('mergeCombine', () => {
+    describe('handlers', () => {
+      it('uses replace behavior', () => {
+        const res = mergeCombine(
+          [1, { a: 'old' }, new Map([['old', 'value']]), ['old']],
+          [2, { b: 'new' }, new Map([['new', 'value']]), ['new']],
+          { handlers: { primitive: 'replace' } }
+        );
+        expect(res[0]).toBe(2);
+        expect(res[1]).toEqual({ b: 'new' });
+        expect(res[2]).toEqual(new Map([['new', 'value']]));
+        expect(res[3]).toEqual(['new']);
       });
-      const result = merge(
-        { behavior: 'per-item', handler: mergeFn },
-        [{ value: 1 }, { value: 2 }],
-        [{ value: 10 }, { value: 20 }]
-      );
-      expect(result).toEqual([{ value: 11 }, { value: 22 }]);
-    });
-  });
+      it('uses custom primitive', () => {
+        const sum = mergeCombine([1], [2], {
+          handlers: { primitive: (c, n) => Number(c || 0) + Number(n) }
+        });
+        expect(sum).toEqual([3]);
+      });
+      it('uses custom object', () => {
+        const res = mergeCombine([1], [{ x: 2 }], {
+          handlers: { object: (c, n) => ({ ...c, ...n }) }
+        });
+        expect(res[0]).toEqual({ x: 2 });
 
-  describe('error handling', () => {
-    it('should throw error for unknown behavior', () => {
-      expect(() =>
-        merge({ behavior: 'unknown' } as any, [1, 2], [3, 4])
-      ).toThrow();
-    });
-    it('should throw error when custom handler is not provided for per-item behavior', () => {
-      expect(() =>
-        merge({ behavior: 'per-item' } as any, [1, 2], [3, 4])
-      ).toThrow();
-    });
-  });
+        const merged = mergeCombine([{ a: 1 }], [{ b: 2 }], {
+          handlers: { object: (c, n) => ({ ...c, ...n }) }
+        });
+        expect(merged[0]).toEqual({ a: 1, b: 2 });
+      });
+      it('uses custom objectType', () => {
+        const res = mergeCombine([1], [() => 5], {
+          handlers: { objectType: (c, n) => ({ prev: c, next: n }) }
+        });
+        expect(res[0]).toEqual({ prev: 1, next: expect.any(Function) });
+        expect((res[0] as any).next()).toBe(5);
+      });
+      describe('array', () => {
+        it('custom', () => {
+          const res = mergeCombine([[1]], [[2]], {
+            handlers: { array: (c, n) => c.concat(n).concat('handled') }
+          });
+          expect(res[0]).toEqual([1, 2, 'handled']);
+        });
+        it('supports behaviors: concat, unique and prepend', () => {
+          expect(mergeCombine([[1]], [[2]], { handlers: { array: 'concat' } })[0]).toEqual([1, 2]);
+          expect(mergeCombine([[1]], [[1]], { handlers: { array: 'unique' } })[0]).toEqual([1]);
+          expect(mergeCombine([[1]], [[2]], { handlers: { array: 'prepend' } })[0]).toEqual([2, 1]);
+        });
+        describe('recursive', () => {
+          it('supports recursive array merging when array handler is recurse', () => {
+            const a = [[1, 2]];
+            const b = [[4]];
+            // recursion merges inner arrays using primitive handler (replace)
+            const res = mergeCombine(a as any, b as any, { handlers: { array: 'recurse' } });
+            expect(res[0]).toEqual([4, 2]);
+          });
+          it('honors maxDepth and behaviorAtMaxDepth', () => {
+            const a = [[1]];
+            const b = [[2]];
+            // With maxDepth 0 the internal logic uses the behaviorAtMaxDepth instead of recursing
+            const resConcat = mergeCombine(a as any, b as any, {
+              handlers: {
+                array: 'recurse',
+                recursiveArrayOptions: { maxDepth: 0, behaviorAtMaxDepth: 'concat' }
+              }
+            });
+            expect(resConcat[0]).toEqual([1, 2]);
 
-  describe('edge cases', () => {
-    it('should handle empty input arrays for append', () => {
-      const result = merge({ behavior: 'append' });
-      expect(result).toEqual([]);
+            // default behaviorAtMaxDepth is 'replace' so result should be next array
+            const resReplace = mergeCombine(a as any, b as any, {
+              handlers: { array: 'recurse', recursiveArrayOptions: { maxDepth: 0 } }
+            });
+            expect(resReplace[0]).toEqual([2]);
+          });
+        });
+      });
     });
 
-    it('should handle empty input arrays for prepend', () => {
-      const result = merge({ behavior: 'prepend' });
-      expect(result).toEqual([]);
+    it('clone option affects whether returned nested arrays reference originals', () => {
+      const a = [[1]];
+      const b = [[2]];
+
+      const resNone = mergeCombine(a as any, b as any, { clone: 'none' });
+      const resDeep = mergeCombine(a as any, b as any, { clone: 'structured' });
+
+      // mutate original b nested array
+      (b[0] as number[])[0] = 999;
+
+      // when clone === 'none' the result references the original nested array, so change is visible
+      expect((resNone[0] as number[])[0]).toBe(999);
+
+      // when clone === 'deep' the result was structured-cloned and does not reflect later changes
+      expect((resDeep[0] as number[])[0]).toBe(2);
     });
 
-    it('should handle empty input arrays for overwrite', () => {
-      const result = merge({ behavior: 'overwrite' });
-      expect(result).toEqual([]);
+    it('works with a mix of types and preserves curr when next is undefined', () => {
+      const a = [1, [2], { a: 3 }];
+      const b = [undefined, [[4]]];
+      const res = mergeCombine(a as any, b as any, {
+        handlers: { array: 'concat', object: (c, n) => ({ ...c, ...n }) }
+      });
+      // index 0: next is undefined -> keep curr
+      expect(res[0]).toBe(1);
+      // index 1: merges arrays with concat
+      expect(res[1]).toEqual([2, [4]]);
+      // index 2: next missing -> keep object
+      expect(res[2]).toEqual({ a: 3 });
     });
-
-    it('should handle empty input arrays for custom function', () => {
-      const mergeFn: MergeItemHandler<number[]> = (current, incoming) =>
-        current + incoming;
-      const result = merge({ behavior: 'per-item', handler: mergeFn });
-      expect(result).toEqual([]);
+    it('uses custom clone function', () => {
+      const customClone = (arr: unknown[]) => arr.map(() => 'cloned');
+      const res = mergeCombine([1, 2], [3, 4], { clone: customClone });
+      expect(res).toEqual(['cloned', 'cloned']);
     });
-
-    it('should handle arrays with mixed types using custom function', () => {
-      const mergeFn: MergeItemHandler<(number | string)[]> = (
-        current,
-        incoming
-      ) => `${current}-${incoming}`;
-      const result = merge(
-        { behavior: 'per-item', handler: mergeFn },
-        [1, 'a', 3],
-        ['x', 2, 'z']
-      );
-      expect(result).toEqual(['1-x', 'a-2', '3-z']);
+    it('sets value to next when current is undefined', () => {
+      const res = mergeCombine([1, undefined], [1, 2]);
+      expect(res).toEqual([1, 2]);
     });
   });
 });

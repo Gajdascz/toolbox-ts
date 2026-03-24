@@ -11,7 +11,7 @@ const objArr = [
 ];
 const emptyArr: number[] = [];
 
-describe('group', () => {
+describe('Array Group', () => {
   it('groups by function result', () => {
     const result = group(numArr, (n) => (n % 2 === 0 ? 'even' : 'odd'));
     expect(result).toEqual({ odd: [1, 3, 5], even: [2, 4, 6] });
@@ -19,11 +19,7 @@ describe('group', () => {
 
   it('groups by string length', () => {
     const result = group(strArr, (s) => s.length.toString());
-    expect(result).toEqual({
-      '3': ['one', 'two'],
-      '4': ['four'],
-      '5': ['three']
-    });
+    expect(result).toEqual({ '3': ['one', 'two'], '4': ['four'], '5': ['three'] });
   });
 
   it('groups by object property', () => {

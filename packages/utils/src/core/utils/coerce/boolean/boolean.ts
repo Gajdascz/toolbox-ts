@@ -1,9 +1,7 @@
+// oxlint-disable no-unused-vars
 import type { Falsy, Truthy } from '@toolbox-ts/types/defs/string';
 
-import {
-  isStringFalsy,
-  isStringTruthy
-} from '../../../guards/primitives/strs/boolish/boolish.js';
+import { isStringFalsy, isStringTruthy } from '../../../guards/primitives/strs/boolish/boolish.js';
 export interface CoerceBooleanOpts {
   /**
    * Strings that should be interpreted as `false` (case-insensitive).
@@ -34,8 +32,7 @@ export const coerceBoolean = (
     case 'string': {
       const normalized = input.toLowerCase().trim();
       if (falsy.includes(normalized) || isStringFalsy(normalized)) return false;
-      if (truthy.includes(normalized) || isStringTruthy(normalized))
-        return true;
+      if (truthy.includes(normalized) || isStringTruthy(normalized)) return true;
     }
   }
   return Boolean(input);

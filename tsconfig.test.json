@@ -23,12 +23,6 @@
     "noImplicitOverride": false,
     "exactOptionalPropertyTypes": false
   },
-  "include": [
-    "**/*.test.*",
-    "**/*.spec.*",
-    "**/*.bench.*",
-    "**/*.test-d.*",
-    "packages/types/src/object/definitions/modifier/modifier.test-d.ts"
-  ],
-  "exclude": ["dist", "node_modules"]
+  "include": ["**/*.test.*", "**/*.spec.*", "**/*.bench.*", "**/*.test-d.*"],
+  "exclude": ["**/dist/**", "**/node_modules/**"]
 }

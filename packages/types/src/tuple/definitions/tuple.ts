@@ -1,27 +1,19 @@
 import type { Falsy, Nullish } from '../../general.js';
-import type {
-  GreaterThan,
-  Increment,
-  LessThan
-} from '../../number/definitions/number.js';
+import type { GreaterThan, Increment, LessThan } from '../../number/definitions/number.js';
 import type { DeepReadonly } from '../../object/definitions/modifier/modifier.js';
 
 //#region> Base Tuple Type
-export type Tuple<T extends readonly unknown[] = unknown[]> = DeepReadonly<
-  [...T]
->;
+export type Tuple<T extends readonly unknown[] = unknown[]> = DeepReadonly<[...T]>;
 //#endregion
 
 //#region> Access
 
 //#region> Element
 export type Element<T extends Tuple> = Exclude<T[number], undefined>;
-export type ElementAt<T extends Tuple, I extends number> =
-  T[I] extends undefined ? never : T[I];
+export type ElementAt<T extends Tuple, I extends number> = T[I] extends undefined ? never : T[I];
 //#endregion
-export type Entries<T extends readonly unknown[]> =
-  T extends readonly [infer F, ...infer R] ?
-    readonly [[0, F], ...ShiftEntries<Entries<R>>]
+export type Entries<T extends readonly unknown[]> = T extends readonly [infer F, ...infer R]
+  ? readonly [[0, F], ...ShiftEntries<Entries<R>>]
   : readonly [];
 
 /**
@@ -44,22 +36,24 @@ export type First<T extends Tuple> = T[0] extends undefined ? never : T[0];
  * type B = ArrLast<[]> // never
  * ```
  */
-export type Last<T extends Tuple> =
-  T extends readonly [...infer _, infer L] ? L : never;
-export type LastIndex<T extends Tuple> =
-  T extends readonly [...infer H, infer _] ? [...H]['length'] : never;
+export type Last<T extends Tuple> = T extends readonly [...infer _, infer L] ? L : never;
+export type LastIndex<T extends Tuple> = T extends readonly [...infer H, infer _]
+  ? [...H]['length']
+  : never;
 
-export type ShiftEntries<T extends readonly unknown[]> =
-  T extends readonly [[infer I extends number, infer V], ...infer R] ?
-    readonly [[Increment<I>, V], ...ShiftEntries<R>]
+export type ShiftEntries<T extends readonly unknown[]> = T extends readonly [
+  [infer I extends number, infer V],
+  ...infer R
+]
+  ? readonly [[Increment<I>, V], ...ShiftEntries<R>]
   : readonly [];
 //#endregion
 
 //#region> Creation
-export type From<L> =
-  L extends readonly unknown[] | unknown[] ? Tuple<L> : readonly [L];
-export type Of<L extends number, T, R extends readonly T[] = readonly []> =
-  R['length'] extends L ? DeepReadonly<R> : Of<L, T, [...R, T]>;
+export type From<L> = L extends readonly unknown[] | unknown[] ? Tuple<L> : readonly [L];
+export type Of<L extends number, T, R extends readonly T[] = readonly []> = R['length'] extends L
+  ? DeepReadonly<R>
+  : Of<L, T, [...R, T]>;
 
 /**
  * Creates a tuple type with two elements.
@@ -81,28 +75,27 @@ export type WithNullish<T extends Tuple = Tuple> = With<T, Nullish>;
 export type WithUndefined<T extends Tuple = Tuple> = With<T, undefined>;
 //#endregion
 //#region> Without
-export type WithoutFalsy<T extends readonly unknown[]> =
-  T extends readonly [infer F, ...infer R] ?
-    F extends Falsy ?
-      WithoutFalsy<R>
+export type WithoutFalsy<T extends readonly unknown[]> = T extends readonly [infer F, ...infer R]
+  ? F extends Falsy
+    ? WithoutFalsy<R>
     : readonly [F, ...WithoutFalsy<R>]
   : readonly [];
-export type WithoutNull<T extends readonly unknown[]> =
-  T extends readonly [infer F, ...infer R] ?
-    F extends null ?
-      WithoutNull<R>
+export type WithoutNull<T extends readonly unknown[]> = T extends readonly [infer F, ...infer R]
+  ? F extends null
+    ? WithoutNull<R>
     : readonly [F, ...WithoutNull<R>]
   : readonly [];
-export type WithoutNullish<T extends readonly unknown[]> =
-  T extends readonly [infer F, ...infer R] ?
-    F extends Nullish ?
-      WithoutNullish<R>
+export type WithoutNullish<T extends readonly unknown[]> = T extends readonly [infer F, ...infer R]
+  ? F extends Nullish
+    ? WithoutNullish<R>
     : readonly [F, ...WithoutNullish<R>]
   : readonly [];
-export type WithoutUndefined<T extends readonly unknown[]> =
-  T extends readonly [infer F, ...infer R] ?
-    F extends undefined ?
-      WithoutUndefined<R>
+export type WithoutUndefined<T extends readonly unknown[]> = T extends readonly [
+  infer F,
+  ...infer R
+]
+  ? F extends undefined
+    ? WithoutUndefined<R>
     : readonly [F, ...WithoutUndefined<R>]
   : readonly [];
 //#endregion
@@ -125,19 +118,21 @@ export type Chunk<
   A extends Tuple = Tuple<[]>,
   R extends Tuple = Tuple<[]>
 > =
-  T extends Tuple<[infer F, ...infer Rest]> ?
-    A['length'] extends Size ?
-      Chunk<T, Size, Tuple<[]>, Tuple<[...R, A]>>
-    : Chunk<Rest, Size, Tuple<[...A, F]>, R>
-  : A extends Tuple<[]> ? R
-  : Tuple<[...R, A]>;
+  T extends Tuple<[infer F, ...infer Rest]>
+    ? A['length'] extends Size
+      ? Chunk<T, Size, Tuple<[]>, Tuple<[...R, A]>>
+      : Chunk<Rest, Size, Tuple<[...A, F]>, R>
+    : A extends Tuple<[]>
+      ? R
+      : Tuple<[...R, A]>;
 export type Dedupe<T extends Tuple, R extends Tuple = Tuple<[]>> =
-  T extends Tuple<[infer F, ...infer Rest]> ?
-    Includes<R, F> extends true ?
-      Dedupe<Rest, R>
-    : Dedupe<Rest, Tuple<[...R, F]>>
-  : R extends Tuple<[]> ? T
-  : Tuple<R>;
+  T extends Tuple<[infer F, ...infer Rest]>
+    ? Includes<R, F> extends true
+      ? Dedupe<Rest, R>
+      : Dedupe<Rest, Tuple<[...R, F]>>
+    : R extends Tuple<[]>
+      ? T
+      : Tuple<R>;
 //#endregion
 
 //#region> Insert
@@ -147,37 +142,54 @@ export type Insert<
   E extends Tuple,
   I extends number,
   Head extends Tuple = readonly []
-> =
-  Head['length'] extends I ? readonly [...Head, ...E, ...T]
-  : T extends readonly [infer F, ...infer Rest] ?
-    Insert<Rest, E, I, readonly [...Head, F]>
-  : readonly [...Head, ...E];
+> = Head['length'] extends I
+  ? readonly [...Head, ...E, ...T]
+  : T extends readonly [infer F, ...infer Rest]
+    ? Insert<Rest, E, I, readonly [...Head, F]>
+    : readonly [...Head, ...E];
 export type Prepend<T extends Tuple, E extends Tuple> = readonly [...E, ...T];
+
+/**
+ * Computes the intersection of all tuple element types.
+ *
+ * @example
+ * ```ts
+ * type A = Intersect<['a' | 'b', 'b' | 'c', 'b'>> // 'b'
+ * type B = Intersect<[1 | 2, 2 | 3, 2 | 4]> // 2
+ * type C = Intersect<['x', 'y', 'z']> // never
+ * type D = Intersect<[]> // unknown
+ * ```
+ */
+export type IntersectElementUnions<T extends readonly unknown[]> = T extends readonly [
+  infer H,
+  ...infer R
+]
+  ? H & IntersectElementUnions<R>
+  : unknown;
 //#endregion
 
 //#region> Conditional & Comparison
-export type Includes<T extends Tuple, V> =
-  T extends readonly [infer F, ...infer R] ?
-    [F] extends readonly [V] ?
-      true
+export type Includes<T extends Tuple, V> = T extends readonly [infer F, ...infer R]
+  ? [F] extends readonly [V]
+    ? true
     : Includes<R, V>
   : false;
 
-export type Longer<T extends Tuple, U extends Tuple> =
-  T['length'] extends U['length'] ? T
-  : GreaterThan<T['length'], U['length']> extends true ? T
-  : U;
-export type Shorter<T extends Tuple, U extends Tuple> =
-  T['length'] extends U['length'] ? T
-  : LessThan<T['length'], U['length']> extends true ? T
-  : U;
+export type Longer<T extends Tuple, U extends Tuple> = T['length'] extends U['length']
+  ? T
+  : GreaterThan<T['length'], U['length']> extends true
+    ? T
+    : U;
+export type Shorter<T extends Tuple, U extends Tuple> = T['length'] extends U['length']
+  ? T
+  : LessThan<T['length'], U['length']> extends true
+    ? T
+    : U;
 //#endregion
 
 //#region> Reverse
 export type Reverse<T extends Tuple, R extends Tuple = []> = DeepReadonly<
-  T extends readonly [infer F, ...infer Rest] ?
-    Reverse<Rest, readonly [F, ...R]>
-  : R
+  T extends readonly [infer F, ...infer Rest] ? Reverse<Rest, readonly [F, ...R]> : R
 >;
 //#endregion
 
@@ -187,10 +199,11 @@ export type SplitAt<
   I extends number,
   Head extends Tuple = readonly []
 > = DeepReadonly<
-  Head['length'] extends I ? readonly [Head, T]
-  : T extends readonly [infer F, ...infer Rest] ?
-    SplitAt<Rest, I, readonly [...Head, F]>
-  : readonly [Head, T]
+  Head['length'] extends I
+    ? readonly [Head, T]
+    : T extends readonly [infer F, ...infer Rest]
+      ? SplitAt<Rest, I, readonly [...Head, F]>
+      : readonly [Head, T]
 >;
 //#endregion
 
@@ -207,10 +220,9 @@ export type SplitAt<
  * type E = Zip<[], []> // []
  * ```
  */
-export type Zip<A extends Tuple, B extends Tuple> =
-  A extends readonly [infer AF, ...infer AR] ?
-    B extends readonly [infer BF, ...infer BR] ?
-      readonly [readonly [AF, BF], ...Zip<AR, BR>]
+export type Zip<A extends Tuple, B extends Tuple> = A extends readonly [infer AF, ...infer AR]
+  ? B extends readonly [infer BF, ...infer BR]
+    ? readonly [readonly [AF, BF], ...Zip<AR, BR>]
     : readonly []
   : readonly [];
 
@@ -228,14 +240,16 @@ export type Zip<A extends Tuple, B extends Tuple> =
  * type D = ZipFill<[], [], undefined> // []
  * ```
  */
-export type ZipFill<A extends Tuple, B extends Tuple, F> =
-  A extends readonly [infer AF, ...infer AR] ?
-    B extends readonly [infer BF, ...infer BR] ?
-      readonly [readonly [AF, BF], ...ZipFill<AR, BR, F>]
+export type ZipFill<A extends Tuple, B extends Tuple, F> = A extends readonly [
+  infer AF,
+  ...infer AR
+]
+  ? B extends readonly [infer BF, ...infer BR]
+    ? readonly [readonly [AF, BF], ...ZipFill<AR, BR, F>]
     : readonly [readonly [AF, F], ...ZipFill<AR, [], F>]
-  : B extends readonly [infer BF, ...infer BR] ?
-    readonly [readonly [F, BF], ...ZipFill<readonly [], BR, F>]
-  : readonly [];
+  : B extends readonly [infer BF, ...infer BR]
+    ? readonly [readonly [F, BF], ...ZipFill<readonly [], BR, F>]
+    : readonly [];
 
 /**
  * Zips two tuples together, returning the zipped pairs and any remainder from the longer array.
@@ -258,14 +272,13 @@ export type ZipRemainder<
   A extends Tuple,
   B extends Tuple,
   Z extends Tuple = readonly []
-> =
-  A extends readonly [infer AF, ...infer AR] ?
-    B extends readonly [infer BF, ...infer BR] ?
-      ZipRemainder<AR, BR, readonly [...Z, readonly [AF, BF]]>
+> = A extends readonly [infer AF, ...infer AR]
+  ? B extends readonly [infer BF, ...infer BR]
+    ? ZipRemainder<AR, BR, readonly [...Z, readonly [AF, BF]]>
     : readonly [Z, readonly [AF, ...AR]]
-  : B extends readonly [infer BF, ...infer BR] ?
-    readonly [Z, readonly [BF, ...BR]]
-  : readonly [Z, readonly []];
+  : B extends readonly [infer BF, ...infer BR]
+    ? readonly [Z, readonly [BF, ...BR]]
+    : readonly [Z, readonly []];
 
 export interface ZipRemainderObj<A extends Tuple, B extends Tuple> {
   readonly remainder: ZipRemainder<A, B>[1];
@@ -274,10 +287,9 @@ export interface ZipRemainderObj<A extends Tuple, B extends Tuple> {
 //#endregion
 
 //#region> Remove
-export type RemoveAll<T extends Tuple, E> =
-  T extends readonly [infer F, ...infer R] ?
-    F extends E ?
-      RemoveAll<R, E>
+export type RemoveAll<T extends Tuple, E> = T extends readonly [infer F, ...infer R]
+  ? F extends E
+    ? RemoveAll<R, E>
     : readonly [F, ...RemoveAll<R, E>]
   : readonly [];
 export type RemoveAt<
@@ -285,17 +297,18 @@ export type RemoveAt<
   I extends number,
   Count extends readonly unknown[] = [],
   Head extends readonly unknown[] = []
-> =
-  Count['length'] extends I ?
-    T extends Tuple<[infer _Drop, ...infer R]> ?
-      Tuple<[...Head, ...R]>
+> = Count['length'] extends I
+  ? T extends Tuple<[infer _Drop, ...infer R]>
+    ? Tuple<[...Head, ...R]>
     : Head
-  : T extends Tuple<[infer F, ...infer R]> ?
-    RemoveAt<R, I, Tuple<[...Count, unknown]>, Tuple<[...Head, F]>>
-  : Head;
-export type RemoveFirst<T extends Tuple> =
-  T extends readonly [infer _, ...infer R] ? Tuple<R> : Tuple<[]>;
+  : T extends Tuple<[infer F, ...infer R]>
+    ? RemoveAt<R, I, Tuple<[...Count, unknown]>, Tuple<[...Head, F]>>
+    : Head;
+export type RemoveFirst<T extends Tuple> = T extends readonly [infer _, ...infer R]
+  ? Tuple<R>
+  : Tuple<[]>;
 
-export type RemoveLast<T extends Tuple> =
-  T extends readonly [...infer R, infer _] ? Tuple<R> : Tuple<[]>;
+export type RemoveLast<T extends Tuple> = T extends readonly [...infer R, infer _]
+  ? Tuple<R>
+  : Tuple<[]>;
 //#endregion

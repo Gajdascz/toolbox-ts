@@ -12,6 +12,4 @@ export const PRIMITIVES: { readonly [K in keyof PrimitiveTypeMap]: K } = {
   symbol: 'symbol',
   undefined: 'undefined'
 } as const;
-export const PRIMITIVES_ARR = Object.values(
-  PRIMITIVES
-) as readonly PrimitiveType[];
+export const PRIMITIVES_ARR = Object.values(PRIMITIVES) as readonly PrimitiveType[];

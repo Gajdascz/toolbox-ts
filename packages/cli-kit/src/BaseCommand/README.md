@@ -1,34 +1,36 @@
 # @toolbox-ts/cli-kit BaseCommand
 
-`BaseCommand` is an abstract [`@oclif/core`](https://oclif.io/) `Command` subclass that standardizes how CLI commands in your project execute shell processes.
+`BaseCommand` is an abstract [`@oclif/core`](https://oclif.io/) `Command` subclass that standardizes
+how CLI commands in your project execute shell processes.
 
 It provides:
 
-* Safe async/sync execution wrappers around [`execa`](https://github.com/sindresorhus/execa).
-* Consistent error handling (default terminate or override to throw).
-* Normalization utilities for turning objects into flags/args.
-* Helpers to wrap commands with a prefix (`git`, `npm --silent`, `docker exec ...`).
-* Hooks for pre/post execution lifecycle.
+- Safe async/sync execution wrappers around [`execa`](https://github.com/sindresorhus/execa).
+- Consistent error handling (default terminate or override to throw).
+- Normalization utilities for turning objects into flags/args.
+- Helpers to wrap commands with a prefix (`git`, `npm --silent`, `docker exec ...`).
+- Hooks for pre/post execution lifecycle.
 
 ---
 
 ## 🔑 Features
 
-* **Unified process execution**
-  * Async: `exec`, `execWithStdio`, `string`
-  * Sync: `sync.exec`, `sync.execWithStdio`, `sync.string`
-* **Pipelines**: `chain()` to run multiple commands in sequence with piping.
-* **Input normalization**: `normalize.objArgs`, `normalize.flagArgs`.
-* **Error handling**: configurable via `defaultErrorBehavior` or per-call `onExecFail`.
-* **Command wrapping**: `wrap(mainCommand)` generates new helpers automatically prefixed with a tool.
+- **Unified process execution**
+  - Async: `exec`, `execWithStdio`, `string`
+  - Sync: `sync.exec`, `sync.execWithStdio`, `sync.string`
+- **Pipelines**: `chain()` to run multiple commands in sequence with piping.
+- **Input normalization**: `normalize.objArgs`, `normalize.flagArgs`.
+- **Error handling**: configurable via `defaultErrorBehavior` or per-call `onExecFail`.
+- **Command wrapping**: `wrap(mainCommand)` generates new helpers automatically prefixed with a
+  tool.
 
 ---
 
 ## ⚙️ Error Handling
 
-* Default behavior: `'terminate'` — exits using Oclif’s `this.error`.
-* Per-call override: `{ onExecFail: 'throw' }` rethrows normalized errors for custom handling.
-* Errors are normalized via `resolveError`.
+- Default behavior: `'terminate'` — exits using Oclif’s `this.error`.
+- Per-call override: `{ onExecFail: 'throw' }` rethrows normalized errors for custom handling.
+- Errors are normalized via `resolveError`.
 
 ---
 
@@ -60,9 +62,7 @@ import { BaseCommand } from '@toolbox-ts/cli-kit';
 
 class MyCommand extends BaseCommand {
   async run() {
-    const result = await this.exec('ls -la', {
-      execaOpts: { cwd: '/tmp' }
-    });
+    const result = await this.exec('ls -la', { execaOpts: { cwd: '/tmp' } });
     this.log(result.stdout);
   }
 }
@@ -82,11 +82,7 @@ class MySyncCommand extends BaseCommand {
 ### Pipeline
 
 ```ts
-const result = await this.chain([
-  'echo "Hello World"',
-  ['grep', ['Hello']],
-  "awk '{print $2}'"
-]);
+const result = await this.chain(['echo "Hello World"', ['grep', ['Hello']], "awk '{print $2}'"]);
 
 console.log(result.stdout); // "World"
 ```
@@ -97,8 +93,8 @@ console.log(result.stdout); // "World"
 class GitCmd extends BaseCommand {
   git = this.wrap('git');
 
-  push(branch:string) {
-    this.git.exec(['push', [branch]]) // runs git push branch
+  push(branch: string) {
+    this.git.exec(['push', [branch]]); // runs git push branch
   }
 }
 ```

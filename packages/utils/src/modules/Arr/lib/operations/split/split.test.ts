@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { split, splitAt } from './split.ts';
 
-describe('split', () => {
+describe('Array Split', () => {
   describe('default behavior (floor)', () => {
     it('should split even-length array into two equal halves', () => {
       const [first, second] = split([1, 2, 3, 4]);

@@ -1,14 +1,5 @@
 # @toolbox-ts/file
 
-## 0.5.1
-
-### Patch Changes
-
-- 9c5d838: - completely rework utils package from the ground up
-  - updated types package
-  - updated cli-kit package to use updated utils and types packages
-  - updated dependencies
-
 ## 0.5.0
 
 ### Minor Changes
@@ -17,22 +8,22 @@
 
 ### Patch Changes
 
-- 8a03bd7: remove file write templates and replace with simpler writeFiles
-  remove depcruiser packages and use depcruise cli directly
+- 8a03bd7: remove file write templates and replace with simpler writeFiles remove depcruiser
+  packages and use depcruise cli directly
 
 ## 0.4.4
 
 ### Patch Changes
 
-- 1a1a5a1: remove file write templates and replace with simpler writeFiles
-  remove depcruiser packages and use depcruise cli directly
+- 1a1a5a1: remove file write templates and replace with simpler writeFiles remove depcruiser
+  packages and use depcruise cli directly
 
 ## 0.4.3
 
 ### Patch Changes
 
-- 571e7e2: change write templates to take per template config instead of a
-  single shared config for every template
+- 571e7e2: change write templates to take per template config instead of a single shared config for
+  every template
 
 ## 0.4.2
 

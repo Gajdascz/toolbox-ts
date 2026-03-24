@@ -12,18 +12,9 @@ describe('gh-actions Reporter', () => {
     const wsRoot = path.resolve('/some/workspace');
     const filePath = path.join(wsRoot, 'src', 'file.ts');
     const adapter = () =>
-      ({
-        file: filePath,
-        line: 7,
-        col: 2,
-        title: 'T',
-        message: 'hello',
-        type: 'error'
-      }) as Message;
+      ({ file: filePath, line: 7, col: 2, title: 'T', message: 'hello', type: 'error' }) as Message;
     const r = new Reporter(adapter);
-    const ann = (r as any).buildAnnotation(adapter(), {
-      workspaceRoot: wsRoot
-    });
+    const ann = (r as any).buildAnnotation(adapter(), { workspaceRoot: wsRoot });
 
     expect(ann.startsWith('::error')).toBe(true);
     expect(ann).toContain('file=src/file.ts');
@@ -33,8 +24,7 @@ describe('gh-actions Reporter', () => {
     expect(ann).toContain('::hello');
   });
   it('format returns array of annotation strings for single and multiple items', () => {
-    const adapter = (i: { id: number }) =>
-      ({ message: `m${i.id}`, type: 'notice' }) as Message;
+    const adapter = (i: { id: number }) => ({ message: `m${i.id}`, type: 'notice' }) as Message;
     const r = new Reporter(adapter);
     const single = r.format({ id: 1 });
     expect(Array.isArray(single)).toBe(true);
@@ -54,15 +44,22 @@ describe('gh-actions Reporter', () => {
     delete process.env.GITHUB_WORKSPACE;
     expect((r as any).resolveWorkspaceRoot(undefined)).toBe(process.cwd());
   });
-
-  it('stringify concatenates header and footer around annotations', () => {
-    const adapter = () => ({ message: 'ok', type: 'notice' }) as Message;
-    const r = new Reporter(adapter);
-    const s = r.stringify(adapter(), { header: 'H', footer: 'F' });
-    expect(s).toContain('H');
-    expect(s).toContain('F');
-    // header should be first line
-    expect(s.split('\n')[0]).toBe('H');
+  describe('stringify', () => {
+    it('concatenates header and footer around annotations', () => {
+      const adapter = () => ({ message: 'ok', type: 'notice' }) as Message;
+      const r = new Reporter(adapter);
+      const s = r.stringify(adapter(), { header: 'H', footer: 'F' });
+      expect(s).toContain('H');
+      expect(s).toContain('F');
+      // header should be first line
+      expect(s.split('\n')[0]).toBe('H');
+    });
+    it('omits header and footer when not provided', () => {
+      const adapter = () => ({ message: 'ok', type: 'notice' }) as Message;
+      const r = new Reporter(adapter);
+      const s = r.stringify(adapter());
+      expect(s).toBe('::notice::ok');
+    });
   });
 
   it('toJson and toObject group messages by notice type and call adapter for each item', () => {
@@ -90,9 +87,7 @@ describe('gh-actions Reporter', () => {
     const obj = r.toObject(items, { workspaceRoot: '/w' });
     // adapter is called twice per item in toObject implementation
     expect(adapter).toHaveBeenCalledTimes(items.length * 2);
-    expect(Object.keys(obj).sort()).toEqual(
-      ['debug', 'error', 'notice', 'warning'].sort()
-    );
+    expect(Object.keys(obj).sort()).toEqual(['debug', 'error', 'notice', 'warning'].sort());
     expect(obj.error).toHaveLength(1);
     expect(obj.warning).toHaveLength(1);
     expect(obj.notice).toHaveLength(1);
@@ -107,8 +102,7 @@ describe('gh-actions Reporter', () => {
     const r = new Reporter(() => ({ message: '', type: 'notice' }));
 
     it('parses a single annotation string', () => {
-      const str =
-        '::warning file=a%25.js,line=10,col=5,title=Test::This is a test';
+      const str = '::warning file=a%25.js,line=10,col=5,title=Test::This is a test';
       const res = r.parseAnnotations(str);
       expect(res).toHaveLength(1);
       expect(res[0]).toEqual({
@@ -146,11 +140,8 @@ describe('gh-actions Reporter', () => {
       expect(() => r.parseAnnotations(str)).toThrow();
     });
     it('throws on unknown annotation type', () => {
-      const str =
-        '::unknown file=a.js,line=10,col=5,title=Test::This is a test';
-      expect(() => r.parseAnnotations(str)).toThrow(
-        'Unknown annotation type: unknown'
-      );
+      const str = '::unknown file=a.js,line=10,col=5,title=Test::This is a test';
+      expect(() => r.parseAnnotations(str)).toThrow('Unknown annotation type: unknown');
     });
     it('parses omits non-provided fields', () => {
       const str = '::notice file=a.js,title=Test::This is a test';
@@ -158,6 +149,16 @@ describe('gh-actions Reporter', () => {
       expect(res).toHaveLength(1);
       expect(res[0].line).toBe(undefined);
       expect(res[0].col).toBe(undefined);
+    });
+    it('skips field if value is missing', () => {
+      const str = '::notice file=a.js,line=10,col=5,title=Test,missing=::This is a test';
+      const res = r.parseAnnotations(str);
+      expect(res).toHaveLength(1);
+      expect(res[0].file).toBe('a.js');
+      expect(res[0].line).toBe(10);
+      expect(res[0].col).toBe(5);
+      expect(res[0].title).toBe('Test');
+      expect((res[0] as any).missing).toBeUndefined();
     });
   });
 });

@@ -13,17 +13,7 @@ import {
   isMapWithValues
 } from './map.ts';
 
-const defaultFail = [
-  null,
-  undefined,
-  {},
-  { a: 1 },
-  [],
-  [1, 2, 3],
-  () => {},
-  new Date(),
-  new Set()
-];
+const defaultFail = [null, undefined, {}, { a: 1 }, [], [1, 2, 3], () => {}, new Date(), new Set()];
 const KEYS = ['a', 'b'] as const;
 const isStr = (v: unknown): v is string => typeof v === 'string';
 const isNum = (v: unknown): v is number => typeof v === 'number';
@@ -37,9 +27,9 @@ runGuardSuites(
     expectType: expectTypeOf(isMapWithKeys<'a' | 'b'>).guards.toEqualTypeOf<
       Map<'a' | 'b', unknown>
     >(),
-    assertType: expectTypeOf(
-      assertIsMapWithKeys<'a' | 'b'>
-    ).asserts.toEqualTypeOf<Map<'a' | 'b', unknown>>(),
+    assertType: expectTypeOf(assertIsMapWithKeys<'a' | 'b'>).asserts.toEqualTypeOf<
+      Map<'a' | 'b', unknown>
+    >(),
     validValues: [
       new Map([
         ['a', 1],
@@ -66,12 +56,10 @@ runGuardSuites(
     is: (v) => isMapWithValues(v, isNum),
     assert: (v) => assertIsMapWithValues(v, isNum),
     check: (v) => checkIsMapWithValues(v, isNum),
-    expectType: expectTypeOf(isMapWithValues<number>).guards.toEqualTypeOf<
+    expectType: expectTypeOf(isMapWithValues<number>).guards.toEqualTypeOf<Map<unknown, number>>(),
+    assertType: expectTypeOf(assertIsMapWithValues<number>).asserts.toEqualTypeOf<
       Map<unknown, number>
     >(),
-    assertType: expectTypeOf(
-      assertIsMapWithValues<number>
-    ).asserts.toEqualTypeOf<Map<unknown, number>>(),
     validValues: [
       new Map([['a', 1]]),
       new Map([
@@ -113,9 +101,7 @@ runGuardSuites(
       isMapWithEntries<Record<'a' | 'b', (v: unknown) => v is number | string>>
     ).guards.toEqualTypeOf<Map<'a' | 'b', number | string>>(),
     assertType: expectTypeOf(
-      assertIsMapWithEntries<
-        Record<'a' | 'b', (v: unknown) => v is number | string>
-      >
+      assertIsMapWithEntries<Record<'a' | 'b', (v: unknown) => v is number | string>>
     ).asserts.toEqualTypeOf<Map<'a' | 'b', number | string>>(),
     validValues: [
       new Map<'a' | 'b', number | string>([

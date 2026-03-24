@@ -1,4 +1,4 @@
-/* c8 ignore start */
+// oxlint-disable no-unused-vars
 import type {
   Falsy,
   IsCamelCase,
@@ -34,73 +34,73 @@ import {
   isStringFalsy,
   isStringKebabCase,
   isStringPascalCase,
-  isStringPunctuated,
-  isStringSemVer,
+  checkIsStringPunctuated,
+  checkIsStringSemVer,
   isStringSnakeCase,
   isStringTruthy
 } from '../../../core/guards/primitives/strs/index.js';
 export const is = {
   /** @narrows `string` */
-  string: isString,
+  any: isString,
   /** @narrows {@link IsCamelCase} */
-  stringCamelCase: isStringCamelCase,
+  camelCase: isStringCamelCase,
   /** @narrows {@link IsCapitalized} */
-  stringCapitalized: isStringCapitalized,
+  capitalized: isStringCapitalized,
   /** @narrows {@link Falsy} */
-  stringFalsy: isStringFalsy,
+  falsy: isStringFalsy,
   /** @narrows {@link IsKebabCase} */
-  stringKebabCase: isStringKebabCase,
+  kebabCase: isStringKebabCase,
   /** @narrows {@link IsPascalCase} */
-  stringPascalCase: isStringPascalCase,
+  pascalCase: isStringPascalCase,
   /** @narrows {@link IsSnakeCase} */
-  stringSnakeCase: isStringSnakeCase,
-  /** @checks if string is punctuated. */
-  stringPunctuated: isStringPunctuated,
-  /** @checks if string is a valid semantic version (semver) */
-  stringSemVer: isStringSemVer,
+  snakeCase: isStringSnakeCase,
+
   /** @narrows {@link Truthy} */
-  stringTruthy: isStringTruthy
+  truthy: isStringTruthy
 } as const;
 
 export const assert = {
   /** @asserts `string` */
-  string: assertIsString,
+  any: assertIsString,
   /** @asserts {@link IsCamelCase} */
-  stringCamelCase: assertIsStringCamelCase,
+  camelCase: assertIsStringCamelCase,
   /** @asserts {@link IsCapitalized} */
-  stringCapitalized: assertIsStringCapitalized,
+  capitalized: assertIsStringCapitalized,
   /** @asserts {@link Falsy} */
-  stringFalsy: assertIsStringFalsy,
+  falsy: assertIsStringFalsy,
   /** @asserts {@link IsKebabCase} */
-  stringKebabCase: assertIsStringKebabCase,
+  kebabCase: assertIsStringKebabCase,
   /** @asserts {@link IsPascalCase} */
-  stringPascalCase: assertIsStringPascalCase,
+  pascalCase: assertIsStringPascalCase,
   /** @asserts {@link IsSnakeCase} */
   stringPunctuated: assertIsStringPunctuated,
   /** @asserts a string is punctuated. */
   stringSemVer: assertIsStringSemver,
   /** @asserts a string is a valid semantic version (semver) */
-  stringSnakeCase: assertIsStringSnakeCase,
+  snakeCase: assertIsStringSnakeCase,
   /** @asserts {@link Truthy} */
-  stringTruthy: assertIsStringTruthy
+  truthy: assertIsStringTruthy
 } as const;
 
 export const check = {
   /** @checks `string` */
-  string: checkIsString,
+  any: checkIsString,
   /** @checks {@link IsCamelCase} */
-  stringCamelCase: checkIsStringCamelCase,
+  camelCase: checkIsStringCamelCase,
   /** @checks {@link Falsy} */
-  stringFalsy: checkIsStringFalsy,
+  falsy: checkIsStringFalsy,
   /** @checks {@link IsKebabCase} */
-  stringKebabCase: checkIsStringKebabCase,
+  kebabCase: checkIsStringKebabCase,
   /** @checks {@link IsPascalCase} */
-  stringPascalCase: checkIsStringPascalCase,
+  pascalCase: checkIsStringPascalCase,
   /** @checks {@link IsSnakeCase} */
-  stringSnakeCase: checkIsStringSnakeCase,
+  snakeCase: checkIsStringSnakeCase,
   /** @checks {@link Truthy} */
-  stringTruthy: checkIsStringTruthy,
+  truthy: checkIsStringTruthy,
   /** @checks {@link IsCapitalized} */
-  stringCapitalized: checkIsStringCapitalized
+  capitalized: checkIsStringCapitalized,
+  /** @checks if string is punctuated. */
+  punctuated: checkIsStringPunctuated,
+  /** @checks if string is a valid semantic version (semver) */
+  semver: checkIsStringSemVer
 } as const;
-/* c8 ignore end */

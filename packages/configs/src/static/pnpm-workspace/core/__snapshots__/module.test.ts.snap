@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`configs/static/pnpmWorkspace > toFileEntry should produce correct file entry 1`] = `
+{
+  "pnpm-workspace.yaml": "packages:
+  - custom/*
+  - packages/*
+ca:
+  - additional
+  - config
+cafile: path/to/cafile
+cert: path/to/cert
+key: path/to/key
+registry: https://registry.npmjs.org/
+strictSsl: false
+autoInstallPeers: true
+",
+}
+`;

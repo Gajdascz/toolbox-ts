@@ -1,1 +1,1 @@
-export type * as Cfg from './definitions/index.js';
+export type * as Configs from './definitions/index.js';

@@ -23,8 +23,8 @@ export type CsvPair<
 /**
  * Prepends a prefix to a string type.
  *
- * @Template P - The prefix to prepend.
- * @Template S - The string to which the prefix will be added.
+ * @template P - The prefix to prepend.
+ * @template S - The string to which the prefix will be added.
  */
 export type Prefix<P extends string, S extends string> = `${P}${S}`;
 /**
@@ -64,12 +64,11 @@ export type SeparatedLiterals<
   V extends TemplateValue[] = TemplateValue[],
   Sep extends string = ',',
   Acc extends string = ''
-> =
-  V extends [infer A, ...infer R] ?
-    A extends TemplateValue ?
-      `${Acc extends '' ? '' : `${Acc}${Sep}`}${A}` extends infer S ?
-        R extends TemplateValue[] ?
-          SeparatedLiterals<R, Sep, S & string>
+> = V extends [infer A, ...infer R]
+  ? A extends TemplateValue
+    ? `${Acc extends '' ? '' : `${Acc}${Sep}`}${A}` extends infer S
+      ? R extends TemplateValue[]
+        ? SeparatedLiterals<R, Sep, S & string>
         : never
       : never
     : Acc
@@ -87,8 +86,8 @@ export type SeparatedPair<
 /**
  * Appends a suffix to a string type.
  *
- * @Template S - The string to which the suffix will be added.
- * @Template P - The suffix to append.
+ * @template S - The string to which the suffix will be added.
+ * @template P - The suffix to append.
  */
 export type Suffix<S extends string, P extends string> = `${S}${P}`;
 
@@ -96,13 +95,7 @@ export type Suffix<S extends string, P extends string> = `${S}${P}`;
  * A type representing all possible primitive values that can be used
  * in template literal types.
  */
-export type TemplateValue =
-  | bigint
-  | boolean
-  | null
-  | number
-  | string
-  | undefined;
+export type TemplateValue = bigint | boolean | null | number | string | undefined;
 /**
  * Wraps a string with specified left and right strings, with an optional
  * connector string in between.

@@ -25,11 +25,7 @@ export const BITS = {
     max: INTERVALS.eightBit[1]
   },
   /** 16-bit depth with range [0, 65,535] */
-  sixteen: {
-    depth: 16,
-    min: INTERVALS.sixteenBit[0],
-    max: INTERVALS.sixteenBit[1]
-  },
+  sixteen: { depth: 16, min: INTERVALS.sixteenBit[0], max: INTERVALS.sixteenBit[1] },
   twentyFour: {
     /** 24-bit depth with range [0, 16,777,215] */
     depth: 24,

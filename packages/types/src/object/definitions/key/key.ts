@@ -68,10 +68,7 @@ export type Symbol<T> = OfType<T, symbol>;
  * type K2 = CoerceNumber<'a'> // 'a'
  * ```
  */
-export type CoerceNumber<T> =
-  T extends string ? T
-  : T extends number ? `${T}`
-  : never;
+export type CoerceNumber<T> = T extends string ? T : T extends number ? `${T}` : never;
 
 /**
  * Keys of T as enumerable strings

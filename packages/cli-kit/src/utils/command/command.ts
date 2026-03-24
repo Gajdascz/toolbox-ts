@@ -48,10 +48,7 @@ export const resolveError = (error: unknown): InstanceType<typeof Error> => {
  * console.log(result.stdout) // lists files in /some/path in console
  * ```
  */
-export const spawn = <O extends Options = Options>(
-  cmd: CommandInput,
-  execaOpts?: O
-) => {
+export const spawn = <O extends Options = Options>(cmd: CommandInput, execaOpts?: O) => {
   const [executable, args] = normalize.commandInput(cmd);
   return execa<O>(executable, args, execaOpts);
 };

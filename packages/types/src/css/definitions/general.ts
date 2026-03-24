@@ -49,9 +49,4 @@ export type LineStyle =
   | 'ridge'
   | 'solid';
 
-export type SizingKeyword =
-  | 'auto'
-  | 'fit-content'
-  | 'max-content'
-  | 'min-content'
-  | 'none';
+export type SizingKeyword = 'auto' | 'fit-content' | 'max-content' | 'min-content' | 'none';

@@ -18,6 +18,9 @@ import {
   chunk,
   clone,
   compact,
+  compactFalsy,
+  compactNull,
+  compactUndefined,
   dedupe,
   entries,
   first,
@@ -35,9 +38,11 @@ import {
   shorter,
   splitAt,
   to,
-  zip
+  zip,
+  zipFill,
+  zipRemainder
 } from './tuple.ts';
-describe('tuple', () => {
+describe('Tuple', () => {
   describe('accessors', () => {
     it('at should return element at index with literal type', () => {
       const t = [1, 'a', true] as const;
@@ -92,9 +97,7 @@ describe('tuple', () => {
     it('entries should return entries with literal types', () => {
       const t = [1, 'two', 3] as const;
       const result = entries(t);
-      expectTypeOf(result).toEqualTypeOf<
-        readonly [[0, 1], [1, 'two'], [2, 3]]
-      >();
+      expectTypeOf(result).toEqualTypeOf<readonly [[0, 1], [1, 'two'], [2, 3]]>();
     });
   });
 
@@ -156,9 +159,7 @@ describe('tuple', () => {
     it('init should create a tuple of given length with initial value', () => {
       const result = init(3, 0);
       expectTypeOf(result).toEqualTypeOf<Tuple<[0, 0, 0]>>();
-      expectTypeOf(init(4, (i) => i + 2)).toEqualTypeOf<
-        Tuple<[number, number, number, number]>
-      >();
+      expectTypeOf(init(4, (i) => i + 2)).toEqualTypeOf<Tuple<[number, number, number, number]>>();
     });
   });
   describe('operations', () => {
@@ -215,9 +216,7 @@ describe('tuple', () => {
       it('chunk should handle size 3', () => {
         const t = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
         const result = chunk(t, 3);
-        expectTypeOf(result).toEqualTypeOf<
-          Tuple<[[1, 2, 3], [4, 5, 6], [7, 8, 9]]>
-        >();
+        expectTypeOf(result).toEqualTypeOf<Tuple<[[1, 2, 3], [4, 5, 6], [7, 8, 9]]>>();
       });
 
       it('chunk should handle uneven chunks', () => {
@@ -239,9 +238,9 @@ describe('tuple', () => {
         expectTypeOf(result).toEqualTypeOf<Tuple<['a', 'b', 'c']>>();
       });
 
-      it('clone should handle deep strategy', () => {
+      it('clone should handle structured strategy', () => {
         const t = [{ a: 1 }, { b: 2 }] as const;
-        const result = clone(t, 'deep');
+        const result = clone(t, 'structured');
         expectTypeOf(result).toEqualTypeOf<Tuple<[{ a: 1 }, { b: 2 }]>>();
       });
     });
@@ -292,32 +291,26 @@ describe('tuple', () => {
     describe('compact', () => {
       it('compact with nullish mode should remove null and undefined', () => {
         const t = [1, null, 2, undefined, 3] as const;
-        const result = compact(t, 'nullish');
+        const result = compact(t);
         expectTypeOf(result).toEqualTypeOf<Tuple<[1, 2, 3]>>();
       });
 
       it('compact with null mode should remove only null', () => {
-        const t = [1, null, 2, null, 3] as const;
-        const result = compact(t, 'null');
-        expectTypeOf(result).toEqualTypeOf<Tuple<[1, 2, 3]>>();
+        const t = [1, null, 2, null, 3, undefined] as const;
+        const result = compactNull(t);
+        expectTypeOf(result).toEqualTypeOf<Tuple<[1, 2, 3, undefined]>>();
       });
 
       it('compact with undefined mode should remove only undefined', () => {
-        const t = [1, undefined, 2, undefined, 3] as const;
-        const result = compact(t, 'undefined');
-        expectTypeOf(result).toEqualTypeOf<Tuple<[1, 2, 3]>>();
+        const t = [1, undefined, 2, null, undefined, 3] as const;
+        const result = compactUndefined(t);
+        expectTypeOf(result).toEqualTypeOf<Tuple<[1, 2, null, 3]>>();
       });
 
       it('compact with falsy mode should remove all falsy values', () => {
         const t = [1, 0, '', false, null, undefined, 2] as const;
-        const result = compact(t, 'falsy');
+        const result = compactFalsy(t);
         expectTypeOf(result).toEqualTypeOf<Tuple<[1, 2]>>();
-      });
-
-      it('compact with default mode should remove nullish', () => {
-        const t = [1, null, 2, undefined, 3] as const;
-        const result = compact(t);
-        expectTypeOf(result).toEqualTypeOf<Tuple<[1, 2, 3]>>();
       });
     });
 
@@ -332,47 +325,43 @@ describe('tuple', () => {
       it('zip with explicit default mode', () => {
         const a = [1, 2] as const;
         const b = [true, false] as const;
-        const result = zip(a, b, 'default');
+        const result = zip(a, b);
         expectTypeOf(result).toEqualTypeOf<Zip<typeof a, typeof b>>();
       });
 
       it('zip with fill mode should use fill value', () => {
         const a = [1, 2] as const;
         const b = ['a', 'b', 'c'] as const;
-        const result = zip(a, b, 'fill', null);
+        const result = zipFill(a, b, null);
         expectTypeOf(result).toEqualTypeOf<ZipFill<typeof a, typeof b, null>>();
       });
 
       it('zip with fill mode and custom fill value', () => {
         const a = [1, 2, 3] as const;
         const b = ['a', 'b'] as const;
-        const result = zip(a, b, 'fill', 'x');
+        const result = zipFill(a, b, 'x');
         expectTypeOf(result).toEqualTypeOf<ZipFill<typeof a, typeof b, 'x'>>();
       });
 
       it('zip with fill mode and number fill', () => {
         const a = [1, 2] as const;
         const b = ['a', 'b', 'c'] as const;
-        const result = zip(a, b, 'fill', 0);
+        const result = zipFill(a, b, 0);
         expectTypeOf(result).toEqualTypeOf<ZipFill<typeof a, typeof b, 0>>();
       });
 
       it('zip with remainder mode should return zipped and remainder', () => {
         const a = [1, 2, 3] as const;
         const b = ['a', 'b'] as const;
-        const result = zip(a, b, 'remainder');
-        expectTypeOf(result).toEqualTypeOf<
-          ZipRemainderObj<typeof a, typeof b>
-        >();
+        const result = zipRemainder(a, b);
+        expectTypeOf(result).toEqualTypeOf<ZipRemainderObj<typeof a, typeof b>>();
       });
 
       it('zip with remainder mode and longer second tuple', () => {
         const a = [1, 2] as const;
         const b = ['a', 'b', 'c', 'd'] as const;
-        const result = zip(a, b, 'remainder');
-        expectTypeOf(result).toEqualTypeOf<
-          ZipRemainderObj<typeof a, typeof b>
-        >();
+        const result = zipRemainder(a, b);
+        expectTypeOf(result).toEqualTypeOf<ZipRemainderObj<typeof a, typeof b>>();
       });
     });
 
@@ -454,9 +443,7 @@ describe('tuple', () => {
       it('removeFirst should handle many elements', () => {
         const t = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
         const result = removeFirst(t);
-        expectTypeOf(result).toEqualTypeOf<
-          Tuple<[2, 3, 4, 5, 6, 7, 8, 9, 10]>
-        >();
+        expectTypeOf(result).toEqualTypeOf<Tuple<[2, 3, 4, 5, 6, 7, 8, 9, 10]>>();
       });
 
       it('removeLast should remove last element with literal type', () => {
@@ -474,9 +461,7 @@ describe('tuple', () => {
       it('removeLast should handle many elements', () => {
         const t = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
         const result = removeLast(t);
-        expectTypeOf(result).toEqualTypeOf<
-          Tuple<[1, 2, 3, 4, 5, 6, 7, 8, 9]>
-        >();
+        expectTypeOf(result).toEqualTypeOf<Tuple<[1, 2, 3, 4, 5, 6, 7, 8, 9]>>();
       });
     });
   });

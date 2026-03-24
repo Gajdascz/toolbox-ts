@@ -1,9 +1,17 @@
-export type FileContentResolver<TLoaded, TResolved = TLoaded> = (
-  parsed: Partial<TLoaded> | TLoaded
-) => null | TResolved;
+/**
+ * File types with supported file-type modules.
+ * - module: ESM/CJS source files (js,jsx,ts,tsx,astro, ...etc)
+ * - text: Plain text files (txt, text)
+ * - json: JSON files (json, json5, jsonc)
+ * - yaml: YAML files (yml, yaml)
+ */
+export type FileType = 'module' | 'text' | 'json' | 'yaml';
 
-export type FileContentResolverArg<T> = Parameters<FileContentResolver<T>>[0];
-
-export type ResultObj<T> =
-  | { error: string; result: null }
-  | { error?: undefined; result: T };
+/**
+ * Strategies for resolving file conflicts during write operations.
+ * - abort: Abort the operation if a conflict is detected.
+ * - skip: Skip the conflicting file and continue with others.
+ * - overwrite: Overwrite the existing file with the new content.
+ * - create: Create a new file without overwriting the existing one.
+ */
+export type ResolutionStrategy = 'abort' | 'skip' | 'overwrite' | 'create';

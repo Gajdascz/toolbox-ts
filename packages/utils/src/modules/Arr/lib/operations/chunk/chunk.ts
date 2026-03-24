@@ -23,7 +23,6 @@ export function chunk<T extends Arr = Arr>(arr: T, size: number): Chunk<T> {
   if (arr.length === 0) return [] as Chunk<T>;
   if (size >= arr.length) return [arr] as Chunk<T>;
   const result = [];
-  for (let i = 0; i < arr.length; i += size)
-    result.push(arr.slice(i, i + size) as T);
+  for (let i = 0; i < arr.length; i += size) result.push(arr.slice(i, i + size) as T);
   return result as Chunk<T>;
 }

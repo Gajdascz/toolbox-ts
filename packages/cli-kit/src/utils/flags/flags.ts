@@ -1,7 +1,4 @@
-import type {
-  AlphabetLowercase,
-  AlphabetUppercase
-} from '@oclif/core/interfaces';
+import type { AlphabetLowercase, AlphabetUppercase } from '@oclif/core/interfaces';
 
 import { Str } from '@toolbox-ts/utils';
 
@@ -30,9 +27,7 @@ export const kebabToFlagEntry = <T extends string>(
  * toFlag('anotherExampleFlag') // '--another-example-flag'
  * ```
  */
-export const toFlag = <T extends string>(
-  key: T
-): FlagToken<Str.CamelToKebab<T>> =>
+export const toFlag = <T extends string>(key: T): FlagToken<Str.CamelToKebab<T>> =>
   Str.prefix('--', Str.Cases.camel.toKebab(key));
 
 export interface FlagMetaOpts {
@@ -69,12 +64,7 @@ export interface FlagMetaOpts {
 export const flagMeta = (
   name: string,
   description: string,
-  {
-    acceptsCommaSeparated = false,
-    otherAliases = [],
-    char,
-    helpGroup
-  }: FlagMetaOpts = {}
+  { acceptsCommaSeparated = false, otherAliases = [], char, helpGroup }: FlagMetaOpts = {}
 ) => {
   const toKebab = Str.Cases.camel.toKebab(name);
   const aliases = [...otherAliases];

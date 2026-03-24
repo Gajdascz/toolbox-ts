@@ -8,7 +8,7 @@ const longestArr = [...numArr1, ...numArr2];
 const pair1 = [1, 2];
 const pair2 = [3, 4];
 
-describe('Comparison', () => {
+describe('Array Comparison', () => {
   describe('longer(', () => {
     it('returns the longer of two arrays', () => {
       expect(longer([], numArr2)).toEqual(numArr2);

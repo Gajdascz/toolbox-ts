@@ -8,12 +8,5 @@
     "composite": true
   },
   "include": ["src/**/*"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.*",
-    "**/*.test-d.*",
-    "**/*.spec.*",
-    "**/*.bench.*"
-  ]
+  "exclude": ["node_modules", "dist", "**/*.test.*", "**/*.test-d.*", "**/*.spec.*", "**/*.bench.*"]
 }

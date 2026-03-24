@@ -8,9 +8,7 @@ export type Any = (...args: any[]) => unknown;
  *
  * @important R is already wrapped in a Promise, do not wrap it again when specifying the return type.
  */
-export type Async<A extends unknown[] = unknown[], R = unknown> = (
-  ...args: A
-) => Promise<R>;
+export type Async<A extends unknown[] = unknown[], R = unknown> = (...args: A) => Promise<R>;
 
 /**
  * A constructor type.
@@ -69,8 +67,8 @@ export type Sync<A extends unknown[] = unknown[], R = unknown> = (
  * > = ...;
  * ```
  */
-export type ExclusiveTypeGuard<F extends Any, N extends string = string> = F
-  & TypeGuardMeta<`Not${Capitalize<N>}`>;
+export type ExclusiveTypeGuard<F extends Any, N extends string = string> = F &
+  TypeGuardMeta<`Not${Capitalize<N>}`>;
 /**
  * A TypeGuard that asserts a specific type from the checked value.
  *
@@ -85,8 +83,7 @@ export type ExclusiveTypeGuard<F extends Any, N extends string = string> = F
  * > = ...;
  * ```
  */
-export type TypeGuard<F extends Any, N extends string = string> = F
-  & TypeGuardMeta<N>;
+export type TypeGuard<F extends Any, N extends string = string> = F & TypeGuardMeta<N>;
 
 /**
  * Metadata for a TypeGuard, including its type name.
@@ -107,10 +104,7 @@ export interface TypeGuardMeta<N extends string = string> {
  * const isValid: CheckGuard<[min: number]> = (v, min) => typeof v === 'number' && v >= min;
  * ```
  */
-export type CheckGuard<A extends unknown[] = void[]> = (
-  v: unknown,
-  ...args: A
-) => boolean;
+export type CheckGuard<A extends unknown[] = void[]> = (v: unknown, ...args: A) => boolean;
 /**
  * A guard that does not narrow the type and returns a boolean.
  * @template A - Additional argument types
@@ -119,10 +113,7 @@ export type CheckGuard<A extends unknown[] = void[]> = (
  * const isNotValid: CheckNotGuard<[min: number]> = (v, min) => typeof v !== 'number' || v < min;
  * ```
  */
-export type CheckNotGuard<A extends unknown[] = void[]> = (
-  v: unknown,
-  ...args: A
-) => boolean;
+export type CheckNotGuard<A extends unknown[] = void[]> = (v: unknown, ...args: A) => boolean;
 
 /**
  * A type guard that narrows the type of a value.
@@ -135,10 +126,7 @@ export type CheckNotGuard<A extends unknown[] = void[]> = (
  * const isString: IsGuard<string> = (v): v is string => typeof v === 'string';
  * ```
  */
-export type IsGuard<V = unknown, A extends unknown[] = void[]> = (
-  v: unknown,
-  ...args: A
-) => v is V;
+export type IsGuard<V = unknown, A extends unknown[] = void[]> = (v: unknown, ...args: A) => v is V;
 /**
  * A type guard that excludes a specific type from the value.
  *
@@ -172,20 +160,10 @@ export type IsNotGuard<E, A extends unknown[] = void[]> = <V>(
  * }
  * ```
  */
-export type IsNotTypeGuardPair<
-  N extends string,
-  E,
-  A extends unknown[] = void[]
-> = {
-  readonly [K in N as `checkIsNot${Capitalize<K>}`]: ExclusiveTypeGuard<
-    CheckNotGuard<A>,
-    K
-  >;
+export type IsNotTypeGuardPair<N extends string, E, A extends unknown[] = void[]> = {
+  readonly [K in N as `checkIsNot${Capitalize<K>}`]: ExclusiveTypeGuard<CheckNotGuard<A>, K>;
 } & {
-  readonly [K in N as `isNot${Capitalize<K>}`]: ExclusiveTypeGuard<
-    IsNotGuard<E, A>,
-    K
-  >;
+  readonly [K in N as `isNot${Capitalize<K>}`]: ExclusiveTypeGuard<IsNotGuard<E, A>, K>;
 };
 /**
  * A pair of type guards
@@ -204,11 +182,7 @@ export type IsNotTypeGuardPair<
  * }
  * ```
  */
-export type IsTypeGuardPair<
-  N extends string,
-  V = unknown,
-  A extends unknown[] = void[]
-> = {
+export type IsTypeGuardPair<N extends string, V = unknown, A extends unknown[] = void[]> = {
   readonly [K in N as `checkIs${Capitalize<K>}`]: TypeGuard<CheckGuard<A>, N>;
 } & { readonly [K in N as `is${Capitalize<K>}`]: TypeGuard<IsGuard<V, A>, N> };
 
@@ -224,8 +198,9 @@ export type IsTypeGuardPair<
  * type ReturnType = InferValueFromAnyFn<Fn>; // boolean
  * ```
  */
-export type InferValueFromAnyFn<F extends Any> =
-  F extends (...args: any[]) => infer R ? R : unknown;
+export type InferValueFromAnyFn<F extends Any> = F extends (...args: any[]) => infer R
+  ? R
+  : unknown;
 
 /**
  * Infers the value type from an IsGuard type.
@@ -238,8 +213,12 @@ export type InferValueFromAnyFn<F extends Any> =
  * type ValueType = InferValueFromGuard<typeof isString>; // string
  * ```
  */
-export type InferValueFromGuard<G> =
-  G extends (v: unknown, ...args: unknown[]) => v is infer V ? V
-  : G extends (v: unknown, ...args: unknown[]) => asserts v is infer R ? R
-  : G extends (v: unknown, ...args: unknown[]) => boolean ? unknown
-  : never;
+export type InferValueFromGuard<G> = G extends ((v: unknown, ...args: unknown[]) => v is infer V)
+  ? V
+  : G extends ((v: unknown, ...args: unknown[]) => asserts v is infer R)
+    ? R
+    : G extends (v: unknown, ...args: unknown[]) => boolean
+      ? unknown
+      : never;
+
+export type InferArgs<F> = F extends (...args: infer A) => any ? A : unknown;

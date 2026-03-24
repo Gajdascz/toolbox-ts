@@ -1,5 +1,4 @@
 export * from './accessors/accessors.js';
-
 export * from './comparison/comparison.js';
 export * from './creation/creation.js';
 export * from './guards.js';

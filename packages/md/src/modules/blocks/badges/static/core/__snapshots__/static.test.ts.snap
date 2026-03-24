@@ -1,0 +1,25 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`(blocks/badges) static badge > snapshots > renders label and color - snapshots 1`] = `"https://shields.io/label-blue"`;
+
+exports[`(blocks/badges) static badge > snapshots > renders label and color - snapshots 2`] = `"![](https://shields.io/label-blue)"`;
+
+exports[`(blocks/badges) static badge > snapshots > renders label and color - snapshots 3`] = `"<img src="https://shields.io/label-blue" />"`;
+
+exports[`(blocks/badges) static badge > snapshots > renders label and message - snapshots 1`] = `"https://shields.io/label-message"`;
+
+exports[`(blocks/badges) static badge > snapshots > renders label and message - snapshots 2`] = `"![](https://shields.io/label-message)"`;
+
+exports[`(blocks/badges) static badge > snapshots > renders label and message - snapshots 3`] = `"<img src="https://shields.io/label-message" />"`;
+
+exports[`(blocks/badges) static badge > snapshots > renders label only - snapshots 1`] = `"https://shields.io/label"`;
+
+exports[`(blocks/badges) static badge > snapshots > renders label only - snapshots 2`] = `"![](https://shields.io/label)"`;
+
+exports[`(blocks/badges) static badge > snapshots > renders label only - snapshots 3`] = `"<img src="https://shields.io/label" />"`;
+
+exports[`(blocks/badges) static badge > snapshots > renders label, message, and color - snapshots 1`] = `"https://shields.io/label-message-blue"`;
+
+exports[`(blocks/badges) static badge > snapshots > renders label, message, and color - snapshots 2`] = `"![](https://shields.io/label-message-blue)"`;
+
+exports[`(blocks/badges) static badge > snapshots > renders label, message, and color - snapshots 3`] = `"<img src="https://shields.io/label-message-blue" />"`;

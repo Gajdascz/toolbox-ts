@@ -9,10 +9,7 @@
  * type OnOff = BoolishPair<'on', 'off'> // ['on', 'off']
  * ```
  */
-export type BoolishPair<T extends string, F extends string> = readonly [
-  truthy: T,
-  falsy: F
-];
+export type BoolishPair<T extends string, F extends string> = readonly [truthy: T, falsy: F];
 //#endregion
 
 //#region> Pairs

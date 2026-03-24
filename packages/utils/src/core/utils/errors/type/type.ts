@@ -9,10 +9,12 @@ import { resolveTypeName } from '../utils/utils.js';
  */
 export function createTypeError(
   expected: string | string[],
-  received: (() => string) | unknown,
+  received: unknown,
   rest?: string
 ): TypeError {
   return new TypeError(
-    `Expected ${typeof received !== 'function' ? resolveTypeName(received) : (received as () => string)()} to be ${Array.isArray(expected) ? `one of type [${expected.join(', ')}]` : `of type ${expected}`}${rest ? ` ${rest}` : ''}`
+    `Expected ${resolveTypeName(received)} to be ${
+      Array.isArray(expected) ? `one of type [${expected.join(', ')}]` : `of type ${expected}`
+    }${rest ? ` ${rest}` : ''}`
   );
 }

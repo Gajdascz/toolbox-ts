@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`configs/static/husky > toFileEntry should produce correct file entry 1`] = `
+{
+  "applypatch-msg": "echo "Custom applypatch-msg command"",
+  "commit-msg": "pnpm exec commitlint --edit "$1"
+echo "Additional commit-msg command"",
+  "pre-applypatch": "echo "Custom pre-applypatch command"",
+  "pre-commit": "branch=$(git rev-parse --abbrev-ref HEAD)
+if [ "$branch" = "main" ]; then
+  echo "Direct commits to 'main' are not allowed. Please checkout a new branch and commit your changes there."
+  exit 1
+fi
+
+pnpm run lint-staged
+
+echo "Additional pre-commit command"",
+}
+`;

@@ -47,7 +47,7 @@ const sc = {
 } as const;
 type SnakeCaseMap = typeof sc;
 
-describe('String Case Conversions', () => {
+describe('Str Case Conversions', () => {
   describe('camelCase', () => {
     describe('camelCase => ToPascalCase', () => {
       it('handles single word', () => {
@@ -464,9 +464,7 @@ describe('String Case Conversions', () => {
       const testValue = 'my-test-value';
 
       // kebab -> camel -> pascal -> kebab
-      expect(pascal.toKebab(camel.toPascal(kebab.toCamel(testValue)))).toBe(
-        testValue
-      );
+      expect(pascal.toKebab(camel.toPascal(kebab.toCamel(testValue)))).toBe(testValue);
 
       // kebab -> snake -> kebab
       expect(snake.toKebab(kebab.toSnake(testValue))).toBe(testValue);

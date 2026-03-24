@@ -9,7 +9,7 @@ const emptyArr: number[] = [];
 const singleArr = [42];
 const mixedArr = [1, 'a', null, undefined, true];
 
-describe('chunk', () => {
+describe('Array Chunk', () => {
   it('returns empty array for empty input', () => {
     expect(chunk(emptyArr, 2)).toEqual([]);
   });
@@ -64,7 +64,6 @@ describe('chunk', () => {
     ['non-integer', [2.5, 1.1, -4]],
     ['NaN', [Number.NaN, -Number.NaN]]
   ])('Throws TypeError for %s size.', (_, cases) => {
-    for (const size of cases)
-      expect(() => chunk(numArr, size)).toThrow(TypeError);
+    for (const size of cases) expect(() => chunk(numArr, size)).toThrow(TypeError);
   });
 });

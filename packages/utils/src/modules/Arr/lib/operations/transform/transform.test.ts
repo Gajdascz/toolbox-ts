@@ -1,20 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
-import { transform } from './transform.ts';
+import { transform, transformInPlace } from './transform.ts';
 
-describe('transform', () => {
+describe('Array Transform', () => {
   describe('basic transformation', () => {
     it('should transform and filter even numbers', () => {
-      const result = transform([1, 2, 3, 4], (n) =>
-        n % 2 === 0 ? n * 2 : undefined
-      );
+      const result = transform([1, 2, 3, 4], (n) => (n % 2 === 0 ? n * 2 : undefined));
       expect(result).toEqual([4, 8]);
     });
 
     it('should transform strings to uppercase and filter', () => {
-      const result = transform(['a', 'b', 'c'], (s) =>
-        s === 'b' ? undefined : s.toUpperCase()
-      );
+      const result = transform(['a', 'b', 'c'], (s) => (s === 'b' ? undefined : s.toUpperCase()));
       expect(result).toEqual(['A', 'C']);
     });
 
@@ -59,9 +55,7 @@ describe('transform', () => {
         { user: { id: 2, active: false } },
         { user: { id: 3, active: true } }
       ];
-      const result = transform(items, (item) =>
-        item.user.active ? item.user.id : undefined
-      );
+      const result = transform(items, (item) => (item.user.active ? item.user.id : undefined));
       expect(result).toEqual([1, 3]);
     });
   });
@@ -110,9 +104,7 @@ describe('transform', () => {
     });
 
     it('should handle array with all undefined results', () => {
-      const result = transform([1, 2, 3, 4, 5], (n) =>
-        n > 10 ? n : undefined
-      );
+      const result = transform([1, 2, 3, 4, 5], (n) => (n > 10 ? n : undefined));
       expect(result).toEqual([]);
     });
 
@@ -192,6 +184,13 @@ describe('transform', () => {
       const copy = [...original];
       transform(original, (n) => n * 2);
       expect(original).toEqual(copy);
+    });
+  });
+  describe('InPlace', () => {
+    it('should modify original array when inPlace is true', () => {
+      const original = [1, 2, 3, 4, 5];
+      transformInPlace(original, (n) => (n % 2 === 0 ? n * 2 : undefined));
+      expect(original).toEqual([4, 8]);
     });
   });
 });

@@ -46,9 +46,7 @@ describe('PropertyDescriptors types', () => {
       }
       type Result = Descriptors.Enumerable<Props>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        getter: { enumerable: true; get: () => string };
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ getter: { enumerable: true; get: () => string } }>();
     });
 
     it('should handle mixed descriptors', () => {
@@ -177,10 +175,7 @@ describe('PropertyDescriptors types', () => {
       }
       type Result = Descriptors.EnumerableEntries<Props>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        age: ['age', 30];
-        name: ['name', 'Alice'];
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ age: ['age', 30]; name: ['name', 'Alice'] }>();
     });
 
     it('should exclude non-value descriptors', () => {
@@ -246,13 +241,9 @@ describe('PropertyDescriptors types', () => {
         value: () => void;
       }
 
-      expectTypeOf<Descriptors.InferValue<ObjDesc>>().toEqualTypeOf<{
-        nested: string;
-      }>();
+      expectTypeOf<Descriptors.InferValue<ObjDesc>>().toEqualTypeOf<{ nested: string }>();
       expectTypeOf<Descriptors.InferValue<ArrDesc>>().toEqualTypeOf<number[]>();
-      expectTypeOf<Descriptors.InferValue<FuncDesc>>().toEqualTypeOf<
-        () => void
-      >();
+      expectTypeOf<Descriptors.InferValue<FuncDesc>>().toEqualTypeOf<() => void>();
     });
 
     it('should handle union types in value', () => {
@@ -287,11 +278,7 @@ describe('PropertyDescriptors types', () => {
       }
       type Result = Descriptors.InferValueMap<Props>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        count: 42;
-        handler: () => void;
-        id: 'user-123';
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ count: 42; handler: () => void; id: 'user-123' }>();
     });
 
     it('should use narrow when Narrow=true', () => {
@@ -302,11 +289,7 @@ describe('PropertyDescriptors types', () => {
       }
       type Result = Descriptors.InferValueMap<Props, true>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        count: 42;
-        handler: () => void;
-        id: 'user-123';
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ count: 42; handler: () => void; id: 'user-123' }>();
     });
 
     it('should handle getters and setters', () => {
@@ -317,11 +300,7 @@ describe('PropertyDescriptors types', () => {
       }
       type Result = Descriptors.InferValueMap<Props>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        age: number;
-        name: string;
-        value: boolean;
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ age: number; name: string; value: boolean }>();
     });
 
     it('should handle empty descriptor map', () => {
@@ -329,6 +308,42 @@ describe('PropertyDescriptors types', () => {
       type Result = Descriptors.InferValueMap<Props>;
 
       expectTypeOf<Result>().toEqualTypeOf<{}>();
+    });
+  });
+  describe('InferEnumerableValueMap<P, Narrow>', () => {
+    it('should infer wide enumerable value map by default', () => {
+      interface Props {
+        name: { enumerable: true; value: 'Alice' };
+        count: { enumerable: true; value: 42 };
+        getData: { enumerable: true; value: () => string };
+        [Symbol.iterator]: { enumerable: true; value: () => Iterator<any> };
+        hidden: { enumerable: false; value: 'secret' };
+      }
+      type Result = Descriptors.InferEnumerableValueMap<Props>;
+
+      expectTypeOf<Result>().toEqualTypeOf<{
+        name: 'Alice';
+        count: 42;
+        getData: () => string;
+        [Symbol.iterator]: () => Iterator<any>;
+      }>();
+    });
+
+    it('should use narrow when Narrow=true', () => {
+      interface Props {
+        id: { enumerable: true; value: 'user-123' };
+        count: { enumerable: true; value: 42 };
+        handler: { enumerable: true; value: () => void };
+        sym: { enumerable: true; value: symbol };
+        hidden: { enumerable: false; value: 'secret' };
+      }
+      type Result = Descriptors.InferEnumerableValueMap<Props, true>;
+      expectTypeOf<Result>().toEqualTypeOf<{
+        id: 'user-123';
+        count: 42;
+        handler: () => void;
+        sym: symbol;
+      }>();
     });
   });
   //#endregion
@@ -343,11 +358,7 @@ describe('PropertyDescriptors types', () => {
       }
       type Result = Descriptors.InferValueMapWide<Props>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        count: 42;
-        getData: () => string;
-        name: 'Alice';
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ count: 42; getData: () => string; name: 'Alice' }>();
     });
 
     it('should handle symbol keys', () => {
@@ -368,30 +379,39 @@ describe('PropertyDescriptors types', () => {
       }
       type Result = Descriptors.InferValueMapWide<Props>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        [key: string]: unknown;
-        specific: string;
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ [key: string]: unknown; specific: string }>();
     });
 
     it('should handle complex nested value types', () => {
       interface Props {
         tags: { value: string[] };
-        user: {
-          value: {
-            profile: { age: number; name: string };
-            settings: { theme: string };
-          };
-        };
+        user: { value: { profile: { age: number; name: string }; settings: { theme: string } } };
       }
       type Result = Descriptors.InferValueMapWide<Props>;
 
       expectTypeOf<Result>().toEqualTypeOf<{
         tags: string[];
-        user: {
-          profile: { age: number; name: string };
-          settings: { theme: string };
-        };
+        user: { profile: { age: number; name: string }; settings: { theme: string } };
+      }>();
+    });
+  });
+  describe('InferEnumerableValueMapWide<P>', () => {
+    it('should include only enumerable properties', () => {
+      interface Props {
+        name: { value: 'Alice'; enumerable: true };
+        count: { value: 42; enumerable: true };
+        getData: { value: () => string; enumerable: true };
+        [Symbol.iterator]: { value: () => Iterator<any>; enumerable: true };
+        hidden: { value: 'secret'; enumerable: false };
+        alsoHidden: { get(): number; enumerable: false };
+      }
+      type Result = Descriptors.InferEnumerableValueMapWide<Props>;
+
+      expectTypeOf<Result>().toEqualTypeOf<{
+        name: 'Alice';
+        count: 42;
+        getData: () => string;
+        [Symbol.iterator]: () => Iterator<any>;
       }>();
     });
   });
@@ -434,11 +454,7 @@ describe('PropertyDescriptors types', () => {
       }
       type Result = Descriptors.InferValueMapNarrow<Props>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        getter: string;
-        setter: number;
-        value: boolean;
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ getter: string; setter: number; value: boolean }>();
     });
 
     it('should preserve symbol keys', () => {
@@ -452,7 +468,51 @@ describe('PropertyDescriptors types', () => {
       expectTypeOf<Result>().toEqualTypeOf<{ str: 'text'; [sym]: number }>();
     });
   });
+  describe('InferEnumerableValueMapNarrow<P>', () => {
+    it('should include only enumerable properties', () => {
+      interface Props {
+        id: { enumerable: true; value: 'user-123' };
+        count: { enumerable: true; value: 42 };
+        handler: { enumerable: true; value: () => void };
+        sym: { enumerable: true; value: symbol };
+        hidden: { enumerable: false; value: 'secret' };
+        alsoHidden: { get: () => 'secret'; enumerable: false };
+      }
+      type Result = Descriptors.InferEnumerableValueMapNarrow<Props>;
+
+      expectTypeOf<Result>().toEqualTypeOf<{
+        id: 'user-123';
+        count: 42;
+        handler: () => void;
+        sym: symbol;
+      }>();
+    });
+  });
   //#endregion
+
+  //#region> ExtractEnumerable
+  describe('ExtractEnumerable<P>', () => {
+    it('should extract enumerable property', () => {
+      interface Desc1 {
+        enumerable: true;
+        value: 10;
+      }
+      interface Desc2 {
+        enumerable: false;
+        value: 20;
+      }
+      interface Desc3 {
+        value: 30;
+      }
+      type Result1 = Descriptors.ExtractEnumerable<Desc1>;
+      type Result2 = Descriptors.ExtractEnumerable<Desc2>;
+      type Result3 = Descriptors.ExtractEnumerable<Desc3>;
+
+      expectTypeOf<Result1>().toEqualTypeOf<true>();
+      expectTypeOf<Result2>().toEqualTypeOf<false>();
+      expectTypeOf<Result3>().toEqualTypeOf<true>();
+    });
+  });
 
   //#region> Integration
   describe('Integration', () => {
@@ -465,11 +525,7 @@ describe('PropertyDescriptors types', () => {
       type Inferred = Descriptors.InferValueMap<Props>;
       type EnumKeys = Descriptors.EnumerableKeys<Props>;
 
-      expectTypeOf<Inferred>().toEqualTypeOf<{
-        age: 30;
-        id: 123;
-        name: 'Alice';
-      }>();
+      expectTypeOf<Inferred>().toEqualTypeOf<{ age: 30; id: 123; name: 'Alice' }>();
       expectTypeOf<EnumKeys>().toEqualTypeOf<'age' | 'name'>();
     });
 
@@ -482,11 +538,7 @@ describe('PropertyDescriptors types', () => {
       type Result = Descriptors.InferValueMap<Desc>;
       type EnumKeys = Descriptors.EnumerableKeys<Desc>;
 
-      expectTypeOf<Result>().toEqualTypeOf<{
-        id: 'user-123';
-        name: string;
-        secret: 'hidden';
-      }>();
+      expectTypeOf<Result>().toEqualTypeOf<{ id: 'user-123'; name: string; secret: 'hidden' }>();
       expectTypeOf<EnumKeys>().toEqualTypeOf<'id' | 'name'>();
     });
   });

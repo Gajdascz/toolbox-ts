@@ -15,15 +15,11 @@ import type {
 describe('Template Literal Types', () => {
   describe('SeparatedLiterals', () => {
     it('joins array with default comma separator', () => {
-      expectTypeOf<
-        SeparatedLiterals<['1', '2', '3']>
-      >().toEqualTypeOf<'1,2,3'>();
+      expectTypeOf<SeparatedLiterals<['1', '2', '3']>>().toEqualTypeOf<'1,2,3'>();
     });
 
     it('joins array with custom separator', () => {
-      expectTypeOf<
-        SeparatedLiterals<['a', 'b', 'c'], '-'>
-      >().toEqualTypeOf<'a-b-c'>();
+      expectTypeOf<SeparatedLiterals<['a', 'b', 'c'], '-'>>().toEqualTypeOf<'a-b-c'>();
     });
 
     it('handles single element array', () => {
@@ -35,47 +31,33 @@ describe('Template Literal Types', () => {
     });
 
     it('joins with pipe separator', () => {
-      expectTypeOf<
-        SeparatedLiterals<['x', 'y', 'z'], ' | '>
-      >().toEqualTypeOf<'x | y | z'>();
+      expectTypeOf<SeparatedLiterals<['x', 'y', 'z'], ' | '>>().toEqualTypeOf<'x | y | z'>();
     });
 
     it('joins numeric values', () => {
-      expectTypeOf<
-        SeparatedLiterals<[1, 2, 3], ':'>
-      >().toEqualTypeOf<'1:2:3'>();
+      expectTypeOf<SeparatedLiterals<[1, 2, 3], ':'>>().toEqualTypeOf<'1:2:3'>();
     });
 
     it('joins boolean values', () => {
-      expectTypeOf<
-        SeparatedLiterals<[true, false]>
-      >().toEqualTypeOf<'true,false'>();
+      expectTypeOf<SeparatedLiterals<[true, false]>>().toEqualTypeOf<'true,false'>();
     });
 
     it('joins mixed types', () => {
-      expectTypeOf<
-        SeparatedLiterals<['a', 1, true]>
-      >().toEqualTypeOf<'a,1,true'>();
+      expectTypeOf<SeparatedLiterals<['a', 1, true]>>().toEqualTypeOf<'a,1,true'>();
     });
 
     it('handles two elements', () => {
-      expectTypeOf<
-        SeparatedLiterals<['first', 'second'], ' '>
-      >().toEqualTypeOf<'first second'>();
+      expectTypeOf<SeparatedLiterals<['first', 'second'], ' '>>().toEqualTypeOf<'first second'>();
     });
   });
 
   describe('SeparatedPair', () => {
     it('creates pair with default space separator', () => {
-      expectTypeOf<
-        SeparatedPair<'hello', 'world'>
-      >().toEqualTypeOf<'hello world'>();
+      expectTypeOf<SeparatedPair<'hello', 'world'>>().toEqualTypeOf<'hello world'>();
     });
 
     it('creates pair with custom separator', () => {
-      expectTypeOf<
-        SeparatedPair<'key', 'value', '='>
-      >().toEqualTypeOf<'key=value'>();
+      expectTypeOf<SeparatedPair<'key', 'value', '='>>().toEqualTypeOf<'key=value'>();
     });
 
     it('creates pair with numeric values', () => {
@@ -83,15 +65,11 @@ describe('Template Literal Types', () => {
     });
 
     it('creates pair with boolean values', () => {
-      expectTypeOf<
-        SeparatedPair<true, false, '-'>
-      >().toEqualTypeOf<'true-false'>();
+      expectTypeOf<SeparatedPair<true, false, '-'>>().toEqualTypeOf<'true-false'>();
     });
 
     it('creates pair with mixed types', () => {
-      expectTypeOf<
-        SeparatedPair<'count', 42, ': '>
-      >().toEqualTypeOf<'count: 42'>();
+      expectTypeOf<SeparatedPair<'count', 42, ': '>>().toEqualTypeOf<'count: 42'>();
     });
   });
 
@@ -179,21 +157,15 @@ describe('Template Literal Types', () => {
 
   describe('WrapTag', () => {
     it('wraps content in HTML tag', () => {
-      expectTypeOf<
-        WrapTag<'div', 'Content'>
-      >().toEqualTypeOf<'<div>Content</div>'>();
+      expectTypeOf<WrapTag<'div', 'Content'>>().toEqualTypeOf<'<div>Content</div>'>();
     });
 
     it('wraps content in different tag', () => {
-      expectTypeOf<
-        WrapTag<'span', 'Text'>
-      >().toEqualTypeOf<'<span>Text</span>'>();
+      expectTypeOf<WrapTag<'span', 'Text'>>().toEqualTypeOf<'<span>Text</span>'>();
     });
 
     it('wraps content in self-closing-style tag', () => {
-      expectTypeOf<
-        WrapTag<'p', 'Paragraph'>
-      >().toEqualTypeOf<'<p>Paragraph</p>'>();
+      expectTypeOf<WrapTag<'p', 'Paragraph'>>().toEqualTypeOf<'<p>Paragraph</p>'>();
     });
 
     it('wraps with custom tag names', () => {
@@ -252,9 +224,7 @@ describe('Template Literal Types', () => {
     });
 
     it('appends file extensions', () => {
-      expectTypeOf<
-        Suffix<'document', '.pdf'>
-      >().toEqualTypeOf<'document.pdf'>();
+      expectTypeOf<Suffix<'document', '.pdf'>>().toEqualTypeOf<'document.pdf'>();
     });
   });
 

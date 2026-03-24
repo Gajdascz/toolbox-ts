@@ -1,9 +1,8 @@
 export type * as Attribute from './attributes.js';
 export type * as Pseudo from './pseudo/index.js';
-export type * as Tags from './tags.js';
 
 import type * as Pseudo from './pseudo/index.js';
-import type * as Tags from './tags.js';
+import type { Html } from '../../../html/index.js';
 
 /** https://drafts.csswg.org/selectors/#child-combinators */
 export type Child = '>';
@@ -22,7 +21,7 @@ export type General =
   | ID
   | Pseudo.Classes.All
   | Pseudo.Elements.All
-  | Tags.All
+  | Html.Tags.Selectable
   | Universal;
 /** https://drafts.csswg.org/selectors/#relational */
 export type Has = `:has(${string})`;

@@ -1,9 +1,22 @@
 /**
+ * Project reference (composite build).
+ */
+export type Reference = {
+  /**
+   * Path to the referenced project (directory containing project's tsconfig.json)
+   */
+  path: string;
+};
+
+/**
  * Project references (composite builds).
  * Not inherited by extends.
  * @see {@link https://www.typescriptlang.org/tsconfig/#references}
  */
-export type References = { path: string }[];
+export type References = Reference[];
+/**
+ * Extended project reference with additional metadata to track dependencies and ensure proper build order.
+ */
 
 //#region> Compiler Options
 //#region> Aliases
@@ -11,12 +24,7 @@ export type References = { path: string }[];
  * Control JSX transform and output mode.
  * @see {@link https://www.typescriptlang.org/tsconfig/#jsx}
  */
-export type JSXMode =
-  | 'preserve'
-  | 'react-jsx'
-  | 'react-jsxdev'
-  | 'react-native'
-  | 'react';
+export type JSXMode = 'preserve' | 'react-jsx' | 'react-jsxdev' | 'react-native' | 'react';
 /**
  * Determine whether a file is considered a module or a script.
  * @see {@link https://www.typescriptlang.org/tsconfig/#moduleDetection}
@@ -564,20 +572,19 @@ export interface TypeChecking {
 /**
  * @see {@link https://www.typescriptlang.org/tsconfig/#compiler-options}
  */
-export type CompilerOptions = CompilerDiagnostics
-  & Completeness
-  & EditorSupport
-  & Emission
-  & InteropConstraints
-  & JavaScriptSupport
-  & LanguageAndEnvironment
-  & Modules
-  & OutputFormatting
-  & Projects
-  & TypeChecking;
+export type CompilerOptions = CompilerDiagnostics &
+  Completeness &
+  EditorSupport &
+  Emission &
+  InteropConstraints &
+  JavaScriptSupport &
+  LanguageAndEnvironment &
+  Modules &
+  OutputFormatting &
+  Projects &
+  TypeChecking;
 
-export type CompilerOptionsWithStatic<C extends CompilerOptions> =
-  CompilerOptions & Required<C>;
+export type CompilerOptionsWithStatic<C extends CompilerOptions> = CompilerOptions & Required<C>;
 //#endregion
 
 //#region> Watch Options
@@ -640,7 +647,7 @@ export interface WatchOptions {
 export interface TypeAcquisition {
   /**
    * Disable filename-based inference:
-   * e.g., jquery.js → automatically fetch \@types/jquery
+   * e.g., jquery.js → automatically fetch `@types/jquery`
    */
   disableFilenameBasedTypeAcquisition?: boolean;
 
@@ -652,17 +659,6 @@ export interface TypeAcquisition {
 
   /** Explicit list of packages to acquire types for. */
   include?: string[];
-}
-//#endregion
-
-//#region> Meta
-/**
- * Metadata fields for tsconfig files to provide additional details.
- */
-export interface ConfigMeta<N extends string> {
-  $schema: string;
-  description: string;
-  name: N;
 }
 //#endregion
 
@@ -699,44 +695,41 @@ export interface Config<C extends CompilerOptions = CompilerOptions> {
 }
 
 /**
- * TsConfig with added metadata fields.
- */
-export type ConfigWithMeta<
-  N extends string,
-  C extends CompilerOptions = CompilerOptions
-> = Config<C> & ConfigMeta<N>;
-
-export type ConfigWithMetaInput<
-  N extends string,
-  StaticFields extends Omit<Partial<ConfigWithMeta<N>>, 'compilerOptions'>,
-  StaticCompilerOptions extends CompilerOptions | object = object
-> = {
-  compilerOptions?: Omit<CompilerOptions, keyof StaticCompilerOptions>;
-} & Omit<ConfigWithMeta<N>, 'compilerOptions' | keyof StaticFields>;
-/**
- * Used for processing tsconfig inputs where certain fields are statically known.
- *
- * @example
- * ```ts
- * const Input: Input<'my-tsconfig', { strict: true }, { strict: true }> = {
- *   compilerOptions: {
- *     noImplicitAny: true, // allowed
- *     strict: false, // Error: Type 'false' is not assignable to type 'true'.
- *   },
- *   exclude: ['node_modules'], // allowed
- *   strict: false, // Error: Object literal may only specify known properties, and 'strict' does not exist in type 'Omit<TsConfig<"my-tsconfig">, "compilerOptions">'.
- * }
- * ```
- */
-export type Input<
-  StaticFields extends Omit<Partial<Config>, 'compilerOptions'>,
-  StaticCompilerOptions extends CompilerOptions | object = object
-> = {
-  compilerOptions?: Omit<CompilerOptions, keyof StaticCompilerOptions>;
-} & Omit<Config, 'compilerOptions' | keyof StaticFields>;
-/**
- * All top-level fields of a tsconfig file.
+ * All top-level fields of a basic tsconfig file.
  *
  *  @see {@link https://www.typescriptlang.org/tsconfig/#root-fields}
  */
 export type RootField = keyof Config;
+
+//#region> Extended
+/**
+ * Metadata fields for tsconfig files to provide additional details.
+ */
+export interface Meta<N extends string = string> {
+  $schema: string;
+  description: string;
+  filename: string;
+  name: N;
+}
+
+export interface ExtendedReference extends Reference {
+  /**
+   * Unique identifier for the reference used to track dependencies.
+   */
+  id: string;
+  /**
+   * id's of other references this one depends on. Used to ensure proper build order.
+   * null if no dependencies.
+   */
+  dependsOn: string[] | null;
+}
+/**
+ * TsConfig with added metadata fields.
+ */
+export type ExtendedConfig<
+  N extends string = string,
+  C extends CompilerOptions = CompilerOptions
+> = Omit<Config<C>, 'references'> & Meta<N> & { references?: ExtendedReference[] };
+
+export type ExtendedRootField = keyof ExtendedConfig<string>;
+//#endregion

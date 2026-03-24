@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { block, create, type IndentBlockLines, line } from './indentation.ts';
 
-describe('indentation', () => {
+describe('Str Indentation', () => {
   describe('line', () => {
     it('indents with default settings', () => {
       expect(line('hello')).toBe('hello');
@@ -22,12 +22,8 @@ describe('indentation', () => {
     });
 
     it('uses custom unitChar', () => {
-      expect(line('hello', 1, false, { unitChar: '\t', indentSize: 1 })).toBe(
-        '\thello'
-      );
-      expect(line('hello', 2, false, { unitChar: '\t', indentSize: 1 })).toBe(
-        '\t\thello'
-      );
+      expect(line('hello', 1, false, { unitChar: '\t', indentSize: 1 })).toBe('\thello');
+      expect(line('hello', 2, false, { unitChar: '\t', indentSize: 1 })).toBe('\t\thello');
     });
 
     it('uses custom indentSize', () => {
@@ -36,13 +32,9 @@ describe('indentation', () => {
     });
 
     it('combines all custom options', () => {
-      expect(
-        line('hello', 2, true, {
-          eolChar: '\r\n',
-          unitChar: '\t',
-          indentSize: 1
-        })
-      ).toBe('\t\thello\r\n');
+      expect(line('hello', 2, true, { eolChar: '\r\n', unitChar: '\t', indentSize: 1 })).toBe(
+        '\t\thello\r\n'
+      );
     });
   });
 
@@ -85,10 +77,7 @@ describe('indentation', () => {
     });
 
     it('handles function lines', () => {
-      const lines: IndentBlockLines = [
-        [() => 'computed1'],
-        [() => 'computed2', 1]
-      ];
+      const lines: IndentBlockLines = [[() => 'computed1'], [() => 'computed2', 1]];
       expect(block(lines, 'final')).toBe(`computed1  computed2${EOL}`);
     });
 
@@ -107,9 +96,9 @@ describe('indentation', () => {
         ['line1', 1],
         ['line2', 2]
       ];
-      expect(
-        block(lines, 'all', { eolChar: '\r\n', unitChar: '\t', indentSize: 1 })
-      ).toBe('\tline1\r\n\t\tline2\r\n');
+      expect(block(lines, 'all', { eolChar: '\r\n', unitChar: '\t', indentSize: 1 })).toBe(
+        '\tline1\r\n\t\tline2\r\n'
+      );
     });
 
     it('handles mixed scenarios', () => {
@@ -199,9 +188,7 @@ describe('indentation', () => {
         ['line1', 1],
         ['line2', 2]
       ];
-      expect(indent(lines, 'all')).toBe(
-        '\t\t\t\tline1\r\n\t\t\t\t\t\t\t\tline2\r\n'
-      );
+      expect(indent(lines, 'all')).toBe('\t\t\t\tline1\r\n\t\t\t\t\t\t\t\tline2\r\n');
     });
 
     it('handles function lines in block input', () => {
@@ -212,12 +199,7 @@ describe('indentation', () => {
 
     it('handles undefined lines in block input', () => {
       const indent = create();
-      const lines: IndentBlockLines = [
-        ['line1'],
-        [undefined],
-        [() => undefined],
-        ['line2']
-      ];
+      const lines: IndentBlockLines = [['line1'], [undefined], [() => undefined], ['line2']];
       expect(indent(lines, 'final')).toBe(`line1line2${EOL}`);
     });
   });

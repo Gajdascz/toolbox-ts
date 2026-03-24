@@ -12,7 +12,7 @@ import type {
   Group,
   Immutable,
   Insert,
-  Merge,
+  Merged,
   Mutable,
   Prepend,
   Split,
@@ -41,12 +41,8 @@ describe('Arr Types', () => {
       type DefaultArr = Arr;
       expectTypeOf<DefaultArr>().toEqualTypeOf<Immutable | Mutable>();
 
-      expectTypeOf<NumArr>().toEqualTypeOf<
-        Immutable<number> | Mutable<number>
-      >();
-      expectTypeOf<StrArr>().toEqualTypeOf<
-        Immutable<string> | Mutable<string>
-      >();
+      expectTypeOf<NumArr>().toEqualTypeOf<Immutable<number> | Mutable<number>>();
+      expectTypeOf<StrArr>().toEqualTypeOf<Immutable<string> | Mutable<string>>();
       expectTypeOf<MixedArr>().toEqualTypeOf<
         Immutable<number | string> | Mutable<number | string>
       >();
@@ -113,9 +109,7 @@ describe('Arr Types', () => {
       type MixedElementNoUndef = ElementNotUndefined<MixedArr>;
       expectTypeOf<MixedElementNoUndef>().toEqualTypeOf<number | string>();
 
-      type WithUndefElement = ElementNotUndefined<
-        readonly (number | undefined)[]
-      >;
+      type WithUndefElement = ElementNotUndefined<readonly (number | undefined)[]>;
       expectTypeOf<WithUndefElement>().toEqualTypeOf<number>();
     });
   });
@@ -140,12 +134,8 @@ describe('Arr Types', () => {
       type FromArrayWithUndef = From<[number, undefined, string]>;
       expectTypeOf<FromArrayWithUndef>().toEqualTypeOf<(number | string)[]>();
 
-      type FromReadonlyArrayWithUndef = From<
-        readonly [number, undefined, string]
-      >;
-      expectTypeOf<FromReadonlyArrayWithUndef>().toEqualTypeOf<
-        readonly (number | string)[]
-      >();
+      type FromReadonlyArrayWithUndef = From<readonly [number, undefined, string]>;
+      expectTypeOf<FromReadonlyArrayWithUndef>().toEqualTypeOf<readonly (number | string)[]>();
     });
   });
   it('prepends elements from one array to another', () => {
@@ -189,24 +179,19 @@ describe('Arr Types', () => {
     });
   });
 
-  describe('Merge', () => {
-    it('merges array with array or array of arrays', () => {
-      type Merged1 = Merge<readonly [1, 2], readonly [3, 4]>;
+  describe('Merged', () => {
+    it('merged array with array or array of arrays', () => {
+      type Merged1 = Merged<readonly [1, 2], readonly [3, 4]>;
       expectTypeOf<Merged1>().toEqualTypeOf<(1 | 2 | 3 | 4)[]>();
 
-      type MergedNested = Merge<readonly [1, 2], readonly [readonly [3, 4]]>;
+      type MergedNested = Merged<readonly [1, 2], readonly [readonly [3, 4]]>;
       expectTypeOf<MergedNested>().toEqualTypeOf<(1 | 2 | 3 | 4)[]>();
 
-      type MergedMultiNested = Merge<
-        readonly [1],
-        readonly [readonly [2, 3], readonly [4, 5]]
-      >;
+      type MergedMultiNested = Merged<readonly [1], readonly [readonly [2, 3], readonly [4, 5]]>;
       expectTypeOf<MergedMultiNested>().toEqualTypeOf<(1 | 2 | 3 | 4 | 5)[]>();
 
-      type MergedMixed = Merge<readonly [string], readonly [number, boolean]>;
-      expectTypeOf<MergedMixed>().toEqualTypeOf<
-        (boolean | number | string)[]
-      >();
+      type MergedMixed = Merged<readonly [string], readonly [number, boolean]>;
+      expectTypeOf<MergedMixed>().toEqualTypeOf<(boolean | number | string)[]>();
     });
   });
 
@@ -218,19 +203,13 @@ describe('Arr Types', () => {
       >();
 
       type ZippedNum = Zip<NumArr, StrArr>;
-      expectTypeOf<ZippedNum>().toEqualTypeOf<
-        [number, string][] | readonly [number, string][]
-      >();
+      expectTypeOf<ZippedNum>().toEqualTypeOf<[number, string][] | readonly [number, string][]>();
 
       type ZippedSame = Zip<NumArr, NumArr>;
-      expectTypeOf<ZippedSame>().toEqualTypeOf<
-        [number, number][] | readonly [number, number][]
-      >();
+      expectTypeOf<ZippedSame>().toEqualTypeOf<[number, number][] | readonly [number, number][]>();
 
       type ZippedEmpty = Zip<readonly [], StrArr>;
-      expectTypeOf<ZippedEmpty>().toEqualTypeOf<
-        [never, string][] | readonly [never, string][]
-      >();
+      expectTypeOf<ZippedEmpty>().toEqualTypeOf<[never, string][] | readonly [never, string][]>();
     });
   });
 
@@ -248,14 +227,12 @@ describe('Arr Types', () => {
 
       type ZipFilledBool = ZipFill<NumArr, StrArr, false>;
       expectTypeOf<ZipFilledBool>().toEqualTypeOf<
-        | [false | number, false | string][]
-        | readonly [false | number, false | string][]
+        [false | number, false | string][] | readonly [false | number, false | string][]
       >();
 
       type ZipFilledUndefined = ZipFill<readonly [1], readonly [2], undefined>;
       expectTypeOf<ZipFilledUndefined>().toEqualTypeOf<
-        | [1 | undefined, 2 | undefined][]
-        | readonly [1 | undefined, 2 | undefined][]
+        [1 | undefined, 2 | undefined][] | readonly [1 | undefined, 2 | undefined][]
       >();
     });
   });
@@ -264,10 +241,7 @@ describe('Arr Types', () => {
     it('returns zipped pairs and remainder', () => {
       type ZipRem1 = ZipRemainder<readonly [1, 2, 3], readonly ['a', 'b']>;
       expectTypeOf<ZipRem1>().toEqualTypeOf<
-        [
-          [1 | 2 | 3, 'a' | 'b'][] | readonly [1 | 2 | 3, 'a' | 'b'][],
-          ['a' | 'b' | 1 | 2 | 3][]
-        ]
+        [[1 | 2 | 3, 'a' | 'b'][] | readonly [1 | 2 | 3, 'a' | 'b'][], ['a' | 'b' | 1 | 2 | 3][]]
       >();
 
       type ZipRemNum = ZipRemainder<NumArr, StrArr>;
@@ -292,9 +266,7 @@ describe('Arr Types', () => {
       >();
 
       type ResultRemainder = Result['remainder'];
-      expectTypeOf<ResultRemainder>().toEqualTypeOf<
-        ('a' | 'b' | 1 | 2 | 3)[]
-      >();
+      expectTypeOf<ResultRemainder>().toEqualTypeOf<('a' | 'b' | 1 | 2 | 3)[]>();
 
       type NumStrResult = ZipRemainderObj<NumArr, StrArr>;
       type NumStrZipped = NumStrResult['zipped'];
@@ -313,10 +285,7 @@ describe('Arr Types', () => {
       expectTypeOf<Group1>().toEqualTypeOf<{ even: number[]; odd: number[] }>();
 
       type GroupStr = Group<StrArr, 'long' | 'short'>;
-      expectTypeOf<GroupStr>().toEqualTypeOf<{
-        long: string[];
-        short: string[];
-      }>();
+      expectTypeOf<GroupStr>().toEqualTypeOf<{ long: string[]; short: string[] }>();
 
       type GroupMixed = Group<MixedArr, 'type1' | 'type2'>;
       expectTypeOf<GroupMixed>().toEqualTypeOf<{
@@ -325,11 +294,7 @@ describe('Arr Types', () => {
       }>();
 
       type GroupNumeric = Group<NumArr, 1 | 2 | 3>;
-      expectTypeOf<GroupNumeric>().toEqualTypeOf<{
-        1: number[];
-        2: number[];
-        3: number[];
-      }>();
+      expectTypeOf<GroupNumeric>().toEqualTypeOf<{ 1: number[]; 2: number[]; 3: number[] }>();
     });
   });
 
@@ -356,9 +321,7 @@ describe('Arr Types', () => {
       expectTypeOf<With<StrArr, null>>().toEqualTypeOf<(null | string)[]>();
 
       type WithBoolean = With<MixedArr, boolean>;
-      expectTypeOf<WithBoolean>().toEqualTypeOf<
-        (boolean | number | string)[]
-      >();
+      expectTypeOf<WithBoolean>().toEqualTypeOf<(boolean | number | string)[]>();
     });
   });
 
@@ -404,9 +367,7 @@ describe('Arr Types', () => {
       expectTypeOf<ResultX>().toEqualTypeOf<(1 | 2)[]>();
       expectTypeOf<ResultY>().toEqualTypeOf<(number | string | true)[]>();
 
-      type ResultStr = WithoutFalsy<
-        Arr<'' | 0 | false | null | string | undefined>
-      >;
+      type ResultStr = WithoutFalsy<Arr<'' | 0 | false | null | string | undefined>>;
       expectTypeOf<ResultStr>().toEqualTypeOf<string[]>();
 
       type ResultClean = WithoutFalsy<(Falsy | number)[]>;

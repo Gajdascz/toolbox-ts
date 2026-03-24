@@ -1,12 +1,17 @@
+import type { WithVar } from './shared.js';
+
 export type Percent = `${number}%`;
+export type PercentWithVar = WithVar<Percent>;
 
 //#region> Angle
 type Angle = Deg | Grad | Rad | Turn;
+type AngleWithVar = WithVar<Angle>;
+
 type Deg = `${number}deg`;
 type Grad = `${number}grad`;
 type Rad = `${number}rad`;
 type Turn = `${number}turn`;
-export type { Angle, Deg, Grad, Rad, Turn };
+export type { Angle, Deg, Grad, Rad, Turn, AngleWithVar };
 //#endregion
 
 //#region> Time

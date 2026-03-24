@@ -34,15 +34,9 @@ describe('conditional helpers', () => {
       });
     });
     it('returns fallback when any condition is falsy', () => {
-      expect(whenAll([true, 0, 'non-empty'], { a: 1 }, { b: 2 })).toEqual({
-        b: 2
-      });
-      expect(whenAll([true, '', 'non-empty'], { a: 1 }, { b: 2 })).toEqual({
-        b: 2
-      });
-      expect(whenAll([true, null, 'non-empty'], { a: 1 }, { b: 2 })).toEqual({
-        b: 2
-      });
+      expect(whenAll([true, 0, 'non-empty'], { a: 1 }, { b: 2 })).toEqual({ b: 2 });
+      expect(whenAll([true, '', 'non-empty'], { a: 1 }, { b: 2 })).toEqual({ b: 2 });
+      expect(whenAll([true, null, 'non-empty'], { a: 1 }, { b: 2 })).toEqual({ b: 2 });
     });
   });
   describe('wrapWhen', () => {
@@ -63,9 +57,7 @@ describe('conditional helpers', () => {
     });
 
     it('applies transform function and passes the key to it', () => {
-      const res = wrapWhen('k', 'v', {
-        transform: (v: string, k: string) => `${k}:${v}`
-      });
+      const res = wrapWhen('k', 'v', { transform: (v: string, k: string) => `${k}:${v}` });
       expect(res).toEqual({ k: 'k:v' });
     });
   });

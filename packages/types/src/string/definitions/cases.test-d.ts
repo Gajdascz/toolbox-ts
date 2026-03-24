@@ -29,33 +29,21 @@ type Pascal = 'HelloWorldHowAreYou';
 type Snake = 'hello_world_how_are_you';
 
 describe('String Case Types', () => {
-  it('KebabToCamel', () =>
-    expectTypeOf<KebabToCamel<Kebab>>().toEqualTypeOf<Camel>());
-  it('KebabToPascal', () =>
-    expectTypeOf<KebabToPascal<Kebab>>().toEqualTypeOf<Pascal>());
-  it('KebabToSnake', () =>
-    expectTypeOf<KebabToSnake<Kebab>>().toEqualTypeOf<Snake>());
+  it('KebabToCamel', () => expectTypeOf<KebabToCamel<Kebab>>().toEqualTypeOf<Camel>());
+  it('KebabToPascal', () => expectTypeOf<KebabToPascal<Kebab>>().toEqualTypeOf<Pascal>());
+  it('KebabToSnake', () => expectTypeOf<KebabToSnake<Kebab>>().toEqualTypeOf<Snake>());
 
-  it('CamelToKebab', () =>
-    expectTypeOf<CamelToKebab<Camel>>().toEqualTypeOf<Kebab>());
-  it('CamelToPascal', () =>
-    expectTypeOf<CamelToPascal<Camel>>().toEqualTypeOf<Pascal>());
-  it('CamelToSnake', () =>
-    expectTypeOf<CamelToSnake<Camel>>().toEqualTypeOf<Snake>());
+  it('CamelToKebab', () => expectTypeOf<CamelToKebab<Camel>>().toEqualTypeOf<Kebab>());
+  it('CamelToPascal', () => expectTypeOf<CamelToPascal<Camel>>().toEqualTypeOf<Pascal>());
+  it('CamelToSnake', () => expectTypeOf<CamelToSnake<Camel>>().toEqualTypeOf<Snake>());
 
-  it('PascalToCamel', () =>
-    expectTypeOf<PascalToCamel<Pascal>>().toEqualTypeOf<Camel>());
-  it('PascalToKebab', () =>
-    expectTypeOf<PascalToKebab<Pascal>>().toEqualTypeOf<Kebab>());
-  it('PascalToSnake', () =>
-    expectTypeOf<PascalToSnake<Pascal>>().toEqualTypeOf<Snake>());
+  it('PascalToCamel', () => expectTypeOf<PascalToCamel<Pascal>>().toEqualTypeOf<Camel>());
+  it('PascalToKebab', () => expectTypeOf<PascalToKebab<Pascal>>().toEqualTypeOf<Kebab>());
+  it('PascalToSnake', () => expectTypeOf<PascalToSnake<Pascal>>().toEqualTypeOf<Snake>());
 
-  it('SnakeToCamel', () =>
-    expectTypeOf<SnakeToCamel<Snake>>().toEqualTypeOf<Camel>());
-  it('SnakeToKebab', () =>
-    expectTypeOf<SnakeToKebab<Snake>>().toEqualTypeOf<Kebab>());
-  it('SnakeToPascal', () =>
-    expectTypeOf<SnakeToPascal<Snake>>().toEqualTypeOf<Pascal>());
+  it('SnakeToCamel', () => expectTypeOf<SnakeToCamel<Snake>>().toEqualTypeOf<Camel>());
+  it('SnakeToKebab', () => expectTypeOf<SnakeToKebab<Snake>>().toEqualTypeOf<Kebab>());
+  it('SnakeToPascal', () => expectTypeOf<SnakeToPascal<Snake>>().toEqualTypeOf<Pascal>());
 
   describe('Round-trip conversions', () => {
     it('converts camel to kebab and back', () => {
@@ -81,9 +69,7 @@ describe('String Case Types', () => {
   describe('Is Case', () => {
     it('identifies camel case', () => {
       expectTypeOf<IsCamelCase<'helloWorld'>>().toEqualTypeOf<'helloWorld'>();
-      expectTypeOf<
-        IsCamelCase<'helloWorldTest!'>
-      >().toEqualTypeOf<'helloWorldTest!'>();
+      expectTypeOf<IsCamelCase<'helloWorldTest!'>>().toEqualTypeOf<'helloWorldTest!'>();
       expectTypeOf<IsCamelCase<'HelloWorld'>>().toEqualTypeOf<never>();
       expectTypeOf<IsCamelCase<'hello-world'>>().toEqualTypeOf<never>();
       expectTypeOf<IsCamelCase<'hello_world'>>().toEqualTypeOf<never>();
@@ -91,9 +77,7 @@ describe('String Case Types', () => {
     });
     it('identifies kebab case', () => {
       expectTypeOf<IsKebabCase<'hello-world'>>().toEqualTypeOf<'hello-world'>();
-      expectTypeOf<
-        IsKebabCase<'hello-world-test'>
-      >().toEqualTypeOf<'hello-world-test'>();
+      expectTypeOf<IsKebabCase<'hello-world-test'>>().toEqualTypeOf<'hello-world-test'>();
       expectTypeOf<IsKebabCase<'hello'>>().toEqualTypeOf<'hello'>();
       expectTypeOf<IsKebabCase<'Hello'>>().toEqualTypeOf<never>();
       expectTypeOf<IsKebabCase<'Hello-World'>>().toEqualTypeOf<never>();
@@ -103,9 +87,7 @@ describe('String Case Types', () => {
     });
     it('identifies pascal case', () => {
       expectTypeOf<IsPascalCase<'HelloWorld'>>().toEqualTypeOf<'HelloWorld'>();
-      expectTypeOf<
-        IsPascalCase<'HelloWorldTest'>
-      >().toEqualTypeOf<'HelloWorldTest'>();
+      expectTypeOf<IsPascalCase<'HelloWorldTest'>>().toEqualTypeOf<'HelloWorldTest'>();
       expectTypeOf<IsPascalCase<'helloWorld'>>().toEqualTypeOf<never>();
       expectTypeOf<IsPascalCase<'hello-world'>>().toEqualTypeOf<never>();
       expectTypeOf<IsPascalCase<'hello_world'>>().toEqualTypeOf<never>();
@@ -114,9 +96,7 @@ describe('String Case Types', () => {
     });
     it('identifies snake case', () => {
       expectTypeOf<IsSnakeCase<'hello_world'>>().toEqualTypeOf<'hello_world'>();
-      expectTypeOf<
-        IsSnakeCase<'hello_world_test'>
-      >().toEqualTypeOf<'hello_world_test'>();
+      expectTypeOf<IsSnakeCase<'hello_world_test'>>().toEqualTypeOf<'hello_world_test'>();
       expectTypeOf<IsSnakeCase<'HelloWorld'>>().toEqualTypeOf<never>();
       expectTypeOf<IsSnakeCase<'Hello_World'>>().toEqualTypeOf<never>();
       expectTypeOf<IsSnakeCase<'hello-world'>>().toEqualTypeOf<never>();

@@ -30,12 +30,6 @@ jobs:
       - name: 📦 Setup Environment
         uses: ./.github/actions/setup-env
 
-      - name: 🏷️ Create Git Tags
-        run: pnpm changeset tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: bash
-
       - name: 🚀 Publish to NPMJS
         run: pnpm changeset publish --registry=https://registry.npmjs.org
         env:

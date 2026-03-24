@@ -4,6 +4,8 @@ import { NPM } from '@toolbox-ts/constants/tooling';
 import { FILES } from '@toolbox-ts/constants/fs';
 import { serializeJson, runtimeConfigToFileContent } from '../../../helpers.js';
 
+export const CS_MARKER = 'Version Packages';
+
 export const DEFAULTS: ProcessedConfig = {
   extends: [NPM['@commitlint/config-conventional'].name],
   rules: {
@@ -29,12 +31,13 @@ export const define = ({
   scopes = [],
   defaultIgnores = DEFAULTS.defaultIgnores,
   ignores = [],
+  usingChangesets = true,
   ...cfg
 }: InputConfig = {}): ProcessedConfig => ({
   extends: Arr.mergeUnique(DEFAULTS.extends, Arr.ensure(_extensions)),
   rules: { ...DEFAULTS.rules, ...rules, 'scope-enum': [2, 'always', scopes] },
   defaultIgnores,
-  ignores,
+  ignores: [...ignores, ...(usingChangesets ? [(c: string) => c.includes(CS_MARKER)] : [])],
   ...cfg
 });
 

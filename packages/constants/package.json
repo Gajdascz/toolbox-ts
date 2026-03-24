@@ -1,6 +1,6 @@
 {
   "name": "@toolbox-ts/constants",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": false,
   "description": "Constants for toolbox-ts packages",
   "keywords": [

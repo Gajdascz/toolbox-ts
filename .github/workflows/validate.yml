@@ -49,11 +49,7 @@ jobs:
 
       - name: 🦋 Check for changeset
         if: ${{ inputs.changeset }}
-        run: |
-          if ! pnpm changeset status --since=origin/main; then
-            echo "::error::No changeset found. Please add a changeset using 'pnpm changeset' if this PR includes user-facing changes."
-            exit 1
-          fi
+        run: pnpm changeset status
         shell: bash
 
       - name: 📝 Validate Commit Messages
@@ -66,6 +62,6 @@ jobs:
             echo "Validating PR title..."
             echo "${{ github.event.pull_request.title }}" | pnpm commitlint --verbose
           else
-            echo "Skipping commitlint (mode=${{ inputs.commitlint_mode }},event=${{ github.event_name }})"
+            echo "Skipping commitlint (mode=${{ inputs.commitlint_mode }}, event=${{ github.event_name }})"
           fi
         shell: bash

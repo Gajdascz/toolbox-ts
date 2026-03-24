@@ -36,11 +36,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
 
-      - name: 📌 Push Git Tags
-        run: git push --follow-tags
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: 🚀 Publish to NPMJS
         run: pnpm changeset publish --registry=https://registry.npmjs.org
         env:

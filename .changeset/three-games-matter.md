@@ -28,6 +28,5 @@ major refactor and rework
 - `types` major additions and re-organization
 - update root readme
 - update ci workflow
-
 - Preparing for `repo-kit` package integration to scaffold and manage repositories using modern
   tooling and best practices.

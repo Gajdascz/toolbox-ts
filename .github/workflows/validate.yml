@@ -63,9 +63,11 @@ jobs:
             echo "Validating last commit..."
             pnpm commitlint --last --verbose
           elif [ "${{ inputs.commitlint_mode }}" = "pr" ] && [ "${{ github.event_name }}" = "pull_request" ]; then
-            echo "Validating PR title..."
-            echo "${{ github.event.pull_request.title }}" | pnpm commitlint --verbose
+            echo "Validating all PR commits..."
+            pnpm commitlint --from ${{ github.event.pull_request.base.sha }} \
+                            --to ${{ github.event.pull_request.head.sha }} \
+                            --verbose
           else
-            echo "Skipping commitlint (mode=${{ inputs.commitlint_mode }},event=${{ github.event_name }})"
+            echo "Skipping commitlint (mode=${{ inputs.commitlint_mode }}, event=${{ github.event_name }})"
           fi
         shell: bash
